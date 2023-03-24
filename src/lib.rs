@@ -54,7 +54,7 @@ impl Webtile {
     /// ```ignore
     /// connect::connect("ws://localhost:8080/socket");
     /// ```
-    pub fn connect(url: &str) -> Result<Self> {
+    pub fn connect(url: &str, speed_ms: usize) -> Result<Self> {
         // Open connection
         let parsed_url = Url::parse(url)?;
         let (socket, _response) = tungstenite::connect(parsed_url)?;
@@ -68,7 +68,7 @@ impl Webtile {
             decompressor,
             wait_list: vec![],
             last_send: SystemTime::now(),
-            speed_ms: 1000,
+            speed_ms,
             received_messages: VecDeque::new(),
         };
 
