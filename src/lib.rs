@@ -39,6 +39,8 @@ pub enum BlockingError {
     More,
     #[error("Blocking due to 'attributes' level up message (select 'S', 'I', 'D').")]
     Attributes,
+    #[error("Blocking due to a pickup menu popup.")]
+    Pickup,
 }
 
 impl Webtile {
@@ -254,6 +256,12 @@ impl Webtile {
                 };
                 if message["mode"].as_u64().unwrap() == 7 {
                     return Err(anyhow!(BlockingError::Attributes));
+                };
+                Ok(())
+            }
+            "menus" => {
+                if message["tag"] == "pickup" {
+                    return Err(anyhow!(BlockingError::Pickup));
                 };
                 Ok(())
             }
