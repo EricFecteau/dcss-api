@@ -259,7 +259,7 @@ impl Webtile {
                 };
                 Ok(())
             }
-            "menus" => {
+            "menu" => {
                 if message["tag"] == "pickup" {
                     return Err(anyhow!(BlockingError::Pickup));
                 };
