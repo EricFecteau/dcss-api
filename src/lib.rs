@@ -30,7 +30,7 @@ pub struct Webtile {
     /// important when using someone else's server.
     speed_ms: usize,
     /// VecDeque of messages received from DCSS.
-    received_messages: VecDeque<Value>,
+    pub received_messages: VecDeque<Value>,
 }
 
 #[derive(Error, Debug)]
