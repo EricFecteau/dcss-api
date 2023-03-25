@@ -41,6 +41,14 @@ pub enum BlockingError {
     Attributes,
     #[error("Blocking due to a pickup menu popup.")]
     Pickup,
+    #[error("Blocking due to a 'identify' menu popup.")]
+    Identify,
+    #[error("Blocking due to a 'enchant weapon' menu popup.")]
+    EnchantWeapon,
+    #[error("Blocking due to a 'brand item' menu popup.")]
+    EnchantItem,
+    #[error("Blocking due to a 'brand weapon' menu popup.")]
+    BrandWeapon,
 }
 
 impl Webtile {
@@ -252,18 +260,35 @@ impl Webtile {
         match msg {
             "input_mode" => {
                 if message["mode"].as_u64().unwrap() == 5 {
-                    return Err(anyhow!(BlockingError::More));
-                };
-                if message["mode"].as_u64().unwrap() == 7 {
-                    return Err(anyhow!(BlockingError::Attributes));
-                };
-                Ok(())
+                    Err(anyhow!(BlockingError::More))
+                } else if message["mode"].as_u64().unwrap() == 7 {
+                    Err(anyhow!(BlockingError::Attributes))
+                } else {
+                    Ok(())
+                }
             }
             "menu" => {
                 if message["tag"] == "pickup" {
-                    return Err(anyhow!(BlockingError::Pickup));
-                };
-                Ok(())
+                    Err(anyhow!(BlockingError::Pickup))
+                } else if message["tag"] == "use_item" {
+                    match message["title"]["text"].as_str().unwrap() {
+                        x if x.contains("Identify which item?") => {
+                            Err(anyhow!(BlockingError::Identify))
+                        }
+                        x if x.contains("Enchant which weapon?") => {
+                            Err(anyhow!(BlockingError::EnchantWeapon))
+                        }
+                        x if x.contains("Enchant which item?") => {
+                            Err(anyhow!(BlockingError::EnchantItem))
+                        }
+                        x if x.contains("Brand which weapon?") => {
+                            Err(anyhow!(BlockingError::BrandWeapon))
+                        }
+                        _ => Ok(()),
+                    }
+                } else {
+                    Ok(())
+                }
             }
             _ => Ok(()),
         }
