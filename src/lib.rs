@@ -132,7 +132,10 @@ impl Webtile {
 
                 // Pre-process the data to identify blocking
                 if let Err(e) = self.is_it_blocking(message) {
-                    blocking = Err(e)
+                    match e.downcast_ref().unwrap() {
+                        BlockingError::Died => return Err(e), // Automatic return when death
+                        _ => blocking = Err(e),
+                    }
                 };
 
                 // If searching for key-value
