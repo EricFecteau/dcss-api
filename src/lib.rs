@@ -1,6 +1,5 @@
 use anyhow::{anyhow, Result};
 use flate2::{Decompress, FlushDecompress};
-use log::trace;
 use serde_json::{json, Value};
 use std::collections::VecDeque;
 use std::net::TcpStream;
@@ -41,6 +40,8 @@ pub enum BlockingError {
     Attributes,
     #[error("Blocking due to a pickup menu popup.")]
     Pickup,
+    #[error("Blocking due to a 'acquirement' menu popup.")]
+    Acquirement,
     #[error("Blocking due to a 'identify' menu popup.")]
     Identify,
     #[error("Blocking due to a 'enchant weapon' menu popup.")]
@@ -144,8 +145,6 @@ impl Webtile {
 
             // Will get array of message, go through them until what is expected is found
             for message in msg["msgs"].as_array().unwrap() {
-                trace!("RECEIVED: {}", message.to_string());
-
                 // Send data to a VeqDeque to be pulled by user;
                 self.received_messages.push_back(message.to_owned());
 
@@ -214,8 +213,6 @@ impl Webtile {
         }
         self.last_send = SystemTime::now();
 
-        trace!("SENT: {}", json_val.to_string());
-
         self.socket
             .write_message(Message::Text(json_val.to_string()))
             .map_err(|e| anyhow!(e))?;
@@ -247,7 +244,6 @@ impl Webtile {
         self.last_send = SystemTime::now();
 
         let json_key = keys(key);
-        trace!("SENT: {}", json_key.to_string());
         self.socket
             .write_message(Message::Text(json_key.to_string()))?;
 
@@ -270,6 +266,8 @@ impl Webtile {
             "menu" => {
                 if message["tag"] == "pickup" {
                     Err(anyhow!(BlockingError::Pickup))
+                } else if message["tag"] == "acquirement" {
+                    Err(anyhow!(BlockingError::Acquirement))
                 } else if message["tag"] == "use_item" {
                     match message["title"]["text"].as_str().unwrap() {
                         x if x.contains("Identify which item?") => {
