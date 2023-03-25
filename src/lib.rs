@@ -48,6 +48,8 @@ pub enum BlockingError {
     EnchantItem,
     #[error("Blocking due to a 'brand weapon' menu popup.")]
     BrandWeapon,
+    #[error("Character died.")]
+    Died,
 }
 
 impl Webtile {
@@ -252,6 +254,20 @@ impl Webtile {
                         _ => Ok(()),
                     }
                 } else {
+                    Ok(())
+                }
+            }
+            "msgs" => {
+                if !message.as_object().unwrap().contains_key("messages") {
+                    Ok(())
+                } else {
+                    for text_obj in message["messages"].as_array().unwrap() {
+                        let text = text_obj["text"].as_str().unwrap();
+
+                        if text.contains("You die...") {
+                            return Err(anyhow!(BlockingError::Died));
+                        }
+                    }
                     Ok(())
                 }
             }
