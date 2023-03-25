@@ -81,7 +81,7 @@ impl Webtile {
         };
 
         webtile
-            .read_until("lobby_complete", "")
+            .read_until("lobby_complete", None, None)
             .map_err(|e| anyhow!(e))?;
 
         Ok(webtile)
@@ -106,7 +106,7 @@ impl Webtile {
     /// ```ignore
     /// self.read_until("input_mode", "ready")?;
     /// ```
-    pub fn read_until(&mut self, search_message: &str, mode: &str) -> Result<()> {
+    pub fn read_until(&mut self, msgs: &str, key: Option<&str>, value: Option<u64>) -> Result<()> {
         // loop until break (found expected results, found a blocking type)
         let mut found = 0;
         while found == 0 {
@@ -133,23 +133,22 @@ impl Webtile {
                     blocking = Err(e)
                 };
 
-                // Get the "mode" if necessary (e.g. input_mode = 1)
-                let mut found_mode = "";
-
-                // TODO: Is a bit finicky (for a special case)
-                if message.as_object().unwrap().contains_key("mode") {
-                    if message["mode"].as_u64().unwrap() == 1 {
-                        found_mode = "ready";
-                    }
-                }
-
-                // Get the "msg" type
+                // If searching for key-value
                 let message_msg = message["msg"].as_str().unwrap().to_owned();
 
-                // Find the index in the message being waited on (None if not found)
-                if search_message == message_msg && mode == found_mode {
+                // Same message
+                if msgs == message_msg &&
+                    // And no key
+                    (key.is_none() ||
+                    // or And contains key
+                    (message.as_object().unwrap().contains_key(&key.unwrap().to_owned()) &&
+                        // And no value
+                        (value.is_none() ||
+                        // or And value correct
+                        message[key.unwrap()].as_u64().unwrap() == value.unwrap())))
+                {
                     found = 1;
-                };
+                }
             }
 
             blocking?
