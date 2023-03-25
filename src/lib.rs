@@ -20,8 +20,6 @@ pub struct Webtile {
     /// A [flate2::Decompress] decompression object (Deflate) to decompress data received
     /// by [DCSS Webtile](http://crawl.develz.org/wordpress/howto).
     decompressor: Decompress,
-    /// List of messages that are being waited for from DCSS Webtiles.
-    wait_list: Vec<(String, String)>,
     /// [SystemTime] of the last sent message. Used to limit the rate for
     /// running the bot on someone else's server.
     last_send: SystemTime,
@@ -77,7 +75,6 @@ impl Webtile {
         let mut webtile = Self {
             socket,
             decompressor,
-            wait_list: vec![],
             last_send: SystemTime::now(),
             speed_ms,
             received_messages: VecDeque::new(),
@@ -110,26 +107,9 @@ impl Webtile {
     /// self.read_until("input_mode", "ready")?;
     /// ```
     pub fn read_until(&mut self, search_message: &str, mode: &str) -> Result<()> {
-        // Send to message queue (in case one already is being waited for)
-        // This queue is for when multiple parts of the system needs to wait for a message
-        // usually for when unexpected things pop up (e.g. a pick-up menu). The system will
-        // continue the bot when one is found, but the other will remain in the queue (unless
-        // also found at the same time). This allows for multiple expected messages to be
-        // packed into one received packet, without missing any of them. If the queue is empty
-        // when the bot gets to this function, it will continue (it assumes the message was
-        // received in another read_until).
-        self.wait_list
-            .push((search_message.to_owned(), mode.to_owned()));
-
-        // loop until break (found expected results)
+        // loop until break (found expected results, found a blocking type)
         let mut found = 0;
         while found == 0 {
-            // Consider the value found if no message is being waited on, and break to not request
-            // a message from the websocket
-            if self.wait_list.is_empty() {
-                break;
-            }
-
             // Read the message from the socket into Vec<u8> -- it will be compressed
             let mut compressed_msg = self
                 .socket
@@ -161,27 +141,15 @@ impl Webtile {
                     if message["mode"].as_u64().unwrap() == 1 {
                         found_mode = "ready";
                     }
-                } else if message.as_object().unwrap().contains_key("depth") {
-                    if !mode.is_empty() {
-                        // Only when specifically requested (the "ready" is always needed)
-                        found_mode = "depth";
-                    }
                 }
 
                 // Get the "msg" type
                 let message_msg = message["msg"].as_str().unwrap().to_owned();
 
                 // Find the index in the message being waited on (None if not found)
-                let index = self.wait_list.iter().position(|r| r.0 == message_msg);
-
-                // If found, (and correct found_mode), delete and identify as "found"
-                // deleting will also prevent waiting in a parent loop.
-                if let Some(ind) = index {
-                    if self.wait_list[ind].1 == found_mode {
-                        found = 1;
-                        self.wait_list.remove(ind);
-                    }
-                }
+                if search_message == message_msg && mode == found_mode {
+                    found = 1;
+                };
             }
 
             blocking?
