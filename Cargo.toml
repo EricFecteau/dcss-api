@@ -5,12 +5,15 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "dcss_api"
+crate-type = ["lib", "cdylib"]
+
 [dependencies]
 flate2 = { version = "1.0", features = ["zlib-ng"], default-features = false }
 tungstenite = "0.18"
 url = "2.3"
-env_logger = "0.10"
 serde_json = "1.0"
-log = "0.4"
 anyhow = "1.0"
 thiserror = "1.0"
+pyo3 = { version = "0.18", features = ["anyhow", "extension-module"] }
