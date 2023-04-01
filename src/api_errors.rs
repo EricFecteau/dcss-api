@@ -1,6 +1,12 @@
-use anyhow::{anyhow, Result};
+use anyhow::anyhow;
 use serde_json::Value;
 use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum APIError {
+    #[error("Failed to login (bad username, password or cookie).")]
+    LoginFailed,
+}
 
 #[derive(Error, Debug)]
 pub enum BlockingError {
@@ -24,8 +30,10 @@ pub enum BlockingError {
     Died,
 }
 
-pub(crate) fn blocking_messages(message: &Value) -> Result<()> {
+pub(crate) fn blocking_messages(message: &Value) -> anyhow::Result<()> {
     let msg = message["msg"].as_str().unwrap();
+
+    println!("{:?}", message);
 
     match msg {
         "input_mode" => {
@@ -76,6 +84,7 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<()> {
                 Ok(())
             }
         }
+        "login_fail" => Err(anyhow!(APIError::LoginFailed)),
         _ => Ok(()),
     }
 }

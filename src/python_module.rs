@@ -11,9 +11,9 @@ pub struct WebtilePy {
 #[pymethods]
 impl WebtilePy {
     #[new]
-    fn connect(url: &str, speed_ms: usize) -> Self {
+    fn connect(url: &str, speed_ms: usize, version: &str) -> Self {
         Self {
-            webtile: Webtile::connect(url, speed_ms).expect(""),
+            webtile: Webtile::connect(url, speed_ms, version).expect(""),
         }
     }
 
@@ -31,9 +31,9 @@ impl WebtilePy {
             .unwrap();
     }
 
-    fn print_return(&mut self) -> String {
+    fn get_message(&mut self) -> Option<String> {
         let value = self.webtile.received_messages.pop_front();
-        value.unwrap().to_string()
+        value.map(|v| v.to_string())
     }
 }
 

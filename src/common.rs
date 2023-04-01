@@ -1,7 +1,33 @@
 use anyhow::{anyhow, Result};
 use flate2::{Decompress, FlushDecompress};
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::str;
+
+/// Convert keyword to json key or input for the game, or send the key directly. Returns
+/// a [serde_json::Value] to be sent to DCSS Webtiles.
+///
+/// /// # Arguments
+///
+/// * `key` - A string slice of the key, or keyword, to be sent.
+pub(crate) fn keys(key: &str) -> Value {
+    match key {
+        "tab" => json!({"msg": "key", "keycode": 9}),
+        "ctrl_a" => json!({"msg": "key", "keycode": 1}),
+        "esc" => json!({"msg": "key", "keycode": 27}),
+        "Dir_N" => json!({"msg": "input", "text": "8"}),
+        "Dir_NE" => json!({"msg": "input", "text": "9"}),
+        "Dir_E" => json!({"msg": "input", "text": "6"}),
+        "Dir_SE" => json!({"msg": "input", "text": "3"}),
+        "Dir_S" => json!({"msg": "input", "text": "2"}),
+        "Dir_SW" => json!({"msg": "input", "text": "1"}),
+        "Dir_W" => json!({"msg": "input", "text": "4"}),
+        "Dir_NW" => json!({"msg": "input", "text": "7"}),
+        "Down" => json!({"msg": "input", "text": ">"}),
+        "Up" => json!({"msg": "input", "text": "<"}),
+        "enter" => json!({"msg": "input", "text": "\r"}),
+        _ => json!({"msg": "input", "text": key}),
+    }
+}
 
 /// Decompresses (deflate) a message from DCSS Webtiles. Returns a [serde_json::Value] object of the data.
 ///
