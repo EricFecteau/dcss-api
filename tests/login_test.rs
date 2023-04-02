@@ -160,10 +160,10 @@ fn using_old_cookie_login() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    // Log in (to a user called "Username", with a password "Password")
+    // Login with cookie
     webtile
-        .login_with_credentials("Username", "Password")
-        .expect("Failed to login");
+        .login_with_cookie(first_cookie.as_str())
+        .expect("Failed to login.");
 
     let _ = webtile.get_message();
 
@@ -188,14 +188,8 @@ fn using_old_cookie_login() {
     while webtile.get_message().is_some() {}
 
     // Login with cookie
-    webtile
-        .login_with_cookie(first_cookie.as_str())
-        .expect("Failed to login.");
+    let result = webtile.login_with_cookie(first_cookie.as_str());
 
-    let _ = webtile.get_message();
-
-    let json: Value =
-        from_str("{\"admin\": false, \"msg\": \"login_success\", \"username\": \"Username\"}")
-            .unwrap();
-    assert_eq!(Some(json), webtile.get_message());
+    let e = result.err().unwrap().downcast::<APIError>().unwrap();
+    assert!(matches!(e, APIError::LoginFailed));
 }
