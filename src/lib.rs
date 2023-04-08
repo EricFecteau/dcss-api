@@ -7,15 +7,14 @@ mod common;
 mod lobby;
 mod python_module;
 
-pub use api_errors::APIError;
+pub use api_errors::{BlockingError, Error};
 
-use anyhow::anyhow;
 use api_errors::blocking_messages;
-use api_errors::BlockingError;
 use flate2::Decompress;
 use serde_json::Value;
 use std::collections::VecDeque;
 use std::net::TcpStream;
+use std::result::Result;
 use std::str;
 use std::thread;
 use std::time::{Duration, SystemTime};
@@ -49,10 +48,10 @@ impl Webtile {
     /// # Arguments
     ///
     /// * `url` - A string slice that holds the `ws://` or `wss://` URL
-    pub fn connect(url: &str, speed_ms: usize, _version: &str) -> anyhow::Result<Self> {
+    pub fn connect(url: &str, speed_ms: usize, _version: &str) -> Result<Self, Error> {
         // Open connection
-        let parsed_url = Url::parse(url)?;
-        let (socket, _response) = tungstenite::connect(parsed_url)?;
+        let parsed_url = Url::parse(url).map_err(Error::Url)?;
+        let (socket, _response) = tungstenite::connect(parsed_url).map_err(Error::Websocket)?;
 
         // Init decompressor (see https://rustpython.github.io/website/src/rustpython_vm/stdlib/zlib.rs.html)
         let wbits = 15; // Windows bits fixed (goes to -15 in flate2 because of zlib_header = false)
@@ -66,15 +65,13 @@ impl Webtile {
             received_messages: VecDeque::new(),
         };
 
-        webtile
-            .read_until("lobby_complete", None, None)
-            .map_err(|e| anyhow!(e))?;
+        webtile.read_until("lobby_complete", None, None)?;
 
         Ok(webtile)
     }
 
-    pub fn disconnect(&mut self) -> anyhow::Result<()> {
-        self.socket.close(None).map_err(|e| anyhow!(e))?;
+    pub fn disconnect(&mut self) -> Result<(), Error> {
+        self.socket.close(None).map_err(Error::Websocket)?;
 
         Ok(())
     }
@@ -96,7 +93,7 @@ impl Webtile {
         msg: &str,
         key: Option<&str>,
         value: Option<u64>,
-    ) -> anyhow::Result<()> {
+    ) -> Result<(), Error> {
         // loop until break (found expected results, found a blocking type)
         let mut found = 0;
         while found == 0 {
@@ -104,7 +101,7 @@ impl Webtile {
             let mut compressed_msg = self
                 .socket
                 .read_message()
-                .map_err(|e| anyhow!(e))?
+                .map_err(Error::Websocket)?
                 .into_data();
 
             // Decompress the message and return JSON Value
@@ -120,8 +117,8 @@ impl Webtile {
 
                 // Pre-process the data to identify blocking
                 if let Err(e) = blocking_messages(message) {
-                    match e.downcast_ref() {
-                        Some(BlockingError::Died) => return Err(e), // Automatic return when death
+                    match e {
+                        Error::Blocking(BlockingError::Died) => return Err(e), // Automatic return when death
                         _ => blocking = Err(e),
                     }
                 };
@@ -155,7 +152,7 @@ impl Webtile {
     /// # Arguments
     ///
     /// * `json_val` - A [serde_json::Value] to send to DCSS Webtiles.
-    pub fn write_json(&mut self, json_val: Value) -> anyhow::Result<()> {
+    pub fn write_json(&mut self, json_val: Value) -> Result<(), Error> {
         // Pause while min time not met
         while SystemTime::now()
             .duration_since(self.last_send)
@@ -169,7 +166,7 @@ impl Webtile {
 
         self.socket
             .write_message(Message::Text(json_val.to_string()))
-            .map_err(|e| anyhow!(e))?;
+            .map_err(Error::Websocket)?;
 
         Ok(())
     }
@@ -180,7 +177,7 @@ impl Webtile {
     ///
     /// * `key` - A string slice to be sent to DCSS (passed through [keys]).
     ///
-    pub fn write_key(&mut self, key: &str) -> anyhow::Result<()> {
+    pub fn write_key(&mut self, key: &str) -> Result<(), Error> {
         // Pause while min time not met
         while SystemTime::now()
             .duration_since(self.last_send)
@@ -194,7 +191,8 @@ impl Webtile {
 
         let json_key = common::keys(key);
         self.socket
-            .write_message(Message::Text(json_key.to_string()))?;
+            .write_message(Message::Text(json_key.to_string()))
+            .map_err(Error::Websocket)?;
 
         Ok(())
     }

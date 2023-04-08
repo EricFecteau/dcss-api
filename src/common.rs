@@ -1,6 +1,7 @@
-use anyhow::{anyhow, Result};
+use crate::Error;
 use flate2::{Decompress, FlushDecompress};
 use serde_json::{json, Value};
+use std::result::Result;
 use std::str;
 
 /// Convert keyword to json key or input for the game, or send the key directly. Returns
@@ -38,7 +39,7 @@ pub(crate) fn keys(key: &str) -> Value {
 pub(crate) fn deflate_to_json(
     decompressor: &mut Decompress,
     compressed_msg: &mut Vec<u8>,
-) -> Result<Value> {
+) -> Result<Value, Error> {
     // DCSS Removes 4 bytes that have to be re-added
     compressed_msg.append(&mut vec![0u8, 0, 255, 255]);
 
@@ -51,10 +52,10 @@ pub(crate) fn deflate_to_json(
             &mut decompressed_bytes,
             FlushDecompress::Sync,
         )
-        .map_err(|e| anyhow!(e))?;
-    let json_str = str::from_utf8(&decompressed_bytes).map_err(|e| anyhow!(e))?;
+        .map_err(Error::Decompress)?;
+    let json_str = str::from_utf8(&decompressed_bytes).map_err(Error::Utf8)?;
 
-    let json_data: Value = serde_json::from_str(json_str).map_err(|e| anyhow!(e))?;
+    let json_data: Value = serde_json::from_str(json_str).map_err(Error::JSON)?;
 
     Ok(json_data)
 }

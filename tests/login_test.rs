@@ -1,4 +1,4 @@
-use dcss_api::{APIError, Webtile};
+use dcss_api::{Error, Webtile};
 use serde_json::{from_str, Value};
 
 #[test]
@@ -31,9 +31,7 @@ fn failed_credential_login() {
 
     let result = webtile.login_with_credentials("XXXXXXX", "XXXXXXX");
 
-    let e = result.err().unwrap().downcast::<APIError>().unwrap();
-
-    assert!(matches!(e, APIError::LoginFailed));
+    assert!(matches!(result, Err(Error::LoginFailed)));
 }
 
 #[test]
@@ -45,8 +43,7 @@ fn failed_credential_login_and_retry() {
     while webtile.get_message().is_some() {}
 
     let result = webtile.login_with_credentials("XXXXXXX", "XXXXXXX");
-    let e = result.err().unwrap().downcast::<APIError>().unwrap();
-    assert!(matches!(e, APIError::LoginFailed));
+    assert!(matches!(result, Err(Error::LoginFailed)));
 
     while webtile.get_message().is_some() {}
 
@@ -120,8 +117,7 @@ fn failed_cookie_login() {
 
     // Login with cookie
     let result = webtile.login_with_cookie("Username%123456789123456789123456789");
-    let e = result.err().unwrap().downcast::<APIError>().unwrap();
-    assert!(matches!(e, APIError::LoginFailed));
+    assert!(matches!(result, Err(Error::LoginFailed)));
 }
 
 #[test]
@@ -190,6 +186,5 @@ fn using_old_cookie_login() {
     // Login with cookie
     let result = webtile.login_with_cookie(first_cookie.as_str());
 
-    let e = result.err().unwrap().downcast::<APIError>().unwrap();
-    assert!(matches!(e, APIError::LoginFailed));
+    assert!(matches!(result, Err(Error::LoginFailed)));
 }

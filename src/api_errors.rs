@@ -1,9 +1,22 @@
-use anyhow::anyhow;
+use std::str::Utf8Error;
+
 use serde_json::Value;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum APIError {
+pub enum Error {
+    #[error("Tungstenite error: {0}")]
+    Websocket(#[from] tungstenite::Error),
+    #[error("Url error: {0}")]
+    Url(#[from] url::ParseError),
+    #[error("Decompress error: {0}")]
+    Decompress(#[from] flate2::DecompressError),
+    #[error("JSON utf8 error: {0}")]
+    Utf8(#[from] Utf8Error),
+    #[error("JSON error: {0}")]
+    JSON(#[from] serde_json::Error),
+    #[error("Blocking error: {0}")]
+    Blocking(#[from] BlockingError),
     #[error("Failed to login (bad username, password or cookie).")]
     LoginFailed,
 }
@@ -30,39 +43,39 @@ pub enum BlockingError {
     Died,
 }
 
-pub(crate) fn blocking_messages(message: &Value) -> anyhow::Result<()> {
+pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
     let msg = message["msg"].as_str().unwrap();
 
-    println!("{:?}", message);
+    // println!("{:?}", message);
 
     match msg {
         "input_mode" => {
             if message["mode"].as_u64().unwrap() == 5 {
-                Err(anyhow!(BlockingError::More))
+                Err(Error::Blocking(BlockingError::More))
             } else if message["mode"].as_u64().unwrap() == 7 {
-                Err(anyhow!(BlockingError::Attributes))
+                Err(Error::Blocking(BlockingError::Attributes))
             } else {
                 Ok(())
             }
         }
         "menu" => {
             if message["tag"] == "pickup" {
-                Err(anyhow!(BlockingError::Pickup))
+                Err(Error::Blocking(BlockingError::Pickup))
             } else if message["tag"] == "acquirement" {
-                Err(anyhow!(BlockingError::Acquirement))
+                Err(Error::Blocking(BlockingError::Acquirement))
             } else if message["tag"] == "use_item" {
                 match message["title"]["text"].as_str().unwrap() {
                     x if x.contains("Identify which item?") => {
-                        Err(anyhow!(BlockingError::Identify))
+                        Err(Error::Blocking(BlockingError::Identify))
                     }
                     x if x.contains("Enchant which weapon?") => {
-                        Err(anyhow!(BlockingError::EnchantWeapon))
+                        Err(Error::Blocking(BlockingError::EnchantWeapon))
                     }
                     x if x.contains("Enchant which item?") => {
-                        Err(anyhow!(BlockingError::EnchantItem))
+                        Err(Error::Blocking(BlockingError::EnchantItem))
                     }
                     x if x.contains("Brand which weapon?") => {
-                        Err(anyhow!(BlockingError::BrandWeapon))
+                        Err(Error::Blocking(BlockingError::BrandWeapon))
                     }
                     _ => Ok(()),
                 }
@@ -78,13 +91,13 @@ pub(crate) fn blocking_messages(message: &Value) -> anyhow::Result<()> {
                     let text = text_obj["text"].as_str().unwrap();
 
                     if text.contains("You die...") {
-                        return Err(anyhow!(BlockingError::Died));
+                        return Err(Error::Blocking(BlockingError::Died));
                     }
                 }
                 Ok(())
             }
         }
-        "login_fail" => Err(anyhow!(APIError::LoginFailed)),
+        "login_fail" => Err(Error::LoginFailed),
         _ => Ok(()),
     }
 }

@@ -1,4 +1,4 @@
-use dcss_api::Webtile;
+use dcss_api::{Error, Webtile};
 use serde_json::{from_str, Value};
 
 #[test]
@@ -18,8 +18,8 @@ fn successful_connect() {
 #[test]
 fn failed_connect() {
     let webtile = Webtile::connect("ws://localhost:XXXX/socket", 100, "0.29");
-    assert!(webtile.is_err());
+    assert!(matches!(webtile, Err(Error::Url(_))));
 
     let webtile = Webtile::connect("ws://localhost:0000/socket", 100, "0.29");
-    assert!(webtile.is_err());
+    assert!(matches!(webtile, Err(Error::Websocket(_))));
 }
