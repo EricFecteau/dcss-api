@@ -22,6 +22,86 @@ fn successful_credential_login() {
 }
 
 #[test]
+fn multiple_login_same_user() {
+    let mut webtile =
+        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect.");
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    webtile
+        .login_with_credentials("Username", "Password")
+        .expect("Login failed.");
+
+    let _ = webtile.get_message();
+
+    let json: Value =
+        from_str("{\"admin\": false, \"msg\": \"login_success\", \"username\": \"Username\"}")
+            .unwrap();
+    assert_eq!(Some(json), webtile.get_message());
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    webtile
+        .login_with_credentials("Username", "Password")
+        .expect("Login failed.");
+
+    let mut found = 0;
+    while let Some(message) = webtile.get_message() {
+        let message_obj = message.as_object().unwrap();
+        if message_obj["msg"] == "login_success" {
+            found = 1;
+            let json: Value = from_str(
+                "{\"admin\": false, \"msg\": \"login_success\", \"username\": \"Username\"}",
+            )
+            .unwrap();
+            assert_eq!(json, message);
+        }
+    }
+    if found == 0 {
+        panic!("Failed to find a login success.")
+    }
+}
+
+#[test]
+fn multiple_login_diff_user() {
+    let mut webtile =
+        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect.");
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    webtile
+        .login_with_credentials("Username", "Password")
+        .expect("Login failed.");
+
+    let _ = webtile.get_message();
+
+    let json: Value =
+        from_str("{\"admin\": false, \"msg\": \"login_success\", \"username\": \"Username\"}")
+            .unwrap();
+    assert_eq!(Some(json), webtile.get_message());
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    println!("{:?}", "========");
+
+    webtile
+        .login_with_credentials("Username2", "Password")
+        .expect("Login failed.");
+
+    let _ = webtile.get_message();
+    let _ = webtile.get_message();
+
+    let json: Value =
+        from_str("{\"admin\": false, \"msg\": \"login_success\", \"username\": \"Username2\"}")
+            .unwrap();
+    assert_eq!(Some(json), webtile.get_message());
+}
+
+#[test]
 fn failed_credential_login() {
     let mut webtile =
         Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect.");

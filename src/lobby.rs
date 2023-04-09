@@ -38,18 +38,23 @@ impl Webtile {
         unreachable!()
     }
 
-    pub fn get_rc_file(&mut self, game_id: &str) -> Result<(), Error> {
+    pub fn get_rc_file(&mut self, game_id: &str) -> Result<String, Error> {
         self.write_json(json!({"msg": "get_rc", "game_id": game_id}))?;
 
         self.read_until("rcfile_contents", None, None)?;
 
-        Ok(())
+        for message in self.read_only_messages() {
+            let message_obj = message.as_object().unwrap();
+            if message_obj["msg"] == "rcfile_contents" {
+                return Ok(message_obj["contents"].as_str().unwrap().to_owned());
+            }
+        }
+
+        unreachable!()
     }
 
     pub fn set_rc_file(&mut self, game_id: &str, content: &str) -> Result<(), Error> {
         self.write_json(json!({"msg": "set_rc", "game_id": game_id, "contents": content}))?;
-
-        self.read_until("set_game_links", None, None)?;
 
         Ok(())
     }
