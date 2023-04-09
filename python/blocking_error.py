@@ -44,5 +44,5 @@ except BlockingErr as e:
         print(f"Blocking (Pickup): {e}")
     else:
         print(f"Blocking: {e}")
-except APIError as e:
+except APIErr as e:
     print(f"API Error: {e}")
