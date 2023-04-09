@@ -9,7 +9,7 @@ pub struct WebtilePy {
     webtile: Webtile,
 }
 
-pyo3::create_exception!(mymodule, APIError, PyException);
+pyo3::create_exception!(mymodule, APIErr, PyException);
 pyo3::create_exception!(mymodule, BlockingErr, PyException);
 
 #[pymethods]
@@ -20,10 +20,11 @@ impl WebtilePy {
 
         match webtile {
             Ok(t) => Ok(Self { webtile: t }),
-            Err(e) => Err(PyErr::new::<APIError, _>(e.to_string())),
+            Err(e) => Err(PyErr::new::<APIErr, _>(e.to_string())),
         }
     }
 
+    /// Pydoc -- is it working?
     fn read_until(&mut self, msg: &str, key: Option<&str>, value: Option<u64>) -> PyResult<()> {
         let result = self.webtile.read_until(msg, key, value);
 
@@ -33,7 +34,7 @@ impl WebtilePy {
                 Error::Blocking(BlockingError::Pickup) => {
                     Err(PyErr::new::<BlockingErr, _>("Pickup"))
                 }
-                _ => Err(PyErr::new::<APIError, _>(e.to_string())),
+                _ => Err(PyErr::new::<APIErr, _>(e.to_string())),
             },
         }
     }
@@ -41,19 +42,19 @@ impl WebtilePy {
     fn write_key(&mut self, key: &str) -> PyResult<()> {
         self.webtile
             .write_key(key)
-            .map_err(|e| PyErr::new::<APIError, _>(e.to_string()))
+            .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
     fn write_json(&mut self, json: &str) -> PyResult<()> {
         self.webtile
             .write_json(serde_json::from_str(json).unwrap())
-            .map_err(|e| PyErr::new::<APIError, _>(e.to_string()))
+            .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
     fn login_with_credentials(&mut self, username: &str, password: &str) -> PyResult<()> {
         self.webtile
             .login_with_credentials(username, password)
-            .map_err(|e| PyErr::new::<APIError, _>(e.to_string()))
+            .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
     fn get_message(&mut self) -> Option<String> {
@@ -66,6 +67,6 @@ impl WebtilePy {
 pub fn dcss_api(py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_class::<WebtilePy>()?;
     m.add("BlockingErr", py.get_type::<BlockingErr>())?;
-    m.add("APIError", py.get_type::<APIError>())?;
+    m.add("APIErr", py.get_type::<APIErr>())?;
     Ok(())
 }

@@ -115,6 +115,8 @@ impl Webtile {
                 // Send data to a VeqDeque to be pulled by user;
                 self.received_messages.push_back(message.to_owned());
 
+                println!("{:?}", message);
+
                 // Pre-process the data to identify blocking
                 if let Err(e) = blocking_messages(message) {
                     match e {
