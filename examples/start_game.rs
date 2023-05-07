@@ -5,10 +5,7 @@ use dcss_api::Webtile;
 fn main() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
 
     // Log in (to a user called "Username", with a password "Password")
     let _game_ids = webtile
@@ -16,7 +13,7 @@ fn main() {
         .expect("Failed to login");
 
     webtile
-        .start_game_seeded("dcss-web-trunk", "1", true, "b", "i", "b")
+        .start_game_seeded("seeded-web-trunk", "1", true, "b", "i", "b")
         .expect("Failed to start game");
 
     webtile.save_game().expect("Failed to save the game.");
@@ -27,8 +24,6 @@ fn main() {
 
     webtile.quit_game().expect("Failed to quit the game.");
 
-    // Print the messages you get upon connecting
-    // while let Some(message) = webtile.get_message() {
-    //     println!("{:?}", message)
-    // }
+    // Empty message queue (would be used to process the info);
+    while webtile.get_message().is_some() {}
 }

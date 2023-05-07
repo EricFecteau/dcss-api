@@ -71,14 +71,28 @@ impl Webtile {
     pub fn quit_game(&mut self) -> Result<(), Error> {
         self.write_key("key_ctrl_q")?;
 
-        match self.read_until("go_lobby", None, None) {
+        match self.read_until("input_mode", Some("mode"), Some(7)) {
             Ok(_) => (),
             Err(e) => match e {
                 Error::Blocking(BlockingError::TextInput) => {
-                    println!("TEST");
+                    let rom = self.read_only_messages();
+                    println!("{:?}", rom);
+                    if !(rom[rom.len() - 1]["msg"] == "init_input"
+                        || rom[rom.len() - 2]["msg"] == "init_input")
+                    {
+                        self.read_until("init_input", None, None)?;
+                    };
                     self.write_key("yes")?;
                     self.write_key("key_enter")?;
                 }
+                _ => return Err(e),
+            },
+        };
+
+        match self.read_until("close_input", None, None) {
+            Ok(_) => (),
+            Err(e) => match e {
+                Error::Blocking(BlockingError::More) => self.write_key("key_esc")?,
                 _ => return Err(e),
             },
         };

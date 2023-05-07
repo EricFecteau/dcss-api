@@ -90,8 +90,6 @@ fn multiple_login_diff_user() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    println!("{:?}", "========");
-
     let _ = webtile
         .login_with_credentials("Username2", "Password")
         .expect("Login failed.");
@@ -329,8 +327,6 @@ fn cookie_login_gameid() {
     let gameid = webtile
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
-
-    print!("{:?}", gameid);
 
     let test_gameid = vec![
         "dcss-web-trunk".to_owned(),
