@@ -50,8 +50,6 @@ pub enum BlockingError {
 pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
     let msg = message["msg"].as_str().unwrap();
 
-    // println!("{:?}", message);
-
     match msg {
         "input_mode" => {
             if message["mode"].as_u64().unwrap() == 5 {

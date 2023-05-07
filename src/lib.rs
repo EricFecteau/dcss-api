@@ -116,8 +116,6 @@ impl Webtile {
                 // Send data to a VeqDeque to be pulled by user;
                 self.received_messages.push_back(message.to_owned());
 
-                println!("RECEIVED: {:?}", message.to_owned());
-
                 // Pre-process the data to identify blocking
                 if let Err(e) = blocking_messages(message) {
                     match e {
@@ -181,8 +179,6 @@ impl Webtile {
     /// * `key` - A string slice to be sent to DCSS (passed through [keys]).
     ///
     pub fn write_key(&mut self, key: &str) -> Result<(), Error> {
-        println!("SENT: {:?}", key);
-
         // Pause while min time not met
         while SystemTime::now()
             .duration_since(self.last_send)
