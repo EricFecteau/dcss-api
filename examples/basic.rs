@@ -13,7 +13,7 @@ fn main() {
     }
 
     // Log in (to a user called "Username", with a password "Password")
-    webtile
+    let _gameid = webtile
         .login_with_credentials("Username", "Password")
         .expect("Failed to login");
 

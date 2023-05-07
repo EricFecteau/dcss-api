@@ -3,7 +3,11 @@ use crate::Webtile;
 use serde_json::json;
 
 impl Webtile {
-    pub fn login_with_credentials(&mut self, username: &str, password: &str) -> Result<(), Error> {
+    pub fn login_with_credentials(
+        &mut self,
+        username: &str,
+        password: &str,
+    ) -> Result<Vec<String>, Error> {
         self.write_json(json!({
             "msg": "login",
             "username": username,
@@ -12,15 +16,25 @@ impl Webtile {
 
         self.read_until("login_success", None, None)?;
 
-        Ok(())
+        self.write_json(json!({
+            "msg": "go_lobby"
+        }))?;
+        self.read_until("go_lobby", None, None)?;
+
+        Ok(self.get_playable_games())
     }
 
-    pub fn login_with_cookie(&mut self, cookie: &str) -> Result<(), Error> {
+    pub fn login_with_cookie(&mut self, cookie: &str) -> Result<Vec<String>, Error> {
         self.write_json(json!({"msg": "token_login", "cookie": cookie}))?;
 
         self.read_until("login_success", None, None)?;
 
-        Ok(())
+        self.write_json(json!({
+            "msg": "go_lobby"
+        }))?;
+        self.read_until("go_lobby", None, None)?;
+
+        Ok(self.get_playable_games())
     }
 
     pub fn request_cookie(&mut self) -> Result<String, Error> {
@@ -58,4 +72,27 @@ impl Webtile {
 
         Ok(())
     }
+
+    fn get_playable_games(&self) -> Vec<String> {
+        for message in self.read_only_messages() {
+            let message_obj = message.as_object().unwrap();
+            if message_obj["msg"] == "set_game_links" {
+                return process_playable_game(message_obj["content"].as_str().unwrap());
+            }
+        }
+
+        unreachable!()
+    }
+}
+
+fn process_playable_game(game_list_html: &str) -> Vec<String> {
+    let mut game_list_vec = game_list_html
+        .split('#')
+        .map(|x| x.split('\"').next().unwrap_or("").to_owned())
+        .map(|x| x[5..x.len()].to_owned())
+        .collect::<Vec<String>>();
+
+    game_list_vec.remove(0);
+
+    game_list_vec
 }

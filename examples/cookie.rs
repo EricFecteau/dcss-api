@@ -13,7 +13,7 @@ fn main() {
     }
 
     // Log in (to a user called "Username", with a password "Password")
-    webtile
+    let _gameid = webtile
         .login_with_credentials("Username", "Password")
         .expect("Failed to login");
 
@@ -28,7 +28,7 @@ fn main() {
         Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect");
 
     // Login with cookie
-    webtile
+    let _gameid = webtile
         .login_with_cookie(cookie.as_str())
         .expect("Failed to login");
 }

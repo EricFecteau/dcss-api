@@ -13,7 +13,7 @@ fn main() {
     }
 
     // Log in (to a user called "Username", with a password "Password")
-    webtile
+    let _gameid = webtile
         .login_with_credentials("Username", "Password")
         .expect("Failed to login");
 
@@ -32,7 +32,7 @@ fn main() {
         .get_rc_file("seeded-web-trunk")
         .expect("Failed to get RC file.");
 
-    print!("RC FILE: {}", rc_file);
+    print!("RC FILE: \n\n {}", rc_file);
 
     // Print the messages you get upon connecting
     while let Some(message) = webtile.get_message() {

@@ -25,8 +25,8 @@ pub enum Error {
 pub enum BlockingError {
     #[error("Blocking due to 'more' message.")]
     More,
-    #[error("Blocking due to 'attributes' level up message (select 'S', 'I', 'D').")]
-    Attributes,
+    #[error("Blocking due to text input necessary from user (likely for level up message).")]
+    TextInput,
     #[error("Blocking due to a pickup menu popup.")]
     Pickup,
     #[error("Blocking due to a 'acquirement' menu popup.")]
@@ -41,6 +41,10 @@ pub enum BlockingError {
     BrandWeapon,
     #[error("Character died.")]
     Died,
+    #[error("Custom seed selection menu.")]
+    SeedSelection,
+    #[error("New game choice selection menu.")]
+    NewGameChoice,
 }
 
 pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
@@ -53,7 +57,7 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
             if message["mode"].as_u64().unwrap() == 5 {
                 Err(Error::Blocking(BlockingError::More))
             } else if message["mode"].as_u64().unwrap() == 7 {
-                Err(Error::Blocking(BlockingError::Attributes))
+                Err(Error::Blocking(BlockingError::TextInput))
             } else {
                 Ok(())
             }
@@ -98,6 +102,18 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
             }
         }
         "login_fail" => Err(Error::LoginFailed),
+        "ui-push" => {
+            if !message.as_object().unwrap().contains_key("type") {
+                Ok(())
+            } else {
+                if message["type"] == "seed-selection" {
+                    return Err(Error::Blocking(BlockingError::SeedSelection));
+                } else if message["type"] == "newgame-choice" {
+                    return Err(Error::Blocking(BlockingError::NewGameChoice));
+                }
+                Ok(())
+            }
+        }
         _ => Ok(()),
     }
 }

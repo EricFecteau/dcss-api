@@ -9,7 +9,7 @@ fn successful_credential_login() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    webtile
+    let _ = webtile
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
@@ -31,7 +31,7 @@ fn multiple_login_same_user() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    webtile
+    let _ = webtile
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
@@ -45,7 +45,7 @@ fn multiple_login_same_user() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    webtile
+    let _ = webtile
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
@@ -76,7 +76,7 @@ fn multiple_login_diff_user() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    webtile
+    let _ = webtile
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
@@ -92,7 +92,7 @@ fn multiple_login_diff_user() {
 
     println!("{:?}", "========");
 
-    webtile
+    let _ = webtile
         .login_with_credentials("Username2", "Password")
         .expect("Login failed.");
 
@@ -143,7 +143,7 @@ fn failed_credential_login_and_retry() {
 
     while webtile.get_message().is_some() {}
 
-    webtile
+    let _ = webtile
         .login_with_credentials("Username", "Password")
         .unwrap();
 
@@ -165,7 +165,7 @@ fn get_cookie_and_login() {
     while webtile.get_message().is_some() {}
 
     // Log in (to a user called "Username", with a password "Password")
-    webtile
+    let _ = webtile
         .login_with_credentials("Username", "Password")
         .expect("Failed to login");
 
@@ -192,7 +192,7 @@ fn get_cookie_and_login() {
     while webtile.get_message().is_some() {}
 
     // Login with cookie
-    webtile
+    let _ = webtile
         .login_with_cookie(cookie.as_str())
         .expect("Failed to login");
 
@@ -232,7 +232,7 @@ fn using_old_cookie_login() {
     while webtile.get_message().is_some() {}
 
     // Log in (to a user called "Username", with a password "Password")
-    webtile
+    let _ = webtile
         .login_with_credentials("Username", "Password")
         .expect("Failed to login");
 
@@ -259,7 +259,7 @@ fn using_old_cookie_login() {
     while webtile.get_message().is_some() {}
 
     // Login with cookie
-    webtile
+    let _ = webtile
         .login_with_cookie(first_cookie.as_str())
         .expect("Failed to login.");
 
@@ -289,6 +289,84 @@ fn using_old_cookie_login() {
     let result = webtile.login_with_cookie(first_cookie.as_str());
 
     assert!(matches!(result, Err(Error::LoginFailed)));
+
+    webtile.disconnect().expect("Failed to disconnect");
+}
+
+#[test]
+fn credential_login_gameid() {
+    let mut webtile =
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    let gameid = webtile
+        .login_with_credentials("Username", "Password")
+        .expect("Login failed.");
+
+    println!("{:?}", gameid);
+
+    let test_gameid = vec![
+        "dcss-web-trunk".to_owned(),
+        "seeded-web-trunk".to_owned(),
+        "tut-web-trunk".to_owned(),
+        "sprint-web-trunk".to_owned(),
+    ];
+    assert_eq!(gameid, test_gameid);
+
+    webtile.disconnect().expect("Failed to disconnect");
+}
+
+#[test]
+fn cookie_login_gameid() {
+    let mut webtile =
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    let gameid = webtile
+        .login_with_credentials("Username", "Password")
+        .expect("Login failed.");
+
+    print!("{:?}", gameid);
+
+    let test_gameid = vec![
+        "dcss-web-trunk".to_owned(),
+        "seeded-web-trunk".to_owned(),
+        "tut-web-trunk".to_owned(),
+        "sprint-web-trunk".to_owned(),
+    ];
+    assert_eq!(gameid, test_gameid);
+
+    // Get cookie from the game
+    let cookie = webtile.request_cookie().unwrap();
+
+    assert_eq!("Username%", &cookie[0..9]);
+
+    // Disconnect from DCSS Webtile
+    webtile.disconnect().expect("Failed to disconnect.");
+
+    // Connect (again) to DCSS Webtile
+    let mut webtile =
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    // Login with cookie
+    let gameid = webtile
+        .login_with_cookie(cookie.as_str())
+        .expect("Failed to login");
+
+    let test_gameid = vec![
+        "dcss-web-trunk".to_owned(),
+        "seeded-web-trunk".to_owned(),
+        "tut-web-trunk".to_owned(),
+        "sprint-web-trunk".to_owned(),
+    ];
+    assert_eq!(gameid, test_gameid);
 
     webtile.disconnect().expect("Failed to disconnect");
 }

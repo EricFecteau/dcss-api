@@ -5,6 +5,7 @@ use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
 
 #[pyclass]
+/// This is a test
 pub struct WebtilePy {
     webtile: Webtile,
 }
@@ -24,7 +25,7 @@ impl WebtilePy {
         }
     }
 
-    /// Pydoc -- is it working?
+    /// THIS IS TEST DOCSTRING
     fn read_until(&mut self, msg: &str, key: Option<&str>, value: Option<u64>) -> PyResult<()> {
         let result = self.webtile.read_until(msg, key, value);
 
@@ -45,17 +46,18 @@ impl WebtilePy {
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Pydoc -- is it working2?
     fn write_json(&mut self, json: &str) -> PyResult<()> {
         self.webtile
             .write_json(serde_json::from_str(json).unwrap())
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
-    fn login_with_credentials(&mut self, username: &str, password: &str) -> PyResult<()> {
-        self.webtile
-            .login_with_credentials(username, password)
-            .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
-    }
+    // fn login_with_credentials(&mut self, username: &str, password: &str) -> PyResult<()> {
+    //     self.webtile
+    //         .login_with_credentials(username, password)
+    //         .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
+    // }
 
     fn get_message(&mut self) -> Option<String> {
         let value = self.webtile.received_messages.pop_front();
