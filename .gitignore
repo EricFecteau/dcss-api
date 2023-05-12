@@ -4,3 +4,4 @@ main.rs
 /pyo3
 /examples/real.rs
 .pytest_cache
+*.pyc

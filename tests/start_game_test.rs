@@ -203,6 +203,14 @@ fn save_game_continue() {
         .continue_game("dcss-web-trunk")
         .expect("Failed to continue game");
 
+    // Get last message
+    let mut last_message = from_str("{}").unwrap();
+    while let Some(message) = webtile.get_message() {
+        last_message = message;
+    }
+
+    assert!(last_message["msg"] == "map");
+
     webtile.quit_game().expect("Failed to quit game");
 
     webtile.disconnect().expect("Failed to disconnect");

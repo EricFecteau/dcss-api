@@ -76,7 +76,6 @@ impl Webtile {
             Err(e) => match e {
                 Error::Blocking(BlockingError::TextInput) => {
                     let rom = self.read_only_messages();
-                    println!("{:?}", rom);
                     if !(rom[rom.len() - 1]["msg"] == "init_input"
                         || rom[rom.len() - 2]["msg"] == "init_input")
                     {

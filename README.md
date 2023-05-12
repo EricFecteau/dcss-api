@@ -3,7 +3,9 @@
 
 ## Documentation
 
-## DCSS Webtile
+## Setup
+
+### Building DCSS Webtile
 
 The API works for both local and public version of DCSS Webtiles. To run on a public server, you must limit the connection to one command every 100 milliseconds (i.e. 10 commands per seconds), by setting the `speed_ms` option in while connecting. Follow any other rules required by the server's owner. 
 
@@ -19,6 +21,18 @@ make WEBTILES=y
 python webserver/server.py
 ```
 
+### Building Python
+
+https://github.com/PyO3/pyo3
+
+```bash
+mkdir pyo3
+python -m venv pyo3
+source pyo3/bin/activate.fish
+pip install maturin
+maturin develop -r
+```
+
 ## Testing
 
-In order to run `cargo test` or `x`, a local DCSS Webtile, with the `stone_soup-0.29` or `stone_soup-0.30` branch, must be exposed on `localhost:8080` and two users must be created: `Username` and `Username2`, both with the password set to `Password`.
+In order to run `cargo test` or `pytest`, a local DCSS Webtile, with the `stone_soup-0.29` or `stone_soup-0.30` branch, must be exposed on `localhost:8080` and two users must be created: `Username` and `Username2`, both with the password set to `Password`.

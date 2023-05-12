@@ -303,8 +303,6 @@ fn credential_login_gameid() {
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
-    println!("{:?}", gameid);
-
     let test_gameid = vec![
         "dcss-web-trunk".to_owned(),
         "seeded-web-trunk".to_owned(),
