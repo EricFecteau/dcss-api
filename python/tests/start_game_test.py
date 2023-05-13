@@ -1,5 +1,6 @@
 import pytest
 import dcss_api
+from dcss_api import BlockingErr
 import json
 
 
@@ -178,244 +179,217 @@ def test_start_game():
     webtile.disconnect()
 
 
-# #[test]
-# fn start_game_two_accounts() {
-#     // Safe test -- login start game, quit, and then test
-#     reset_test("Username");
+def test_start_game_two_accounts():
+    reset_test("Username")
 
-#     // Connect to DCSS Webtile
-#     let mut webtile =
-#         Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.29")
 
-#     // Empty message queue;
-#     while webtile.get_message().is_some() {}
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     // Log in (to a user called "Username", with a password "Password")
-#     let _game_ids = webtile
-#         .login_with_credentials("Username", "Password")
-#         .expect("Failed to login");
+    webtile.login_with_credentials("Username", "Password")
 
-#     // Empty message queue;
-#     while webtile.get_message().is_some() {}
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     webtile
-#         .start_game("dcss-web-trunk", "b", "i", "b")
-#         .expect("Failed to start game");
+    webtile.start_game("dcss-web-trunk", "b", "i", "b")
 
-#     let mut msgs = from_str("{}").unwrap();
-#     while let Some(message) = webtile.get_message() {
-#         if message["msg"] == "msgs" {
-#             msgs = message;
-#             break;
-#         }
-#     }
+    msgs = None
+    while (message := webtile.get_message()) != None:
+        json_message = json.loads(message)
+        if json_message["msg"] == "msgs":
+            msgs = json_message
+            break
 
-#     assert!(msgs["messages"].to_string().contains("Welcome, Username "));
+    found = False
+    for msg in msgs["messages"]:
+        if "Welcome, Username " in msg["text"]:
+            found = True
+            break
 
-#     // Get last message
-#     let mut last_message = from_str("{}").unwrap();
-#     while let Some(message) = webtile.get_message() {
-#         last_message = message;
-#     }
+    assert found
 
-#     assert!(last_message["msg"] == "map");
+    json_message = None
+    while (message := webtile.get_message()) != None:
+        json_message = json.loads(message)
 
-#     webtile.quit_game().expect("Failed to quit game");
+    assert json_message["msg"] == "map"
 
-#     webtile.disconnect().expect("Failed to disconnect");
+    webtile.quit_game()
 
-#     // Safe test -- login start game, quit, and then test
-#     reset_test("Username2");
+    webtile.disconnect()
 
-#     // Connect to DCSS Webtile
-#     let mut webtile =
-#         Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+    reset_test("Username2")
 
-#     // Empty message queue;
-#     while webtile.get_message().is_some() {}
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.29")
 
-#     // Log in (to a user called "Username", with a password "Password")
-#     let _game_ids = webtile
-#         .login_with_credentials("Username2", "Password")
-#         .expect("Failed to login");
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     // Empty message queue;
-#     while webtile.get_message().is_some() {}
+    webtile.login_with_credentials("Username2", "Password")
 
-#     webtile
-#         .start_game("dcss-web-trunk", "b", "i", "b")
-#         .expect("Failed to start game");
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     let mut msgs = from_str("{}").unwrap();
-#     while let Some(message) = webtile.get_message() {
-#         if message["msg"] == "msgs" {
-#             msgs = message;
-#             break;
-#         }
-#     }
+    webtile.start_game("dcss-web-trunk", "b", "i", "b")
 
-#     assert!(msgs["messages"].to_string().contains("Welcome, Username2 "));
+    msgs = None
+    while (message := webtile.get_message()) != None:
+        json_message = json.loads(message)
+        if json_message["msg"] == "msgs":
+            msgs = json_message
+            break
 
-#     // Get last message
-#     let mut last_message = from_str("{}").unwrap();
-#     while let Some(message) = webtile.get_message() {
-#         last_message = message;
-#     }
+    found = False
+    for msg in msgs["messages"]:
+        if "Welcome, Username2 " in msg["text"]:
+            found = True
+            break
 
-#     assert!(last_message["msg"] == "map");
+    assert found
 
-#     webtile.quit_game().expect("Failed to quit game");
+    json_message = None
+    while (message := webtile.get_message()) != None:
+        json_message = json.loads(message)
 
-#     webtile.disconnect().expect("Failed to disconnect");
-# }
+    assert json_message["msg"] == "map"
 
-# #[test]
-# fn start_game_two_accounts_combined() {
-#     // Safe test -- login start game, quit, and then test
-#     reset_test("Username");
-#     reset_test("Username2");
+    webtile.quit_game()
 
-#     // Connect to DCSS Webtile
-#     let mut webtile1 =
-#         Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
-#     let mut webtile2 =
-#         Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+    webtile.disconnect()
 
-#     // Empty message queue;
-#     while webtile1.get_message().is_some() {}
-#     while webtile2.get_message().is_some() {}
 
-#     // Log in (to a user called "Username", with a password "Password")
-#     let _game_ids = webtile1
-#         .login_with_credentials("Username", "Password")
-#         .expect("Failed to login");
-#     let _game_ids = webtile2
-#         .login_with_credentials("Username2", "Password")
-#         .expect("Failed to login");
+def test_start_game_two_accounts_combined():
+    reset_test("Username")
+    reset_test("Username2")
 
-#     // Empty message queue;
-#     while webtile1.get_message().is_some() {}
-#     while webtile2.get_message().is_some() {}
+    webtile1 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.29")
+    webtile2 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.29")
 
-#     webtile1
-#         .start_game("dcss-web-trunk", "b", "i", "b")
-#         .expect("Failed to start game");
-#     webtile2
-#         .start_game("dcss-web-trunk", "b", "i", "b")
-#         .expect("Failed to start game");
+    while (message := webtile1.get_message()) != None:
+        pass
+    while (message := webtile2.get_message()) != None:
+        pass
 
-#     let mut msgs = from_str("{}").unwrap();
-#     while let Some(message) = webtile1.get_message() {
-#         if message["msg"] == "msgs" {
-#             msgs = message;
-#             break;
-#         }
-#     }
+    webtile1.login_with_credentials("Username", "Password")
+    webtile2.login_with_credentials("Username2", "Password")
 
-#     assert!(msgs["messages"].to_string().contains("Welcome, Username "));
+    while (message := webtile1.get_message()) != None:
+        pass
+    while (message := webtile2.get_message()) != None:
+        pass
 
-#     let mut msgs = from_str("{}").unwrap();
-#     while let Some(message) = webtile2.get_message() {
-#         if message["msg"] == "msgs" {
-#             msgs = message;
-#             break;
-#         }
-#     }
+    webtile1.start_game("dcss-web-trunk", "b", "i", "b")
+    webtile2.start_game("dcss-web-trunk", "b", "i", "b")
 
-#     assert!(msgs["messages"].to_string().contains("Welcome, Username2 "));
+    msgs = None
+    while (message := webtile1.get_message()) != None:
+        json_message = json.loads(message)
+        if json_message["msg"] == "msgs":
+            msgs = json_message
+            break
 
-#     // Get last message
-#     let mut last_message = from_str("{}").unwrap();
-#     while let Some(message) = webtile1.get_message() {
-#         last_message = message;
-#     }
+    found = False
+    for msg in msgs["messages"]:
+        if "Welcome, Username " in msg["text"]:
+            found = True
+            break
 
-#     assert!(last_message["msg"] == "map");
+    assert found
 
-#     // Get last message
-#     let mut last_message = from_str("{}").unwrap();
-#     while let Some(message) = webtile2.get_message() {
-#         last_message = message;
-#     }
+    msgs = None
+    while (message := webtile2.get_message()) != None:
+        json_message = json.loads(message)
+        if json_message["msg"] == "msgs":
+            msgs = json_message
+            break
 
-#     assert!(last_message["msg"] == "map");
+    found = False
+    for msg in msgs["messages"]:
+        if "Welcome, Username2 " in msg["text"]:
+            found = True
+            break
 
-#     webtile1.quit_game().expect("Failed to quit game");
-#     webtile2.quit_game().expect("Failed to quit game");
+    assert found
 
-#     webtile1.disconnect().expect("Failed to disconnect");
-#     webtile2.disconnect().expect("Failed to disconnect");
-# }
+    json_message = None
+    while (message := webtile1.get_message()) != None:
+        json_message = json.loads(message)
 
-# #[test]
-# fn real_blocking_error() {
-#     // Safe test -- login start game, quit, and then test
-#     reset_test("Username");
+    assert json_message["msg"] == "map"
 
-#     // Connect to DCSS Webtile
-#     let mut webtile =
-#         Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+    json_message = None
+    while (message := webtile2.get_message()) != None:
+        json_message = json.loads(message)
 
-#     // Empty message queue;
-#     while webtile.get_message().is_some() {}
+    assert json_message["msg"] == "map"
 
-#     // Log in (to a user called "Username", with a password "Password")
-#     let _game_ids = webtile
-#         .login_with_credentials("Username", "Password")
-#         .expect("Failed to login");
+    webtile1.quit_game()
+    webtile2.quit_game()
 
-#     // Empty message queue;
-#     while webtile.get_message().is_some() {}
+    webtile1.disconnect()
+    webtile2.disconnect()
 
-#     webtile
-#         .start_game_seeded("dcss-web-trunk", "1", true, "b", "i", "b")
-#         .expect("Failed to start game");
 
-#     // Get last message
-#     let mut msgs = from_str("{}").unwrap();
-#     while let Some(message) = webtile.get_message() {
-#         if message["msg"] == "msgs" {
-#             msgs = message;
-#             break;
-#         }
-#     }
+def test_real_blocking_error():
+    reset_test("Username")
 
-#     assert!(msgs["messages"].to_string().contains("Welcome, Username "));
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.29")
 
-#     // Get last message
-#     let mut last_message = from_str("{}").unwrap();
-#     while let Some(message) = webtile.get_message() {
-#         last_message = message;
-#     }
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     assert!(last_message["msg"] == "map");
+    webtile.login_with_credentials("Username", "Password")
 
-#     // Drop everything
-#     webtile.write_key("6").expect("");
-#     webtile.write_key("i").expect("");
-#     webtile.write_key("a").expect("");
-#     webtile.write_key("d").expect("");
-#     webtile.write_key("i").expect("");
-#     webtile.write_key("b").expect("");
-#     webtile.write_key("d").expect("");
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     // Empty message queue;
-#     webtile.read_until("close_all_menus", None, None).expect("");
+    webtile.start_game("dcss-web-trunk", "b", "i", "b")
 
-#     // Pick it up again (leading to an unexpected menu)
-#     webtile.write_key(",").expect("");
+    msgs = None
+    while (message := webtile.get_message()) != None:
+        json_message = json.loads(message)
+        if json_message["msg"] == "msgs":
+            msgs = json_message
+            break
 
-#     let result = webtile.read_until("whatever", None, None);
+    found = False
+    for msg in msgs["messages"]:
+        if "Welcome, Username " in msg["text"]:
+            found = True
+            break
 
-#     assert!(matches!(
-#         result,
-#         Err(Error::Blocking(BlockingError::Pickup))
-#     ));
+    assert found
 
-#     // Ignore the menu after all
-#     webtile.write_key("key_esc").expect("");
+    json_message = None
+    while (message := webtile.get_message()) != None:
+        json_message = json.loads(message)
 
-#     webtile.quit_game().expect("Failed to quit game");
+    assert json_message["msg"] == "map"
 
-#     webtile.disconnect().expect("Failed to disconnect");
-# }
+    webtile.write_key("6")
+    webtile.write_key("i")
+    webtile.write_key("a")
+    webtile.write_key("d")
+    webtile.write_key("i")
+    webtile.write_key("b")
+    webtile.write_key("d")
+
+    webtile.read_until("close_all_menus", None, None)
+
+    webtile.write_key(",")
+
+    try:
+        webtile.read_until("whatever", None, None)
+        assert False
+    except BlockingErr as e:
+        if "Pickup" in e.args[0]:
+            assert True
+        else:
+            assert False
+
+    webtile.write_key("key_esc")
+
+    webtile.quit_game()
+
+    webtile.disconnect()
