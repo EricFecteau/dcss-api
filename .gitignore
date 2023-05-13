@@ -5,3 +5,4 @@ main.rs
 /examples/real.rs
 .pytest_cache
 *.pyc
+/python/tests/__pycache__
