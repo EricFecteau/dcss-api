@@ -7,6 +7,13 @@ use std::str;
 /// Convert keyword to json key or input for the game, or send the key directly. Returns
 /// a [serde_json::Value] to be sent to DCSS Webtiles.
 ///
+/// Special keys:
+/// * CTRL+char = `key_ctrl_a` to `key_ctrl_z`
+/// * Special chars = `key_tab`, `key_esc` and `key_enter`
+/// * Cardinal directions: `key_dir_n`, `key_dir_ne`, `key_dir_e`, `key_dir_se`,
+/// `key_dir_s`, `key_dir_sw`, `key_dir_w` and `key_dir_nw`
+/// * Stairs: `key_stair_down` and `key_stair_up`
+///
 /// /// # Arguments
 ///
 /// * `key` - A string slice of the key, or keyword, to be sent.
@@ -59,7 +66,7 @@ pub(crate) fn keys(key: &str) -> Value {
 ///
 /// # Arguments
 ///
-/// * `decompressor` - A [flate2::Decompress] decompression object (Deflate) to decompress data received
+/// * `decompressor` - A [flate2::Decompress] decompression object (Deflate) to decompress data received.
 /// * `compressed_msg` - the compressed message received from DCSS Webtiles.
 pub(crate) fn deflate_to_json(
     decompressor: &mut Decompress,
@@ -78,8 +85,11 @@ pub(crate) fn deflate_to_json(
             FlushDecompress::Sync,
         )
         .map_err(Error::Decompress)?;
+
+    // Convert to a string slice
     let json_str = str::from_utf8(&decompressed_bytes).map_err(Error::Utf8)?;
 
+    // Convert to json Value
     let json_data: Value = serde_json::from_str(json_str).map_err(Error::JSON)?;
 
     Ok(json_data)

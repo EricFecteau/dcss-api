@@ -23,6 +23,10 @@ pub enum Error {
 
 #[derive(Error, Debug)]
 pub enum BlockingError {
+    #[error("Custom seed selection menu.")]
+    SeedSelection,
+    #[error("New game choice selection menu.")]
+    NewGameChoice,
     #[error("Blocking due to 'more' message.")]
     More,
     #[error("Blocking due to text input necessary from user (likely for level up message).")]
@@ -41,10 +45,6 @@ pub enum BlockingError {
     BrandWeapon,
     #[error("Character died.")]
     Died,
-    #[error("Custom seed selection menu.")]
-    SeedSelection,
-    #[error("New game choice selection menu.")]
-    NewGameChoice,
 }
 
 pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {

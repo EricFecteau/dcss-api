@@ -429,13 +429,7 @@ fn real_blocking_error() {
     assert!(last_message["msg"] == "map");
 
     // Drop everything
-    webtile.write_key("6").expect("");
-    webtile.write_key("i").expect("");
-    webtile.write_key("a").expect("");
-    webtile.write_key("d").expect("");
-    webtile.write_key("i").expect("");
-    webtile.write_key("b").expect("");
-    webtile.write_key("d").expect("");
+    webtile.write_key("6iadibd").expect("");
 
     // Empty message queue;
     webtile.read_until("close_all_menus", None, None).expect("");

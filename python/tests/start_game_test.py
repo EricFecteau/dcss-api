@@ -367,13 +367,7 @@ def test_real_blocking_error():
 
     assert json_message["msg"] == "map"
 
-    webtile.write_key("6")
-    webtile.write_key("i")
-    webtile.write_key("a")
-    webtile.write_key("d")
-    webtile.write_key("i")
-    webtile.write_key("b")
-    webtile.write_key("d")
+    webtile.write_key("6iadibd")
 
     webtile.read_until("close_all_menus", None, None)
 
