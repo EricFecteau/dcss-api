@@ -3,6 +3,7 @@ use std::str::Utf8Error;
 use serde_json::Value;
 use thiserror::Error;
 
+/// Main errors types that can be raised while using the API.
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Tungstenite error: {0}")]
@@ -21,6 +22,16 @@ pub enum Error {
     LoginFailed,
 }
 
+/// Errors that will block the game from processing normally. Since each read
+/// of the websocket requires an expected "end of read", this is a list of
+/// unexpected data that would prevent expected results from being sent.
+///
+/// # Example
+///
+/// When picking up an item (i.e. ","), normally a "input_mode" with a "mode" of 1
+/// would be received, but if there is more than one item where the character
+/// is standing a "menu" with a "pickup" tag will instead be sent. Since this
+/// is unexpected, it will send a "Pickup" BlockingError.
 #[derive(Error, Debug)]
 pub enum BlockingError {
     #[error("Custom seed selection menu.")]
@@ -47,6 +58,14 @@ pub enum BlockingError {
     Died,
 }
 
+/// This function will "pre-process" each received message and return an
+/// error if a BlockingError type message is received, through various
+/// message types received by the DCSS webtile.
+///
+/// # Arguments
+///
+/// * `message` - The message (as a [serde_json::Value]) received by the
+/// DCSS webtile.
 pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
     let msg = message["msg"].as_str().unwrap();
 
