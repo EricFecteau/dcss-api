@@ -94,7 +94,7 @@ impl Webtile {
         Ok(())
     }
 
-    /// Read the websocket messages until a specified message is found. Store the
+    /// Read the websocket messages until a specified message is found. Stores the
     /// messages in a [VecDeque] that can be accessed by the user through the
     /// [`Webtile::get_message()`] function. Any known blocking message (e.g.
     /// a 'more' log statement) will return a [api_errors::BlockingError].
@@ -188,7 +188,7 @@ impl Webtile {
     ///
     /// ```no_run
     /// // Send the login command
-    /// self.write_json(json!({
+    /// webtile.write_json(json!({
     ///     "msg": "login",
     ///     "username": "Username",
     ///     "password": "Password",
