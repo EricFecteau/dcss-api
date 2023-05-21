@@ -4,9 +4,9 @@
 
 ## Documentation
 
-The documentation for the `dcss-api` can be found [here]() for Rust and [here] for Python. The best way to start is to look at the examples [here]() for Rust and [here]() for Python. Please see the [Setup](#setup) in order to be able to run these examples.
+The documentation for the `dcss-api` can be found [here]() for Rust and [here]() for Python. The best way to start is to look at the examples [here](https://github.com/EricFecteau/dcss-api/tree/main/examples) for Rust and [here](https://github.com/EricFecteau/dcss-api/tree/main/python) for Python. Please see the [Setup](#setup) in order to be able to run these examples.
 
-In depth documentation about the DCSS websocket API can also be found [here]().
+In depth documentation about the DCSS websocket API can also be found [here](https://github.com/EricFecteau/dcss-api/blob/main/docs/0.%20index.md) (not yet finalized).
 
 ## Setup
 
@@ -28,13 +28,13 @@ python webserver/server.py
 
 ### Building Python
 
-https://github.com/PyO3/pyo3
+The python package for `dcss-api` is a [PyO3](https://github.com/PyO3/pyo3) Python wrapper for the Rust package. it can be built using the following commands:
 
 ```bash
 mkdir pyo3
 python -m venv pyo3
 source pyo3/bin/activate
-pip install maturin
+pip install maturin patchelf
 maturin develop -r
 ```
 
