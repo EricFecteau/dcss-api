@@ -35,7 +35,7 @@ fn main() {
     webtile.write_key("key_dir_n").expect("Failed to write key");
     webtile.write_key("key_dir_s").expect("Failed to write key");
 
-    // Print the messages you while moving
+    // Print the messages you while moving (should be processed)
     while let Some(message) = webtile.get_message() {
         println!("{:?}", message)
     }

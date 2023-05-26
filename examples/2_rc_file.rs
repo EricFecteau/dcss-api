@@ -35,4 +35,7 @@ fn main() {
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
+
+    // Disconnect from webtile
+    webtile.disconnect().expect("Failed to disconnect");
 }
