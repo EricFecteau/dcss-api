@@ -86,7 +86,7 @@ impl Webtile {
         unreachable!()
     }
 
-    /// Get the RC file content of a specific game ID.
+    /// Get the RC file content for a specific game ID.
     ///
     /// # Arguments
     ///
@@ -122,7 +122,7 @@ impl Webtile {
     /// # Example
     ///
     /// ```no_run
-    /// webtile..set_rc_file("dcss-web-trunk", "show_more = false\nrest_delay = -1")?;
+    /// webtile.set_rc_file("dcss-web-trunk", "show_more = false\nrest_delay = -1")?;
     /// ```
     pub fn set_rc_file(&mut self, game_id: &str, content: &str) -> Result<(), Error> {
         self.write_json(json!({"msg": "set_rc", "game_id": game_id, "contents": content}))?;

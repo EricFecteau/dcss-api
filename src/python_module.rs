@@ -174,29 +174,67 @@ impl WebtilePy {
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Request a cookie from the DCSS Webtile.
+    ///
+    /// Example:
+    ///     webtile.request_cookie()
     fn request_cookie(&mut self) -> PyResult<String> {
         self.webtile
             .request_cookie()
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Get the messages received by the DCSS Webtile, in order of
+    /// reception. Will return `None` if the queue is empty.
+    ///
+    /// Example:
+    ///     # Print the messages received, until the queue is empty
+    ///     while (message := webtile.get_message()) != None:
+    ///         print(message)
     fn get_message(&mut self) -> Option<String> {
         let value = self.webtile.received_messages.pop_front();
         value.map(|v| v.to_string())
     }
 
+    /// Set the RC file content of a specific game ID.
+    ///
+    /// Arguments:
+    ///     game_id (str): A string of the game's ID.
+    ///     content (str): A string of the content to write to the RC file.
+    ///
+    /// Example:
+    ///     webtile.set_rc_file("dcss-web-trunk", "show_more = false\nrest_delay = -1")
     fn set_rc_file(&mut self, game_id: &str, content: &str) -> PyResult<()> {
         self.webtile
             .set_rc_file(game_id, content)
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Get the RC file content for a specific game ID.
+    ///
+    /// Arguments:
+    ///     game_id (str): A string of the game's ID.
+    ///
+    /// Example:
+    ///     webtile.get_rc_file("dcss-web-trunk")
     fn get_rc_file(&mut self, game_id: &str) -> PyResult<String> {
         self.webtile
             .get_rc_file(game_id)
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Start an unseeded game by selecting the game_id and the character's
+    /// specifications.
+    ///
+    /// Arguments:
+    ///     game_id (str): A string of the game's ID.
+    ///     species (str): A string for the character's species.
+    ///     background (str): A string for the character's background.
+    ///     weapon (str): A string for the character's weapon.
+    ///
+    /// Example:
+    ///     # Start a game on "dcss-web-trunk", for a Minotaur (b), Berserker (i), with a mace (b)
+    ///     webtile.start_game("dcss-web-trunk", "b", "i", "b")
     fn start_game(
         &mut self,
         game_id: &str,
@@ -209,6 +247,21 @@ impl WebtilePy {
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Start an seeded game by selecting the game_id, the seed and the character's
+    /// specifications.
+    ///
+    /// Arguments:
+    ///     game_id (str): A string of the game's ID.
+    ///     seed (str): A string of the game's seed.
+    ///     pregenerate (bool): A bool on if the pregeneration option should be selected.
+    ///     species (str): A string for the character's species.
+    ///     background (str): A string for the character's background.
+    ///     weapon (str): A string for the character's weapon.
+    ///
+    /// Example:
+    ///     # Start a game on "dcss-web-trunk", for the "123" seed (pregenerated) for a
+    ///     # Minotaur (b), Berserker (i), with a mace (b)
+    ///     webtile.start_game_seeded("dcss-web-trunk", "123", true, "b", "i", "b")
     fn start_game_seeded(
         &mut self,
         game_id: &str,
@@ -223,18 +276,35 @@ impl WebtilePy {
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Save a game by sending the `CTRL + S` command.
+    ///
+    /// Example:
+    ///     webtile.save_game()
     fn save_game(&mut self) -> PyResult<()> {
         self.webtile
             .save_game()
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Continue a saved game by selecting it's game ID.
+    ///
+    /// Arguments:
+    ///     game_id (str): A string of the game's ID.
+    ///
+    /// Example:
+    ///     # Continue a game on "dcss-web-trunk"
+    ///     webtile.continue_game("dcss-web-trunk")
     fn continue_game(&mut self, game_id: &str) -> PyResult<()> {
         self.webtile
             .continue_game(game_id)
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Quit the game (same result as dying), by sending a `CTRL + Q` and
+    /// answering `yes`.
+    ///
+    /// Example:
+    ///     webtile.quit_game()
     fn quit_game(&mut self) -> PyResult<()> {
         self.webtile
             .quit_game()

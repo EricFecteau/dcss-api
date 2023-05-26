@@ -39,7 +39,7 @@ impl Webtile {
     /// # Example
     ///
     /// ```no_run
-    /// // Start a game on "dcss-web-trunk", for a Minotaur (b), Berserker (i), with a mace (b)
+    /// // Continue a game on "dcss-web-trunk"
     /// webtile.continue_game("dcss-web-trunk")?;
     /// ```
     pub fn continue_game(&mut self, game_id: &str) -> Result<(), Error> {
@@ -107,7 +107,7 @@ impl Webtile {
         }
     }
 
-    /// Save a game by sending the "CTRL + S" command.
+    /// Save a game by sending the `CTRL + S` command.
     ///
     /// # Example
     ///
@@ -122,8 +122,8 @@ impl Webtile {
         Ok(())
     }
 
-    /// Quit the game (same result as dying), by sending a "CTRL + Q" and
-    /// answering yes.
+    /// Quit the game (same result as dying), by sending a `CTRL + Q` and
+    /// answering `yes`.
     ///
     /// # Example
     ///

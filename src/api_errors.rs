@@ -31,7 +31,7 @@ pub enum Error {
 /// When picking up an item (i.e. ","), normally a "input_mode" with a "mode" of 1
 /// would be received, but if there is more than one item where the character
 /// is standing a "menu" with a "pickup" tag will instead be sent. Since this
-/// is unexpected, it will send a "Pickup" BlockingError.
+/// is unexpected, `dcss-api` will send a "Pickup" BlockingError.
 #[derive(Error, Debug)]
 pub enum BlockingError {
     #[error("Custom seed selection menu.")]
