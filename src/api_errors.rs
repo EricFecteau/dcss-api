@@ -54,6 +54,8 @@ pub enum BlockingError {
     EnchantItem,
     #[error("Blocking due to a 'brand weapon' menu popup.")]
     BrandWeapon,
+    #[error("Blocking due to a 'blink' action.")]
+    Blink,
     #[error("Character died.")]
     Died,
 }
@@ -113,6 +115,10 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
 
                     if text.contains("You die...") {
                         return Err(Error::Blocking(BlockingError::Died));
+                    }
+
+                    if text.contains("Blink to where?") {
+                        return Err(Error::Blocking(BlockingError::Blink));
                     }
                 }
                 Ok(())
