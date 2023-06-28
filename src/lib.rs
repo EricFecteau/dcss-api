@@ -33,6 +33,8 @@ pub struct Webtile {
     /// [SystemTime] of the last sent message. Used to limit the rate for
     /// running the bot on someone else's server.
     last_send: SystemTime,
+    /// A [bool] of if the searched for data (in the websocket) has been found.
+    message_found: bool,
     /// Speed limit in milliseconds between each command sent to DCSS Webtiles.
     speed_ms: usize,
     /// [VecDeque] of messages received from DCSS.
@@ -71,6 +73,7 @@ impl Webtile {
             decompressor,
             last_send: SystemTime::now(),
             speed_ms,
+            message_found: false,
             received_messages: VecDeque::new(),
         };
 
@@ -125,8 +128,8 @@ impl Webtile {
         value: Option<u64>,
     ) -> Result<(), Error> {
         // loop until break (found expected results or found a blocking type)
-        let mut found = 0;
-        while found == 0 {
+        // use self variable in order to retain the info when there is a blocking error
+        while !self.message_found {
             // Read the message from the socket into Vec<u8> -- it will be compressed
             let mut compressed_msg = self
                 .socket
@@ -167,12 +170,14 @@ impl Webtile {
                         // or And value correct
                         message[key.unwrap()].as_u64().unwrap() == value.unwrap())))
                 {
-                    found = 1;
+                    self.message_found = true;
                 }
             }
 
             blocking?
         }
+
+        self.message_found = false;
 
         Ok(())
     }
