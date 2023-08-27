@@ -137,14 +137,9 @@ impl Webtile {
             Ok(_) => (),
             Err(e) => match e {
                 Error::Blocking(BlockingError::TextInput) => {
-                    let rom = self.read_only_messages();
-                    if !(rom[rom.len() - 1]["msg"] == "init_input"
-                        || rom[rom.len() - 2]["msg"] == "init_input")
-                    {
-                        self.read_until("init_input", None, None)?;
-                    };
                     self.write_key("yes")?;
                     self.write_key("key_enter")?;
+                    self.message_found = false; // Otherwise close_input will be skipped
                 }
                 _ => return Err(e),
             },
