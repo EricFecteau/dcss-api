@@ -19,8 +19,6 @@ jobs:
         target: [x86_64, x86, aarch64, armv7, s390x, ppc64le]
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     steps:
-      - name: Install libssl-dev
-        run: sudo apt-get install -y libssl-dev
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
