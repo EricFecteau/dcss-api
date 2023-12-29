@@ -56,6 +56,8 @@ pub enum BlockingError {
     BrandWeapon,
     #[error("Blocking due to a 'blink' action.")]
     Blink,
+    #[error("Blocking due to a 'scroll of noise' read prompt.")]
+    Noise,
     #[error("Character died.")]
     Died,
 }
@@ -119,6 +121,10 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
 
                     if text.contains("Blink to where?") {
                         return Err(Error::Blocking(BlockingError::Blink));
+                    }
+
+                    if text.contains("Really read the scroll of noise?") {
+                        return Err(Error::Blocking(BlockingError::Noise));
                     }
                 }
                 Ok(())
