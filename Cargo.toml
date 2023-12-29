@@ -1,6 +1,6 @@
 [package]
 name = "dcss-api"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 license = "GPL-3.0"
 description = "A DCSS Webtile API for Rust."
@@ -14,7 +14,7 @@ doctest = false
 
 [dependencies]
 flate2 = { version = "1.0", features = ["zlib"], default-features = false }
-tungstenite = { version = "0.20", features = ["native-tls-vendored"] }
+tungstenite = { version = "0.21", features = ["native-tls-vendored"] }
 url = "2.3"
 serde_json = "1.0"
 thiserror = "1.0"
