@@ -58,7 +58,7 @@ pub enum BlockingError {
     Blink,
     #[error("Blocking due to an 'equipping' action.")]
     Equipping,
-    #[error("Blocking due to an 'equipping' action.")]
+    #[error("Blocking due to an 'disrobing' action.")]
     Disrobing,
     #[error("Blocking due to a 'scroll of noise' read prompt.")]
     Noise,
@@ -106,12 +106,6 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
                     x if x.contains("Brand which weapon?") => {
                         Err(Error::Blocking(BlockingError::BrandWeapon))
                     }
-                    x if x.contains("Keep equipping yourself?") => {
-                        Err(Error::Blocking(BlockingError::Equipping))
-                    }
-                    x if x.contains("Keep disrobing?") => {
-                        Err(Error::Blocking(BlockingError::Disrobing))
-                    }
                     _ => Ok(()),
                 }
             } else {
@@ -135,6 +129,14 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
 
                     if text.contains("Really read the scroll of noise?") {
                         return Err(Error::Blocking(BlockingError::Noise));
+                    }
+
+                    if text.contains("Keep equipping yourself?") {
+                        Err(Error::Blocking(BlockingError::Equipping))
+                    }
+
+                    if text.contains("Keep disrobing?") {
+                        Err(Error::Blocking(BlockingError::Disrobing))
                     }
                 }
                 Ok(())
