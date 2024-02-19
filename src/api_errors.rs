@@ -56,6 +56,8 @@ pub enum BlockingError {
     BrandWeapon,
     #[error("Blocking due to a 'blink' action.")]
     Blink,
+    #[error("Blocking due to an 'equipping' action.")]
+    Equipping,
     #[error("Blocking due to a 'scroll of noise' read prompt.")]
     Noise,
     #[error("Character died.")]
@@ -101,6 +103,9 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
                     }
                     x if x.contains("Brand which weapon?") => {
                         Err(Error::Blocking(BlockingError::BrandWeapon))
+                    }
+                    x if x.contains("Keep equipping yourself?") => {
+                        Err(Error::Blocking(BlockingError::Equipping))
                     }
                     _ => Ok(()),
                 }
