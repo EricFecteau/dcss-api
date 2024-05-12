@@ -132,11 +132,11 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
                     }
 
                     if text.contains("Keep equipping yourself?") {
-                        Err(Error::Blocking(BlockingError::Equipping))
+                        return Err(Error::Blocking(BlockingError::Equipping));
                     }
 
                     if text.contains("Keep disrobing?") {
-                        Err(Error::Blocking(BlockingError::Disrobing))
+                        return Err(Error::Blocking(BlockingError::Disrobing));
                     }
                 }
                 Ok(())
