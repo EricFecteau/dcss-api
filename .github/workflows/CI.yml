@@ -60,7 +60,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-linux-${{ matrix.platform.target }}
           path: dist
 
   musllinux:
@@ -95,7 +95,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-musllinux-${{ matrix.platform.target }}
           path: dist
 
   windows:
@@ -126,7 +126,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-windows-${{ matrix.platform.target }}
           path: dist
 
   macos:
@@ -156,7 +156,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-macos-${{ matrix.platform.target }}
           path: dist
 
   release:
@@ -165,15 +165,10 @@ jobs:
     needs: [linux, musllinux, windows, macos]
     steps:
       - uses: actions/download-artifact@v4
-        with:
-          name: wheels
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
       - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
         env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          pip install --upgrade twine
-          twine upload --skip-existing *
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --non-interactive --skip-existing wheels-*/*
