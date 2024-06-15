@@ -6,7 +6,7 @@
 
 The documentation for the `dcss-api` can be found [here](https://docs.rs/dcss-api/latest/dcss_api/index.html). The best way to start is to look at the examples [here](https://github.com/EricFecteau/dcss-api/tree/main/examples) for Rust and [here](https://github.com/EricFecteau/dcss-api/tree/main/python) for Python. Please see the [Setup](#setup) in order to be able to run these examples.
 
-In depth documentation about the DCSS websocket API can also be found [here](https://github.com/EricFecteau/dcss-api/blob/main/docs/0.%20index.md) (not yet finalized).
+In depth documentation about the DCSS websocket API can also be found [here](https://ericfecteau.github.io/dcss-api-docs/) (not yet finalized).
 
 ## Setup
 
@@ -25,6 +25,7 @@ git checkout stone_soup-0.29
 make WEBTILES=y
 python webserver/server.py
 ```
+Note that this API has been verified to work with version 0.29, version 0.30 and version 0.31 of DCSS.
 
 ### Building Python
 
@@ -40,4 +41,4 @@ maturin develop -r
 
 ## Testing
 
-In order to run `cargo test` or `pytest`, a local DCSS Webtile, with the `stone_soup-0.29` or `stone_soup-0.30` branch, must be exposed on `localhost:8080` and two users must be created: `Username` and `Username2`, both with the password set to `Password`.
+In order to run `cargo test` or `pytest`, a local DCSS Webtile, with the `stone_soup-0.29`, `stone_soup-0.30` or `stone_soup-0.31` branch, must be exposed on `localhost:8080` and two users must be created: `Username` and `Username2`, both with the password set to `Password`.
