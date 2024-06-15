@@ -303,12 +303,22 @@ fn credential_login_gameid() {
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
-    let test_gameid = vec![
-        "dcss-web-trunk".to_owned(),
-        "seeded-web-trunk".to_owned(),
-        "tut-web-trunk".to_owned(),
-        "sprint-web-trunk".to_owned(),
-    ];
+    let test_gameid: Vec<String> = if gameid.len() == 5 {
+        vec![
+            "dcss-web-trunk".to_owned(),
+            "seeded-web-trunk".to_owned(),
+            "descent-web-trunk".to_owned(),
+            "tut-web-trunk".to_owned(),
+            "sprint-web-trunk".to_owned(),
+        ]
+    } else {
+        vec![
+            "dcss-web-trunk".to_owned(),
+            "seeded-web-trunk".to_owned(),
+            "tut-web-trunk".to_owned(),
+            "sprint-web-trunk".to_owned(),
+        ]
+    };
     assert_eq!(gameid, test_gameid);
 
     webtile.disconnect().expect("Failed to disconnect");
@@ -326,12 +336,22 @@ fn cookie_login_gameid() {
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
-    let test_gameid = vec![
-        "dcss-web-trunk".to_owned(),
-        "seeded-web-trunk".to_owned(),
-        "tut-web-trunk".to_owned(),
-        "sprint-web-trunk".to_owned(),
-    ];
+    let test_gameid: Vec<String> = if gameid.len() == 5 {
+        vec![
+            "dcss-web-trunk".to_owned(),
+            "seeded-web-trunk".to_owned(),
+            "descent-web-trunk".to_owned(),
+            "tut-web-trunk".to_owned(),
+            "sprint-web-trunk".to_owned(),
+        ]
+    } else {
+        vec![
+            "dcss-web-trunk".to_owned(),
+            "seeded-web-trunk".to_owned(),
+            "tut-web-trunk".to_owned(),
+            "sprint-web-trunk".to_owned(),
+        ]
+    };
     assert_eq!(gameid, test_gameid);
 
     // Get cookie from the game
@@ -354,12 +374,22 @@ fn cookie_login_gameid() {
         .login_with_cookie(cookie.as_str())
         .expect("Failed to login");
 
-    let test_gameid = vec![
-        "dcss-web-trunk".to_owned(),
-        "seeded-web-trunk".to_owned(),
-        "tut-web-trunk".to_owned(),
-        "sprint-web-trunk".to_owned(),
-    ];
+    let test_gameid: Vec<String> = if gameid.len() == 5 {
+        vec![
+            "dcss-web-trunk".to_owned(),
+            "seeded-web-trunk".to_owned(),
+            "descent-web-trunk".to_owned(),
+            "tut-web-trunk".to_owned(),
+            "sprint-web-trunk".to_owned(),
+        ]
+    } else {
+        vec![
+            "dcss-web-trunk".to_owned(),
+            "seeded-web-trunk".to_owned(),
+            "tut-web-trunk".to_owned(),
+            "sprint-web-trunk".to_owned(),
+        ]
+    };
     assert_eq!(gameid, test_gameid);
 
     webtile.disconnect().expect("Failed to disconnect");

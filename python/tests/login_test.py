@@ -257,12 +257,21 @@ def test_credential_login_gameid():
 
     gameid = webtile.login_with_credentials("Username", "Password")
 
-    assert gameid == [
-        "dcss-web-trunk",
-        "seeded-web-trunk",
-        "tut-web-trunk",
-        "sprint-web-trunk",
-    ]
+    if len(gameid) == 5:
+        assert gameid == [
+            "dcss-web-trunk",
+            "seeded-web-trunk",
+            "descent-web-trunk",
+            "tut-web-trunk",
+            "sprint-web-trunk",
+        ]
+    else:
+        assert gameid == [
+            "dcss-web-trunk",
+            "seeded-web-trunk",
+            "tut-web-trunk",
+            "sprint-web-trunk",
+        ]
 
     webtile.disconnect()
 
@@ -275,12 +284,21 @@ def test_cookie_login_gameid():
 
     gameid = webtile.login_with_credentials("Username", "Password")
 
-    assert gameid == [
-        "dcss-web-trunk",
-        "seeded-web-trunk",
-        "tut-web-trunk",
-        "sprint-web-trunk",
-    ]
+    if len(gameid) == 5:
+        assert gameid == [
+            "dcss-web-trunk",
+            "seeded-web-trunk",
+            "descent-web-trunk",
+            "tut-web-trunk",
+            "sprint-web-trunk",
+        ]
+    else:
+        assert gameid == [
+            "dcss-web-trunk",
+            "seeded-web-trunk",
+            "tut-web-trunk",
+            "sprint-web-trunk",
+        ]
 
     cookie = webtile.request_cookie()
 
@@ -295,11 +313,20 @@ def test_cookie_login_gameid():
 
     gameid = webtile.login_with_cookie(cookie)
 
-    assert gameid == [
-        "dcss-web-trunk",
-        "seeded-web-trunk",
-        "tut-web-trunk",
-        "sprint-web-trunk",
-    ]
+    if len(gameid) == 5:
+        assert gameid == [
+            "dcss-web-trunk",
+            "seeded-web-trunk",
+            "descent-web-trunk",
+            "tut-web-trunk",
+            "sprint-web-trunk",
+        ]
+    else:
+        assert gameid == [
+            "dcss-web-trunk",
+            "seeded-web-trunk",
+            "tut-web-trunk",
+            "sprint-web-trunk",
+        ]
 
     webtile.disconnect()
