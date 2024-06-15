@@ -19,7 +19,7 @@ def test_failed_connect():
         webtile = dcss_api.WebtilePy("ws://localhost:XXXX/socket", 0, "0.29")
         assert False
     except APIErr as e:
-        if "Url error" in e.args[0]:
+        if "Tungstenite error" in e.args[0]:
             assert True
         else:
             assert False

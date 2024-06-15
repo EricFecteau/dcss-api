@@ -8,8 +8,6 @@ use thiserror::Error;
 pub enum Error {
     #[error("Tungstenite error: {0}")]
     Websocket(#[from] tungstenite::Error),
-    #[error("Url error: {0}")]
-    Url(#[from] url::ParseError),
     #[error("Decompress error: {0}")]
     Decompress(#[from] flate2::DecompressError),
     #[error("JSON utf8 error: {0}")]

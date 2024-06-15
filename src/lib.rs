@@ -19,7 +19,6 @@ use std::thread;
 use std::time::{Duration, SystemTime};
 use tungstenite::Message;
 use tungstenite::{self, protocol::WebSocket, stream::MaybeTlsStream};
-use url::Url;
 
 /// Webtile connection, using websocket ([tungstenite]) and a Deflate decoder ([flate2]).
 #[derive(Debug)]
@@ -60,8 +59,7 @@ impl Webtile {
     /// ```
     pub fn connect(url: &str, speed_ms: usize, _version: &str) -> Result<Self, Error> {
         // Open connection
-        let parsed_url = Url::parse(url).map_err(Error::Url)?;
-        let (socket, _response) = tungstenite::connect(parsed_url).map_err(Error::Websocket)?;
+        let (socket, _response) = tungstenite::connect(url).map_err(Error::Websocket)?;
 
         // Init decompressor (see https://rustpython.github.io/website/src/rustpython_vm/stdlib/zlib.rs.html)
         let wbits = 15; // Windows bits fixed (goes to -15 in flate2 because of zlib_header = false)
