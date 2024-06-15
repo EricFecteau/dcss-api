@@ -162,7 +162,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [linux, windows, macos]
+    needs: [linux, musllinux, windows, macos]
     steps:
       - uses: actions/download-artifact@v3
         with:
