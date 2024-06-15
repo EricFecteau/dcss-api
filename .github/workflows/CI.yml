@@ -115,6 +115,9 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
+          before-script-linux: |
+            # If we're running on debian-based system.
+            apt update -y && apt-get install -y libssl-dev openssl pkg-config
           sccache: 'true'
       - name: Upload wheels
         uses: actions/upload-artifact@v4
