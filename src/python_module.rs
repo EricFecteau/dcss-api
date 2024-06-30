@@ -75,6 +75,7 @@ impl WebtilePy {
     ///
     ///     # Read until the "input_mode" message is received, with mode == 1
     ///     webtile.read_until("input_mode", Some("mode"), Some(1))
+    #[pyo3(signature = (msg, key=None, value=None))]
     fn read_until(&mut self, msg: &str, key: Option<&str>, value: Option<u64>) -> PyResult<()> {
         let result = self.webtile.read_until(msg, key, value);
 
