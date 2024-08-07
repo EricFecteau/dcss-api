@@ -48,9 +48,9 @@ impl Webtile {
     ///
     /// * `url` - A [&str] that holds the `ws://` or `wss://` URL
     /// * `speed_ms` - A [usize] that depicts the speed limit in milliseconds between
-    /// each command sent to DCSS Webtiles.
+    ///   each command sent to DCSS Webtiles.
     /// * `_version` - Currently a placeholder for the version number of DCSS, in case
-    /// the API changes in the future.
+    ///   the API changes in the future.
     ///     
     /// # Example
     ///
@@ -107,7 +107,7 @@ impl Webtile {
     /// * `msg` - A [&str] that holds the value expected in the "msg" field of any returned message.
     /// * `key` - A optional [&str] with the name of the specific key in the json data to search for.
     /// * `value` - A optional [u64] with the value of the `key`, only if u64. Specifically meant to
-    /// distinguish between types of "modes" for the input_mode.
+    ///   distinguish between types of "modes" for the input_mode.
     ///
     /// # Example
     ///
@@ -221,7 +221,7 @@ impl Webtile {
     /// * CTRL+char = `key_ctrl_a` to `key_ctrl_z`
     /// * Special chars = `key_tab`, `key_esc` and `key_enter`
     /// * Cardinal directions: `key_dir_n`, `key_dir_ne`, `key_dir_e`, `key_dir_se`,
-    /// `key_dir_s`, `key_dir_sw`, `key_dir_w` and `key_dir_nw`
+    ///   `key_dir_s`, `key_dir_sw`, `key_dir_w` and `key_dir_nw`
     /// * Stairs: `key_stair_down` and `key_stair_up`
     ///
     /// # Arguments

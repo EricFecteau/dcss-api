@@ -11,7 +11,7 @@ use std::str;
 /// * CTRL+char = `key_ctrl_a` to `key_ctrl_z`
 /// * Special chars = `key_tab`, `key_esc` and `key_enter`
 /// * Cardinal directions: `key_dir_n`, `key_dir_ne`, `key_dir_e`, `key_dir_se`,
-/// `key_dir_s`, `key_dir_sw`, `key_dir_w` and `key_dir_nw`
+///   `key_dir_s`, `key_dir_sw`, `key_dir_w` and `key_dir_nw`
 /// * Stairs: `key_stair_down` and `key_stair_up`
 ///
 /// /// # Arguments

@@ -71,7 +71,7 @@ pub enum BlockingError {
 /// # Arguments
 ///
 /// * `message` - The message (as a [serde_json::Value]) received by the
-/// DCSS webtile.
+///   DCSS webtile.
 pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
     let msg = message["msg"].as_str().unwrap();
 
