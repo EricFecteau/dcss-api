@@ -35,7 +35,7 @@ pub struct Webtile {
     /// A [bool] of if the searched for data (in the websocket) has been found.
     message_found: bool,
     /// Speed limit in milliseconds between each command sent to DCSS Webtiles.
-    speed_ms: usize,
+    speed_ms: u32,
     /// [VecDeque] of messages received from DCSS.
     received_messages: VecDeque<Value>,
 }
@@ -47,7 +47,7 @@ impl Webtile {
     /// # Arguments
     ///
     /// * `url` - A [&str] that holds the `ws://` or `wss://` URL
-    /// * `speed_ms` - A [usize] that depicts the speed limit in milliseconds between
+    /// * `speed_ms` - A [u32] that depicts the speed limit in milliseconds between
     ///   each command sent to DCSS Webtiles.
     /// * `_version` - Currently a placeholder for the version number of DCSS, in case
     ///   the API changes in the future.
@@ -57,7 +57,7 @@ impl Webtile {
     /// ```no_run
     /// let mut webtile = Webtile::connect("ws://localhost:8080/socket", 100, "0.29")?;
     /// ```
-    pub fn connect(url: &str, speed_ms: usize, _version: &str) -> Result<Self, Error> {
+    pub fn connect(url: &str, speed_ms: u32, _version: &str) -> Result<Self, Error> {
         // Open connection
         let (socket, _response) = tungstenite::connect(url).map_err(Error::Websocket)?;
 

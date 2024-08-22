@@ -30,7 +30,7 @@ pyo3::create_exception!(mymodule, BlockingErr, PyException);
 #[pymethods]
 impl WebtilePy {
     #[new]
-    fn connect(url: &str, speed_ms: usize, version: &str) -> PyResult<Self> {
+    fn connect(url: &str, speed_ms: u32, version: &str) -> PyResult<Self> {
         let webtile = Webtile::connect(url, speed_ms, version);
 
         match webtile {
