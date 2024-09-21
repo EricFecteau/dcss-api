@@ -14,7 +14,7 @@ use std::str;
 ///   `key_dir_s`, `key_dir_sw`, `key_dir_w` and `key_dir_nw`
 /// * Stairs: `key_stair_down` and `key_stair_up`
 ///
-/// /// # Arguments
+/// # Arguments
 ///
 /// * `key` - A string slice of the key, or keyword, to be sent.
 pub(crate) fn keys(key: &str) -> Value {

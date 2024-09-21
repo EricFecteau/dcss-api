@@ -212,7 +212,7 @@ impl Webtile {
         Ok(())
     }
 
-    /// Write a string slice (passed through [common::keys]) to the websocket. Special
+    /// Write a string slice to the websocket. Special
     /// characters starting with `key_` will be sent as a keycode (e.g. `key_esc` will
     /// send the `esc` character). Will only send if sufficient time has elapsed since
     /// the last sent data, according to the [`Webtile::connect`] speed_ms option.
@@ -226,7 +226,7 @@ impl Webtile {
     ///
     /// # Arguments
     ///
-    /// * `key` - A string slice to be sent to DCSS (passed through [common::keys]).
+    /// * `key` - A string slice to be sent to DCSS.
     ///
     /// # Example
     ///
