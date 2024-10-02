@@ -108,7 +108,7 @@ checksum = "e8566979429cf69b49a5c740c60791108e86440e8be149bbea4fe54d2c32d6e2"
 
 [[package]]
 name = "dcss-api"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "flate2",
  "pyo3",
