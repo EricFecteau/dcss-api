@@ -17,8 +17,8 @@ impl Webtile {
     /// # Example
     ///
     /// ```no_run
-    /// // Start a game on "dcss-web-trunk", for a Minotaur (b), Berserker (i), with a mace (b)
-    /// webtile.start_game("dcss-web-trunk", "b", "i", "b")?;
+    /// // Start a game on "dcss-web-trunk", for a Minotaur (b), Berserker (i), with a mace (c)
+    /// webtile.start_game("dcss-web-trunk", "b", "i", "c")?;
     /// ```
     pub fn start_game(
         &mut self,
