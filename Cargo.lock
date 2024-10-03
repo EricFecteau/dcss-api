@@ -111,7 +111,6 @@ name = "dcss-api"
 version = "0.1.7"
 dependencies = [
  "flate2",
- "openssl-src",
  "pyo3",
  "serde_json",
  "thiserror",
