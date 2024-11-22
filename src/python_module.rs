@@ -316,7 +316,7 @@ impl WebtilePy {
 #[pymodule]
 pub fn dcss_api(py: Python<'_>, m: Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<WebtilePy>()?;
-    m.add("BlockingErr", py.get_type_bound::<BlockingErr>())?;
-    m.add("APIErr", py.get_type_bound::<APIErr>())?;
+    m.add("BlockingErr", py.get_type::<BlockingErr>())?;
+    m.add("APIErr", py.get_type::<APIErr>())?;
     Ok(())
 }
