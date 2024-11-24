@@ -139,7 +139,7 @@ impl Webtile {
 
             // Will get array of message, go through them until what is expected is found
             for message in messages["msgs"].as_array().unwrap() {
-                // Send data to a VeqDeque to be pulled by user;
+                // Send data to a VecDeque to be pulled by user;
                 self.received_messages.push_back(message.to_owned());
 
                 // Pre-process the data to identify blocking
