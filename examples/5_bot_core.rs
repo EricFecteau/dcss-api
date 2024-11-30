@@ -53,11 +53,12 @@ fn write_key_bot(webtile: &mut Webtile, to_send: &str, to_receive: &str) -> Resu
                 println!("ERROR: Likely level up choice");
             }
             APIError::Blocking(BlockingError::Pickup) => println!("ERROR: Pickup"),
-            APIError::Blocking(BlockingError::Acquirement) => println!("ERROR: Acquirement"),
-            APIError::Blocking(BlockingError::Identify) => println!("ERROR: Identify"),
-            APIError::Blocking(BlockingError::EnchantWeapon) => println!("ERROR: EnchantWeapon"),
-            APIError::Blocking(BlockingError::EnchantItem) => println!("ERROR: EnchantItem"),
-            APIError::Blocking(BlockingError::BrandWeapon) => println!("ERROR: BrandWeapon"),
+            APIError::Blocking(BlockingError::Acquirement(_)) => println!("ERROR: Acquirement"),
+            APIError::Blocking(BlockingError::Identify(_)) => println!("ERROR: Identify"),
+            APIError::Blocking(BlockingError::EnchantWeapon(_)) => println!("ERROR: EnchantWeapon"),
+            APIError::Blocking(BlockingError::EnchantItem(_)) => println!("ERROR: EnchantItem"),
+            APIError::Blocking(BlockingError::BrandWeapon(_)) => println!("ERROR: BrandWeapon"),
+            APIError::Blocking(BlockingError::Skill) => println!("ERROR: Skill"),
             APIError::Blocking(BlockingError::Died) => {
                 println!("ERROR: Died");
                 process::exit(0);

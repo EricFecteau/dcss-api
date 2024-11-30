@@ -43,15 +43,17 @@ pub enum BlockingError {
     #[error("Blocking due to a pickup menu popup.")]
     Pickup,
     #[error("Blocking due to a 'acquirement' menu popup.")]
-    Acquirement,
+    Acquirement(Value),
     #[error("Blocking due to a 'identify' menu popup.")]
-    Identify,
+    Identify(Value),
     #[error("Blocking due to a 'enchant weapon' menu popup.")]
-    EnchantWeapon,
+    EnchantWeapon(Value),
     #[error("Blocking due to a 'brand item' menu popup.")]
-    EnchantItem,
+    EnchantItem(Value),
     #[error("Blocking due to a 'brand weapon' menu popup.")]
-    BrandWeapon,
+    BrandWeapon(Value),
+    #[error("Blocking due to a 'skills to train' txt menu.")]
+    Skill,
     #[error("Blocking due to a 'blink' action.")]
     Blink,
     #[error("Blocking due to an 'equipping' action.")]
@@ -89,26 +91,41 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
             if message["tag"] == "pickup" {
                 Err(Error::Blocking(BlockingError::Pickup))
             } else if message["tag"] == "acquirement" {
-                Err(Error::Blocking(BlockingError::Acquirement))
+                Err(Error::Blocking(BlockingError::Acquirement(message.clone())))
             } else if message["tag"] == "use_item" {
                 match message["title"]["text"].as_str().unwrap() {
                     x if x.contains("Identify which item?") => {
-                        Err(Error::Blocking(BlockingError::Identify))
+                        Err(Error::Blocking(BlockingError::Identify(message.clone())))
                     }
-                    x if x.contains("Enchant which weapon?") => {
-                        Err(Error::Blocking(BlockingError::EnchantWeapon))
-                    }
+                    x if x.contains("Enchant which weapon?") => Err(Error::Blocking(
+                        BlockingError::EnchantWeapon(message.clone()),
+                    )),
                     x if x.contains("Enchant which item?") => {
-                        Err(Error::Blocking(BlockingError::EnchantItem))
+                        Err(Error::Blocking(BlockingError::EnchantItem(message.clone())))
                     }
                     x if x.contains("Brand which weapon?") => {
-                        Err(Error::Blocking(BlockingError::BrandWeapon))
+                        Err(Error::Blocking(BlockingError::BrandWeapon(message.clone())))
                     }
                     _ => Ok(()),
                 }
             } else {
                 Ok(())
             }
+        }
+        "txt" => {
+            let lines_obj = message.as_object().unwrap()["lines"].as_object().unwrap();
+
+            if lines_obj.contains_key("0")
+                && lines_obj[&("0".to_string())]
+                    .as_str()
+                    .unwrap()
+                    .to_owned()
+                    .contains("Select the skills to train")
+            {
+                return Err(Error::Blocking(BlockingError::Skill));
+            }
+
+            Ok(())
         }
         "msgs" => {
             if !message.as_object().unwrap().contains_key("messages") {
