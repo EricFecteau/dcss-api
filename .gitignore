@@ -6,3 +6,4 @@ main.rs
 .pytest_cache
 *.pyc
 /python/tests/__pycache__
+/crawl
