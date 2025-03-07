@@ -18,6 +18,8 @@ pub enum Error {
     Blocking(#[from] BlockingError),
     #[error("Failed to login (bad username, password or cookie).")]
     LoginFailed,
+    #[error("Failed to register.")]
+    RegisterFailed,
 }
 
 /// Errors that will block the game from processing normally. Since each read
@@ -158,6 +160,7 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
             }
         }
         "login_fail" => Err(Error::LoginFailed),
+        "register_fail" => Err(Error::RegisterFailed),
         "ui-push" => {
             if !message.as_object().unwrap().contains_key("type") {
                 Ok(())

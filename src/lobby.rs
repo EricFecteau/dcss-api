@@ -64,6 +64,47 @@ impl Webtile {
         Ok(self.get_playable_games())
     }
 
+    /// Create an account and login to the game, using a username and password. It returns a vector
+    /// of all playable game IDs. If the account exists, it will simply login using the provided
+    /// password.
+    ///
+    /// # Arguments
+    ///
+    /// * `username` - A string slice of the user's username.
+    /// * `password` - A string slice of the user's password.
+    /// * `email` - A optional string slice of the user's email.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// // Register and login under the user "Username", with a password of "Password"
+    /// webtile.register_account("Username", "Password", None)?;
+    /// ```
+    pub fn register_account(
+        &mut self,
+        username: &str,
+        password: &str,
+        email: Option<&str>,
+    ) -> Result<Vec<String>, Error> {
+        self.write_json(
+            json!({"msg": "register", "username": username, "password": password, "email": email.unwrap_or("")}),
+        )?;
+
+        if let Err(e) = self.read_until("login_success", None, None) {
+            match e {
+                Error::RegisterFailed => self.login_with_credentials(username, password)?,
+                _ => Err(e)?,
+            };
+        };
+
+        self.write_json(json!({
+            "msg": "go_lobby"
+        }))?;
+        self.read_until("go_lobby", None, None)?;
+
+        Ok(self.get_playable_games())
+    }
+
     /// Request a cookie from the DCSS Webtile.
     ///
     /// # Example

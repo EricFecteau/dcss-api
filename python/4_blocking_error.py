@@ -3,7 +3,7 @@ from dcss_api import BlockingErr
 
 def main():
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.29")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.32")
 
     # Empty message queue
     while (message := webtile.get_message()) != None:
@@ -16,8 +16,8 @@ def main():
     while (message := webtile.get_message()) != None:
         pass
 
-    # Start a random game on 'dcss-web-trunk', for Minotaur berserker with a mace.
-    webtile.start_game("dcss-web-trunk", "b", "i", "b")
+    # Start a random game on 'dcss-0.32', for Minotaur berserker with a mace.
+    webtile.start_game("dcss-0.32", "b", "i", "b")
 
     # Print the messages you get upon starting the game (should be processed)
     while (message := webtile.get_message()) != None:

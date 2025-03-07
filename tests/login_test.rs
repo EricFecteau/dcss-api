@@ -4,7 +4,7 @@ use serde_json::{from_str, Value};
 #[test]
 fn successful_credential_login() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -26,7 +26,7 @@ fn successful_credential_login() {
 #[test]
 fn multiple_login_same_user() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -71,7 +71,7 @@ fn multiple_login_same_user() {
 #[test]
 fn multiple_login_diff_user() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -116,7 +116,7 @@ fn multiple_login_diff_user() {
 #[test]
 fn failed_credential_login() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -131,7 +131,7 @@ fn failed_credential_login() {
 #[test]
 fn failed_credential_login_and_retry() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -157,7 +157,7 @@ fn failed_credential_login_and_retry() {
 fn get_cookie_and_login() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -184,7 +184,7 @@ fn get_cookie_and_login() {
 
     // Connect (again) to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -208,7 +208,7 @@ fn get_cookie_and_login() {
 fn failed_cookie_login() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -224,7 +224,7 @@ fn failed_cookie_login() {
 fn using_old_cookie_login() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -251,7 +251,7 @@ fn using_old_cookie_login() {
 
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -278,7 +278,7 @@ fn using_old_cookie_login() {
 
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -294,7 +294,7 @@ fn using_old_cookie_login() {
 #[test]
 fn credential_login_gameid() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -303,22 +303,12 @@ fn credential_login_gameid() {
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
-    let test_gameid: Vec<String> = if gameid.len() == 5 {
-        vec![
-            "dcss-web-trunk".to_owned(),
-            "seeded-web-trunk".to_owned(),
-            "descent-web-trunk".to_owned(),
-            "tut-web-trunk".to_owned(),
-            "sprint-web-trunk".to_owned(),
-        ]
-    } else {
-        vec![
-            "dcss-web-trunk".to_owned(),
-            "seeded-web-trunk".to_owned(),
-            "tut-web-trunk".to_owned(),
-            "sprint-web-trunk".to_owned(),
-        ]
-    };
+    let test_gameid: Vec<String> = vec![
+        "dcss-0.29".to_owned(),
+        "dcss-0.30".to_owned(),
+        "dcss-0.31".to_owned(),
+        "dcss-0.32".to_owned(),
+    ];
     assert_eq!(gameid, test_gameid);
 
     webtile.disconnect().expect("Failed to disconnect");
@@ -327,7 +317,7 @@ fn credential_login_gameid() {
 #[test]
 fn cookie_login_gameid() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -336,22 +326,12 @@ fn cookie_login_gameid() {
         .login_with_credentials("Username", "Password")
         .expect("Login failed.");
 
-    let test_gameid: Vec<String> = if gameid.len() == 5 {
-        vec![
-            "dcss-web-trunk".to_owned(),
-            "seeded-web-trunk".to_owned(),
-            "descent-web-trunk".to_owned(),
-            "tut-web-trunk".to_owned(),
-            "sprint-web-trunk".to_owned(),
-        ]
-    } else {
-        vec![
-            "dcss-web-trunk".to_owned(),
-            "seeded-web-trunk".to_owned(),
-            "tut-web-trunk".to_owned(),
-            "sprint-web-trunk".to_owned(),
-        ]
-    };
+    let test_gameid: Vec<String> = vec![
+        "dcss-0.29".to_owned(),
+        "dcss-0.30".to_owned(),
+        "dcss-0.31".to_owned(),
+        "dcss-0.32".to_owned(),
+    ];
     assert_eq!(gameid, test_gameid);
 
     // Get cookie from the game
@@ -364,7 +344,7 @@ fn cookie_login_gameid() {
 
     // Connect (again) to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -374,22 +354,12 @@ fn cookie_login_gameid() {
         .login_with_cookie(cookie.as_str())
         .expect("Failed to login");
 
-    let test_gameid: Vec<String> = if gameid.len() == 5 {
-        vec![
-            "dcss-web-trunk".to_owned(),
-            "seeded-web-trunk".to_owned(),
-            "descent-web-trunk".to_owned(),
-            "tut-web-trunk".to_owned(),
-            "sprint-web-trunk".to_owned(),
-        ]
-    } else {
-        vec![
-            "dcss-web-trunk".to_owned(),
-            "seeded-web-trunk".to_owned(),
-            "tut-web-trunk".to_owned(),
-            "sprint-web-trunk".to_owned(),
-        ]
-    };
+    let test_gameid: Vec<String> = vec![
+        "dcss-0.29".to_owned(),
+        "dcss-0.30".to_owned(),
+        "dcss-0.31".to_owned(),
+        "dcss-0.32".to_owned(),
+    ];
     assert_eq!(gameid, test_gameid);
 
     webtile.disconnect().expect("Failed to disconnect");

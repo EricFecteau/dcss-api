@@ -2,7 +2,7 @@ import dcss_api
 
 def main():
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.29")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.32")
 
     # Empty message queue
     while (message := webtile.get_message()) != None:

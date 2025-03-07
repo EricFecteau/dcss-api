@@ -5,7 +5,7 @@ import sys
 
 def main():
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.29")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.32")
 
     # Empty message queue
     while (message := webtile.get_message()) != None:
@@ -18,7 +18,7 @@ def main():
     while (message := webtile.get_message()) != None:
         pass
 
-    # Start a random game on 'dcss-web-trunk', for Minotaur berserker with a mace.
+    # Start a random game on 'dcss-0.29', for Minotaur berserker with a mace.
     webtile.start_game(gameid[0], "b", "i", "b")
 
     # Print the messages you get upon starting the game (should be processed)

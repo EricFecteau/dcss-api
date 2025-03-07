@@ -7,3 +7,4 @@ main.rs
 *.pyc
 /python/tests/__pycache__
 /crawl
+/saves

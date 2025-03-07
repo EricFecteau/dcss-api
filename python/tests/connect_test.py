@@ -5,7 +5,7 @@ from dcss_api import APIErr
 
 def test_successful_connect():
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.29")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
 
     assert '{"msg":"ping"}' == webtile.get_message()
     assert '{"msg":"lobby_clear"}' == webtile.get_message()
@@ -16,7 +16,7 @@ def test_successful_connect():
 
 def test_failed_connect():
     try:
-        webtile = dcss_api.WebtilePy("ws://localhost:XXXX/socket", 0, "0.29")
+        webtile = dcss_api.WebtilePy("ws://localhost:XXXX/socket", 0, "0.32")
         assert False
     except APIErr as e:
         if "Tungstenite error" in e.args[0]:
@@ -25,7 +25,7 @@ def test_failed_connect():
             assert False
 
     try:
-        webtile = dcss_api.WebtilePy("ws://localhost:0000/socket", 0, "0.29")
+        webtile = dcss_api.WebtilePy("ws://localhost:0000/socket", 0, "0.32")
         assert False
     except APIErr as e:
         if "Tungstenite error" in e.args[0]:

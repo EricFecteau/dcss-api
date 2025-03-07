@@ -159,6 +159,30 @@ impl WebtilePy {
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Create an account and login to the game, using a username and password. It returns a vector
+    /// of all playable game IDs. If the account exists, it will simply login using the provided
+    /// password.
+    ///
+    /// Arguments:
+    ///     username (str): A string of the user's username.
+    ///     password (str): A string of the user's password.
+    ///     email (Option<str>): A optional string of the user's email.
+    ///
+    /// Example:
+    ///     # Register and login under the user "Username", with a password of "Password"
+    ///     webtile.register_account("Username", "Password", None)
+    #[pyo3(signature = (username, password, email=None))]
+    fn register_account(
+        &mut self,
+        username: &str,
+        password: &str,
+        email: Option<&str>,
+    ) -> PyResult<Vec<String>> {
+        self.webtile
+            .register_account(username, password, email)
+            .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
+    }
+
     /// Login to the game, using a cookie. It returns a list of all
     /// playable game IDs.
     ///

@@ -41,4 +41,4 @@ maturin develop -r
 
 ## Testing
 
-In order to run `cargo test` or `pytest`, a local DCSS Webtile, with the `stone_soup-0.29`, `stone_soup-0.30`, `stone_soup-0.31` or `stone_soup-0.32` branch, must be exposed on `localhost:8080` and two users must be created: `Username` and `Username2`, both with the password set to `Password`.
+In order to run `cargo test` or `pytest`, a local DCSS Webtile, with the `stone_soup-0.29`, `stone_soup-0.30`, `stone_soup-0.31` and `stone_soup-0.32` branch, must be exposed on `localhost:8080`. The `Justfile` can be used to create this environment and the users necessary for the tests.
