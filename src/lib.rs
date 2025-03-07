@@ -129,7 +129,12 @@ impl Webtile {
         // use self variable in order to retain the info when there is a blocking error
         while !self.message_found {
             // Read the message from the socket into Vec<u8> -- it will be compressed
-            let mut compressed_msg = self.socket.read().map_err(Error::Websocket)?.into_data();
+            let mut compressed_msg = self
+                .socket
+                .read()
+                .map_err(Error::Websocket)?
+                .into_data()
+                .to_vec();
 
             // Decompress the message and return JSON Value
             let messages = common::deflate_to_json(&mut self.decompressor, &mut compressed_msg)?;
@@ -206,7 +211,7 @@ impl Webtile {
         self.last_send = SystemTime::now();
 
         self.socket
-            .send(Message::Text(json_val.to_string()))
+            .send(Message::Text(json_val.to_string().into()))
             .map_err(Error::Websocket)?;
 
         Ok(())
@@ -254,7 +259,7 @@ impl Webtile {
 
         let json_key = common::keys(key);
         self.socket
-            .send(Message::Text(json_key.to_string()))
+            .send(Message::Text(json_key.to_string().into()))
             .map_err(Error::Websocket)?;
 
         Ok(())
