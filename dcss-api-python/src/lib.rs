@@ -1,3 +1,5 @@
+//! An API library to interact with [DCSS Webtile](http://crawl.develz.org/wordpress/howto).
+
 use ::dcss_api::{BlockingError, Error, Webtile};
 
 use pyo3::exceptions::PyException;
