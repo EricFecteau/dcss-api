@@ -37,7 +37,7 @@ setup-dcss-server:
 
     rm -rf ./crawl/main
 
-run-dcss:
+dcss-run:
     python crawl/server/server.py
 
 dcss-clear:
@@ -59,17 +59,17 @@ dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg, data)/# type: (str, Any) -> bool/g' ./crawl/server/webtiles/ws_handler.py
 
 dcss-create-users:
-    cargo run --example 0_setup
+    cd ./dcss-api && cargo -r run --example 0_setup
 
-test-rust:
-    cargo test
+test-rust-api:
+    cd ./dcss-api && cargo -r test
 
 setup-python:
-    rm -rf pyo3
-    mkdir pyo3
-    python -m venv pyo3
-    source pyo3/bin/activate && pip install maturin patchelf pytest
-    source pyo3/bin/activate && maturin develop -r
+    rm -rf ./dcss-api-python/pyo3
+    mkdir ./dcss-api-python/pyo3
+    python -m venv ./dcss-api-python/pyo3
+    source ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && pip install maturin patchelf pytest
+    source ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && maturin develop -r
 
 test-python:
-    source pyo3/bin/activate && pytest ./python
+    source ./dcss-api-python/pyo3/bin/activate && pytest ./dcss-api-python/tests

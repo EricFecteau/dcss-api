@@ -4,7 +4,6 @@ mod api_errors;
 mod common;
 mod lobby;
 mod play;
-mod python_module;
 
 pub use api_errors::{BlockingError, Error};
 

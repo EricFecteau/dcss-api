@@ -1,5 +1,4 @@
-use crate::Webtile;
-use crate::{BlockingError, Error};
+use ::dcss_api::{BlockingError, Error, Webtile};
 
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
@@ -217,7 +216,7 @@ impl WebtilePy {
     ///     while (message := webtile.get_message()) != None:
     ///         print(message)
     fn get_message(&mut self) -> Option<String> {
-        let value = self.webtile.received_messages.pop_front();
+        let value = self.webtile.get_message();
         value.map(|v| v.to_string())
     }
 

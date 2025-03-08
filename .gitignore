@@ -1,10 +1,9 @@
-/target
+**/target
 main.rs
 /.vscode
-/pyo3
-/examples/real.rs
+**/pyo3
 .pytest_cache
 *.pyc
-/python/tests/__pycache__
+**/__pycache__
 /crawl
 /saves
