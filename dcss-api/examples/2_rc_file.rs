@@ -20,7 +20,7 @@ fn main() {
 
     // Write RC File
     webtile
-        .set_rc_file("seeded-web-trunk", "show_more = false\nrest_delay = -1")
+        .set_rc_file("dcss-0.32", "show_more = false\nrest_delay = -1")
         .expect("Failed to set RC file.");
 
     // Empty message queue;
@@ -28,7 +28,7 @@ fn main() {
 
     // Read RC File
     let rc_file = webtile
-        .get_rc_file("seeded-web-trunk")
+        .get_rc_file("dcss-0.32")
         .expect("Failed to get RC file.");
 
     print!("RC FILE: \n\n {}\n\n", rc_file);
