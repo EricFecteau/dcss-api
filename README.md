@@ -1,44 +1,25 @@
 # dcss-api
 
-`dcss-api` is an easy to use Rust and Python wrapper for [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) websocket API. It supports logging in, starting a game and sending commands during game play.
+This repo contains a series of libraries in Rust and Python to work with [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/).
 
-## Documentation
+## Crates
 
-The documentation for the `dcss-api` can be found [here](https://docs.rs/dcss-api/latest/dcss_api/index.html). The best way to start is to look at the examples [here](https://github.com/EricFecteau/dcss-api/tree/main/examples) for Rust and [here](https://github.com/EricFecteau/dcss-api/tree/main/python) for Python. Please see the [Setup](#setup) in order to be able to run these examples.
+### [dcss-api](https://github.com/EricFecteau/dcss-api/blob/main/dcss-api/) [![Crates.io Version](https://img.shields.io/crates/v/dcss-api)](https://crates.io/crates/dcss-api) [![docs.rs](https://img.shields.io/docsrs/dcss-api)](https://docs.rs/dcss-api/0.2.0/dcss_api/) 
 
-In depth documentation about the DCSS websocket API can also be found [here](https://ericfecteau.github.io/dcss-api-docs/) (not yet finalized).
+`dcss-api` is an easy to use Rust wrapper for DCSS Webtile websocket API. It works with version `0.29`, `0.30`, `0.31` or `0.32` of DCSS.
 
-## Setup
+### [dcss-scenario-builder](https://github.com/EricFecteau/dcss-api/blob/main/dcss-api/)
 
-### Building DCSS Webtile
+`dcss-scenario-builder` is a crate to build scenarios in DCSS (wizmode) from a yaml file by providing features, items and monsters and mapping them on a tile map. This is great for testing other crates in this repository.
 
-The API works for both local and public version of DCSS Webtiles. To run on a public server, you must limit the connection to a maximum of one command every 100 milliseconds (i.e. 10 commands per seconds), by setting the `speed_ms` option to `100` while connecting. Follow any other rules required by the server's owner. 
+### [dcss-api-python](https://github.com/EricFecteau/dcss-api/tree/main/dcss-api-python) [![PyPI - Version](https://img.shields.io/pypi/v/dcss-api)](https://pypi.org/project/dcss-api/)
 
-Due to this, it is preferred to run the API against a local version of DCSS Webtile. You can find installation information on the [DCSS Webtiles Server page](https://github.com/crawl/crawl/tree/master/crawl-ref/source/webserver).
+`dcss-api` is an easy to use Python wrapper for DCSS Webtile websocket API, that includes the `dcss-scenario-builder` functionalities. It works with version `0.29`, `0.30`, `0.31` or `0.32` of DCSS.
 
-A summary (after installing all prerequisites):
+## Docs
 
-```bash
-git clone "https://github.com/crawl/crawl.git"
-cd crawl/crawl-ref/source/
-git checkout stone_soup-0.32
-make WEBTILES=y
-python webserver/server.py
-```
-Note that this API has been verified to work with version `0.29`, `0.30`, `0.31` or `0.32` of DCSS.
+Documentation about the DCSS websocket API can also be found [here](https://ericfecteau.github.io/dcss-api-docs/).
 
-### Building Python
+## Server & testing
 
-The python package for `dcss-api` is a [PyO3](https://github.com/PyO3/pyo3) Python wrapper for the Rust package. It can be built using the following commands:
-
-```bash
-mkdir pyo3
-python -m venv pyo3
-source pyo3/bin/activate
-pip install maturin patchelf
-maturin develop -r
-```
-
-## Testing
-
-In order to run `cargo test` or `pytest`, a local DCSS Webtile, with the `stone_soup-0.29`, `stone_soup-0.30`, `stone_soup-0.31` and `stone_soup-0.32` branch, must be exposed on `localhost:8080`. The `Justfile` can be used to create this environment and the users necessary for the tests.
+The [Justfile](https://github.com/EricFecteau/dcss-api/blob/main/Justfile) has commands to setup a DCSS Webtile server, with the correct configurations. Run `just setup-dcss-server` to setup the server, `just dcss-run` to run the server and `just dcss-create-users` to create the required users for testing. For the server prerequisites and other options, see the [DCSS Webtiles Server page](https://github.com/crawl/crawl/tree/master/crawl-ref/source/webserver#dungeon-crawl-stone-soup-webtiles-server). To build the python library, run `just setup-python`. Testing can be run with `just test-rust-api` for Rust and `just test-python` for Python.

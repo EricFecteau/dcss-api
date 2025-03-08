@@ -37,6 +37,9 @@ setup-dcss-server:
 
     rm -rf ./crawl/main
 
+dcss-create-users:
+    cd ./dcss-api && cargo -r run --example 0_setup
+
 dcss-run:
     python crawl/server/server.py
 
@@ -57,9 +60,6 @@ dcss-enable-logging:
 
 dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg, data)/# type: (str, Any) -> bool/g' ./crawl/server/webtiles/ws_handler.py
-
-dcss-create-users:
-    cd ./dcss-api && cargo -r run --example 0_setup
 
 test-rust-api:
     cd ./dcss-api && cargo -r test
