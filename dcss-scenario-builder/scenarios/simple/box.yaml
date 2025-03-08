@@ -1,0 +1,14 @@
+options:
+  default_feature: "floor"
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+
+      map: |-
+          ###
+          #@#
+          ###

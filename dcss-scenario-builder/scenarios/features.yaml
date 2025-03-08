@@ -1,0 +1,171 @@
+options:
+  default_feature: "floor"
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '# = metal_wall'
+        - '< = exit_dungeon'
+        - '+ = closed_door'
+        - '. = floor'
+
+        # Stairs
+        - '0 = exit_dungeon'
+        - '1 = stone_stairs_down_i'
+        - '2 = stone_stairs_down_ii'
+        - '3 = stone_stairs_down_iii'
+        - '4 = escape_hatch_down'
+        - '5 = enter_temple'
+
+        # Doors
+        - 'a = open_door'
+        - 'b = open_clear_door'
+        - 'c = closed_door'
+        - 'd = broken_door'
+        - 'e = closed_clear_door'
+        - 'f = broken_clear_door'
+        - 'g = runed_door'
+        - 'h = runed_clear_door'
+        - 'i = sealed_door'
+        - 'j = sealed_clear_door'
+        - 'k = badly_sealed_door'
+
+        # Trees
+        - 'l = tree'
+        - 'm = mangrove'
+        - 'n = demonic_tree'
+        - 'o = petrified_tree'
+
+        # Walls
+        - 'p = metal_wall'
+        - 'q = crystal_wall'
+        - 'r = rock_wall'
+        - 's = slimy_wall'
+        - 't = stone_wall'
+        - 'u = permarock_wall'
+        - 'v = clear_rock_wall'
+        - 'w = clear_stone_wall'
+        - 'x = clear_permarock_wall'
+
+        # Solids
+        - 'y = iron_grate' 
+        - 'z = open_sea'
+        - 'A = endless_lava' 
+        - 'B = endless_salt'
+        - 'C = orcish_idol'
+        - 'D = granite_statue'
+        - 'E = malign_gateway'
+        - 'F = lava'
+        - 'G = deep_water'
+        - 'H = shallow_water'
+        - 'I = toxic_bog'
+
+        # Fountains
+        - 'J = fountain_blue'
+        - 'K = fountain_sparkling'
+        - 'L = fountain_blood'
+        - 'M = dry_fountain'
+        - 'N = runelight'
+
+        # Other
+        - 'O = abandoned_shop'
+        - 'P = transporter'
+        - 'Q = transporter_landing'
+        - 'R = expired_portal'
+        - 'S = stone_arch'
+        - 'T = unknown_portal'
+        - 'V = sealed_stair_up'
+        - 'W = sealed_stair_down'
+
+      map: |-
+          #####
+          #...#
+          #.@.#
+          #...#####################################
+          #...#...................................#
+          #.0.+..a..b..c..d..e..f..g..h..i..j..k..#
+          #...#...................................#
+          #...#####################################
+          #...#..............#
+          #.1.+..l..m..n..o..#
+          #...#..............#
+          #...###############################
+          #...#.............................#
+          #.2.+..p..q..r..s..t..u..v..w..x..#
+          #...#.............................#
+          #...#####################################
+          #...#...................................#
+          #.3.+..y..z..A..B..C..D..E..F..G..H..I..#
+          #...#...................................#
+          #...#####################################
+          #...#.................#
+          #.4.+..J..K..L..M..N..#
+          #...#.................#
+          #...############################
+          #...#..........................#
+          #.5.+..O..P..Q..R..S..T..V..W..#
+          #...#..........................#
+          ################################
+
+  - level:
+      name: D:2
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = stone_stairs_up_i'
+        - 'a = stone_stairs_up_ii'
+        - 'b = stone_stairs_up_iii'
+        - 'c = stone_stairs_up_iii'
+        - 'd = escape_hatch_up'
+      map: |-
+          ###################
+          #.................#
+          #..<..a..b..c..d..#
+          #.................#
+          ###################
+
+  - level:
+      name: Temple
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_temple'
+        - 'a = altar_zin' 
+        - 'b = altar_the_shining_one'
+        - 'c = altar_kikubaaqudgha' 
+        - 'd = altar_yredelemnul' 
+        - 'e = altar_xom' 
+        - 'f = altar_vehumet' 
+        - 'g = altar_okawaru' 
+        - 'h = altar_makhleb' 
+        - 'i = altar_sif_muna' 
+        - 'j = altar_trog' 
+        - 'k = altar_nemelex_xobeh' 
+        - 'l = altar_elyvilon' 
+        - 'm = altar_lugonu' 
+        - 'n = altar_beogh' 
+        - 'o = altar_jiyva' 
+        - 'p = altar_fedhas' 
+        - 'q = altar_cheibriados' 
+        - 'r = altar_ashenzari'
+        - 's = altar_dithmenos' 
+        - 't = altar_gozag' 
+        - 'u = altar_qazlal' 
+        - 'v = altar_ru' 
+        - 'w = altar_uskayaw' 
+        - 'x = altar_hepliaklqana' 
+        - 'y = altar_wu_jian' 
+        - 'z = altar_ignis'
+        - 'A = altar_ecumenical'
+        - 'B = unknown_altar'
+      map: |-
+          #################################################
+          #...............................................#
+          #..<..a..b..c..d..e..f..g..h..i..j..k..l..m..n..#
+          #...............................................#
+          #.....o..p..q..r..s..t..u..v..w..x..y..z..A..B..#
+          #...............................................#
+          #################################################
+
+

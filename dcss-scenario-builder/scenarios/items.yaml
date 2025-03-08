@@ -1,0 +1,83 @@
+options:
+  default_feature: "floor"
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '# = metal_wall'
+        - '< = exit_dungeon'
+        - '. = floor'
+        - '> = stone_stairs_down_i'
+      items:
+        - 'a = Scroll of identify'
+        - 'b = Scroll of teleportation'
+        - 'c = Scroll of amnesia'
+        - 'd = Scroll of blinking'
+        - 'e = Scroll of brand weapon'
+        - 'f = Scroll of enchant armour'
+        - 'g = Scroll of enchant weapon'
+        - 'h = Scroll of fear'
+        - 'i = Scroll of fog'
+        - 'j = Scroll of immolation'
+        - 'k = Scroll of revelation'
+        - 'l = Scroll of noise'
+        - 'm = Scroll of vulnerability'
+        - 'n = Scroll of poison'
+        - 'o = Scroll of silence'
+        - 'p = Scroll of torment'
+        - 'q = Scroll of butterflies' # Only one of these per seed
+        - 'r = Scroll of summoning' # Only one of these per seed
+        - 's = Scroll of acquirement'
+      map: |-
+          ########################################
+          #......................................#
+          #..@..<..a..b..c..d..e..f..g..h..i..j..#
+          #......................................#
+          #.....>..k..l..m..n..o..p..q..r..s.....#
+          #......................................#
+          ########################################
+
+  - level:
+      name: D:2
+      features:
+        - '# = metal_wall'
+        - '< = stone_stairs_up_i'
+        - '. = floor'
+        - '> = stone_stairs_down_i'
+      items:
+        - 'a = Potion of ambrosia'
+        - 'b = Potion of attraction'
+        - 'c = Potion of berserk rage'
+        - 'd = Potion of brilliance'
+        - 'e = Potion of cancellation'
+        - 'f = Potion of curing'
+        - 'g = Potion of degeneration'
+        - 'h = Potion of experience'
+        - 'i = Potion of enlightenment'
+        - 'j = Potion of haste'
+        - 'k = Potion of heal wounds'
+        - 'l = Potion of invisibility'
+        - 'm = Potion of lignification'
+        - 'n = Potion of magic'
+        - 'o = Potion of might'
+        - 'p = Potion of mutation'
+        - 'q = Potion of resistance'
+      map: |-
+          ########################################
+          #......................................#
+          #.....<..a..b..c..d..e..f..g..h..i..j..#
+          #......................................#
+          #.....>..k..l..m..n..o..p..q...........#
+          #......................................#
+          ########################################
+
+  - level:
+      name: D:3
+      features:
+        - '# = metal_wall'
+        - '< = stone_stairs_up_i'
+      map: |-
+          ###
+          #<#
+          ###

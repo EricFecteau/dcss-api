@@ -1,0 +1,305 @@
+options:
+  default_feature: "floor"
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '# = metal_wall'
+        - '< = exit_dungeon'
+        - '. = floor'
+        - 'T = enter_temple'
+        - 'L = enter_lair'
+        - 'O = enter_orcish_mines'
+        - 'V = enter_vaults'
+        - 'U = enter_depths'
+      map: |-
+          ########################
+          #......................#
+          #.@..<..T..L..O..V..U..#
+          #......................#
+          ########################
+
+  - level:
+      name: Temple
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_temple'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Lair:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_lair'
+        - 'A = enter_shoals'
+        - 'N = enter_spider_nest'
+        - 'M = enter_slime_pits'
+      map: |-
+          ################
+          #..............#
+          #..<..A..N..M..#
+          #..............#
+          ################
+
+  - level:
+      name: Shoals:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_shoals'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Spider:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_spider_nest'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Slime:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_slime_pits'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Orc:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_orcish_mines'
+        - 'E = enter_elven_halls'
+      map: |-
+          ##########
+          #........#
+          #..<..E..#
+          #........#
+          ##########
+
+  - level:
+      name: Elf:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_elven_halls'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Vaults:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_vaults'
+        - 'C = enter_crypt'
+      items:
+        - 'z = silver rune of Zot'
+      map: |-
+          #############
+          #...........#
+          #..<..C..z..#
+          #...........#
+          #############
+
+  - level:
+      name: Crypt:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_crypt'
+        - 'W = enter_tomb'
+      map: |-
+          #############
+          #...........#
+          #..<..W..8..#
+          #...........#
+          #############
+
+  - level:
+      name: Tomb:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_tomb'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Depths:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_depths'
+        - 'H = enter_hell'
+        - 'J = enter_abyss'
+        - 'R = enter_pandemonium'
+        - 'X = stone_stairs_up_i'
+        - 'Z = enter_zot'
+      items:
+        - '1 = slimy rune of Zot'
+        - '2 = silver rune of Zot'
+        - '3 = golden rune of Zot'
+      map: |-
+          #####################
+          #.................1.#
+          #..<..H..J..R..Z..2.#
+          #.................3.#
+          #####################
+
+  - level:
+      name: Hell:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_hell'
+        - 'X = enter_cocytus'
+        - 'G = enter_gehenna'
+        - 'Y = enter_tartarus'
+        - 'I = enter_dis'
+      map: |-
+          ###################
+          #.................#
+          #..<..X..G..Y..I..#
+          #.................#
+          ###################
+
+  - level:
+      name: Coc:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_cocytus'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Geh:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_gehenna'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Tar:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_tartarus'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Dis:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_dis'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+  - level:
+      name: Abyss:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_abyss'
+        - '> = abyssal_stair'
+      map: |-
+          ##########
+          #........#
+          #..<..>..#
+          #........#
+          ##########
+
+  - level:
+      name: Pan:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - 'T = transit_pandemonium'
+        - '< = exit_pandemonium'
+      map: |-
+          ##########
+          #........#
+          #..<..T..#
+          #........#
+          ##########
+
+  - level:
+      name: Zot:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+        - '< = exit_zot'
+      map: |-
+          #######
+          #.....#
+          #..<..#
+          #.....#
+          #######
+
+# These are also possible, but often vary wildly per seed so hard to plan for them:
+# enter_ziggurat    | exit_ziggurat
+# enter_bazaar      | exit_bazaar
+# enter_trove       | exit_trove
+# enter_sewer       | exit_sewer
+# enter_ossuary     | exit_ossuary
+# enter_bailey      | exit_bailey
+# enter_gauntlet    | exit_gauntlet
+# enter_ice_cave    | exit_ice_cave
+# enter_volcano     | exit_volcano
+# enter_wizlab      | exit_wizlab
+# enter_desolation  | exit_desolation
+# enter_arena       | exit_arena
