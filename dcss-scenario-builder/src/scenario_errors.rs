@@ -11,7 +11,9 @@ pub enum Error {
     #[error(transparent)]
     YamlError(#[from] serde_yaml::Error),
     #[error("DCSS Parsing Error: {0}")]
-    DCSSParsing(#[from] ParsingError),
+    YamlParsingError(#[from] YamlParsingError),
+    #[error("DCSS Lua error: {0}")]
+    LuaError(String),
 }
 
 impl std::fmt::Debug for Error {
@@ -23,7 +25,13 @@ impl std::fmt::Debug for Error {
 
 /// Errors that can be raised while parsing the yaml scenarios.
 #[derive(Error, Debug)]
-pub enum ParsingError {
+pub enum YamlParsingError {
     #[error("Branch `{0}` does not exist.")]
     UnknownBranch(String),
+    #[error("Missing `@` on `D:1` in the yaml.")]
+    MissingChar,
+    #[error("Maximum width of map is 80 columns.")]
+    MapTooWide,
+    #[error("Maximum height of map is 69 rows.")]
+    MapTooLong,
 }

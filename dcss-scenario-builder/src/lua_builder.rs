@@ -1,5 +1,5 @@
 use crate::common::{branch_keys, Coord};
-use crate::Error;
+use crate::{Error, YamlParsingError};
 use rustc_hash::FxHashMap;
 use serde_yaml::{from_reader, Value};
 
@@ -28,7 +28,7 @@ pub(crate) fn process_scenario(
 
     let default_feature = from_reader["options"]["default_feature"].as_str().unwrap();
 
-    let mut coord = (1, 1);
+    let mut coord: Option<Coord> = None;
 
     // For each level
     for level in from_reader["levels"].as_sequence().unwrap().iter() {
@@ -55,17 +55,15 @@ pub(crate) fn process_scenario(
             .map(|x| process_glyphs(x.iter().map(|x| x.as_str().unwrap()).collect::<Vec<&str>>()));
 
         // Use all glyphs to process the map data
-        let map;
-        let temp;
-        (temp, map) = process_map(
+        let (temp, map) = process_map(
             features.unwrap(),
             items.as_ref(),
             monsters.as_ref(),
             level_data["map"].as_str().unwrap(),
             default_feature,
-        );
+        )?;
 
-        if temp != (1, 1) {
+        if temp.is_some() {
             coord = temp;
         }
 
@@ -88,7 +86,11 @@ pub(crate) fn process_scenario(
         levels.push((level_name.to_owned(), lua_scenario.concat()))
     }
 
-    Ok((coord, levels))
+    if coord.is_none() {
+        Err(Error::YamlParsingError(YamlParsingError::MissingChar))?
+    }
+
+    Ok((coord.unwrap(), levels))
 }
 
 /// Maps the glyphs to the features, items or monsters in the YAML.
@@ -129,7 +131,7 @@ fn process_map(
     monsters: Option<&FxHashMap<String, String>>,
     map: &str,
     default_feature: &str,
-) -> (Coord, String) {
+) -> Result<(Option<Coord>, String), Error> {
     let mut lua_map = vec![];
 
     let map_coords: Vec<Vec<String>> = map
@@ -143,12 +145,20 @@ fn process_map(
         })
         .collect::<Vec<Vec<String>>>();
 
-    let mut player_coord_d1 = (1, 1);
+    let mut player_coord_d1: Option<Coord> = None;
 
     for (y, inner) in map_coords.iter().enumerate() {
         for (x, glyph) in inner.iter().enumerate() {
+            if x > 80 {
+                Err(Error::YamlParsingError(YamlParsingError::MapTooWide))?
+            }
+
+            if y > 69 {
+                Err(Error::YamlParsingError(YamlParsingError::MapTooLong))?
+            }
+
             if glyph == "@" {
-                player_coord_d1 = (x, y);
+                player_coord_d1 = Some((x, y));
                 let lua_feat_line = format!("dgn.terrain_changed({}, {}, \"{}\")\n", x, y, "floor");
                 lua_map.push(lua_feat_line);
             } else if glyph == " " {
@@ -193,5 +203,5 @@ fn process_map(
         }
     }
 
-    (player_coord_d1, lua_map.concat())
+    Ok((player_coord_d1, lua_map.concat()))
 }

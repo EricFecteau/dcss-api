@@ -5,7 +5,7 @@ mod lua_builder;
 mod scenario_errors;
 mod wizmode;
 
-pub use scenario_errors::{Error, ParsingError};
+pub use scenario_errors::{Error, YamlParsingError};
 use wizmode::{enable_wiz, setup_map};
 
 use dcss_api::Webtile;

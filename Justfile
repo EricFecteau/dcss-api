@@ -61,8 +61,11 @@ dcss-enable-logging:
 dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg, data)/# type: (str, Any) -> bool/g' ./crawl/server/webtiles/ws_handler.py
 
-test-rust-api:
-    cd ./dcss-api && cargo -r test
+test-api:
+    cd ./dcss-api && cargo test
+
+test-scenario:
+    cd ./dcss-scenario-builder && cargo test
 
 setup-python:
     rm -rf ./dcss-api-python/pyo3

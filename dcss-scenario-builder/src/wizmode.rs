@@ -113,7 +113,7 @@ pub(crate) fn setup_map(
                         && m["channel"].as_i64().unwrap() != 3
                         && m["channel"].as_i64().unwrap() != 31
                     {
-                        println!("{}", m); // Replace when finalized
+                        Err(Error::LuaError(m.to_string()))?
                     }
                 }
             }

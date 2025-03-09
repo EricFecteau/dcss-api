@@ -56,7 +56,7 @@ fn verify_wizmode() -> Result<(), Error> {
         "b",
         "i",
         "c",
-        "./scenarios/simple/simple_map.yaml",
+        "./tests/test_scenarios/simple_map.yaml",
     )
     .expect("Failed to start game with scenario.");
 

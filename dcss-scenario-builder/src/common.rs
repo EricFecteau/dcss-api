@@ -1,4 +1,4 @@
-use crate::scenario_errors::{Error, ParsingError};
+use crate::scenario_errors::{Error, YamlParsingError};
 
 /// The (x, y) coordinate on a 2d grid
 pub type Coord = (usize, usize);
@@ -58,7 +58,7 @@ pub(crate) fn branch_keys(branch: &str) -> Result<(String, String, String), Erro
         "Desolation" => "9",
         "Gauntlet" => "!",
         "Arena" => "\"",
-        _ => Err(Error::DCSSParsing(ParsingError::UnknownBranch(
+        _ => Err(Error::YamlParsingError(YamlParsingError::UnknownBranch(
             branch_name.to_owned(),
         )))?,
     };

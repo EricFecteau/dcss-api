@@ -1,9 +1,0 @@
-* Create custom errors for the yaml
-* Get lua errors from game (Object {"dump": String("Nonecrash-Username-20231028-141834"), "message": String("1???"), "msg": String("game_ended"), "reason": String("crash")})
-* trap_def error when creating a trap
-* Error too large map (80+)
-* enter_shop crashes game
-* Badly named? Not crashing
-* enter_portal_vault and exit_portal_vault connections?
-* Todo -- identify seeds with Swamp-Spider, Swamp-Snake, Shoals-Spider and Shoals-Snake. Can generate correctly in the same game, but impossible to path it correctly (send you back to dungeon instead of lair)
-* Add log
