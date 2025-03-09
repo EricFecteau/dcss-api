@@ -1,0 +1,124 @@
+---
+title: "Lobby commands"
+---
+
+Once the `{"msg": "lobby_complete"}` JSON message is received, DCSS Webtiles is ready for commands. There are various things that can be done at this point. 
+
+## Logging in
+
+You can login to the DCSS Webtiles with credentials (username and password), or with a [cookie](https://en.wikipedia.org/wiki/HTTP_cookie) (if you have collected one previously).
+
+### Login with credential
+
+The first time you sign in, you must sign in with credentials (username and password). When sending the following (where this particular user is called `Username` and the password for that user is `Password`), you will receive a `login_success` message, if successful and a `login_fail`, if unsuccessful.
+
+```python
+# Sent to webtiles: 
+{"msg": "login", "username": "Username", "password": "Password"}
+
+# Received if successful:
+{"username": "Username", "admin": false, "msg": "login_success"}
+
+# Received if failed:
+{"msg": "login_fail"}
+```
+
+### Login with cookie
+
+Once you have logged on successfully with your credentials, you can request a cookie from DCSS Webtiles: 
+
+```python
+# Sent to webtiles
+{"msg": "set_login_cookie"}
+
+# Received
+{"cookie": "Username%20123075677009872810135587785129954954508", "expires": 7, "msg": "login_cookie"}
+
+```
+
+Once you have a cookie, you can send it back to log on the next time (you will receive a login_success). A new login cookie must be requested every time you use the cookie or once it expires.
+
+```python
+# Sent to webtiles:
+{"msg": "token_login", "cookie": "Username%20123075677009872810135587785129954954508"}
+
+# Received (if the cookie was good)
+{"username": "Username", "admin": false, "msg": "login_success"}
+
+# Received (if the cookie was bad)
+{"msg": "login_fail"}
+```
+
+## Game ids
+
+Once the login is successful, the game will provide various welcome `html` messages, such as the banner, and will provide a `set_game_links` message resembling this:
+
+```python
+{"content": "Play now:\n\n\n\n<span>\n\n<br>\n<a href=\"#play-dcss-web-trunk\">\nPlay trunk</a>\n\n\n<a href=\"javascript:\"\nclass=\"edit_rc_link\"\ndata-game_id=\"dcss-web-trunk\">(edit rc)</a>\n\n</span>\n\n<span>\n\n | \n<a href=\"#play-seeded-web-trunk\">\nSeeded</a>\n\n\n</span>\n\n<span>\n\n | \n<a href=\"#play-tut-web-trunk\">\nTutorial</a>\n\n\n</span>\n\n<span>\n\n | \n<a href=\"#play-sprint-web-trunk\">\nSprint trunk</a>\n\n\n</span>\n\n\n", "msg": "set_game_links"}
+```
+
+In this `set_game_links` message, you can find the game ids that will be required to change the `rc file` and to start a game. The game ids are marked by a `#` (e.g. `#play-dcss-web-trunk`) where the `#play-` should be discarded (e.g. `dcss-web-trunk`). In the above `set_game_links` you will find four game ids: `dcss-web-trunk`, `seeded-web-trunk`, `tut-web-trunk` and `sprint-web-trunk`. Starting with DCSS 0.31, an additional one is available: `descent-web-trunk`.
+
+## Editing the rc file
+
+You can read and write DCSS's options in the [rc file](http://crawl.akrasiac.org/docs/options_guide.txt) for each game ids. 
+
+You can use the `get_rc` command to read the `rc file` of the `dcss-web-trunk` game id (as an example):
+
+```python
+{"msg": "get_rc", "game_id": "dcss-web-trunk"}
+```
+
+You can use the `set_rc` command to write the `rc file` of the `dcss-web-trunk` game id (as an example). The entire content of the file will be replaced with the contents provided.
+
+```python
+{"msg": "set_rc", "game_id": "dcss-web-trunk", "contents": "show_more = false\nrest_delay = -1"}
+```
+
+## Starting a game
+
+You can start a game with the `play` command and a `game_id`:
+
+```python
+# Sent to webtiles: 
+{"msg": "play", "game_id": "seeded-web-trunk"}
+
+# Received if good game_id: 
+{"msg": "game_started"}
+
+# Received if bad game_id: 
+{"msg": "go_lobby"}
+```
+
+Depending on the content of your `rc file` and the type of game selected, there are a few `ui-push` that may pop up. The `ui-push` are a type of pop up message that take the focus of the game. 
+
+### Seeded game
+
+If the game was seeded (e.g. `seeded-web-trunk`), a `ui-push` with a `seed-selection` in the `type` key will popup with the following message:
+
+```python
+{"body":"Choose 0 for a random seed. [Tab]/[Shift-Tab] to cycle input focus.\n","footer":"\nThe seed will determine the dungeon layout, monsters, and items\nthat you discover, relative to this version of crawl. Upgrading\nmid-game may affect seeding. (See the manual for more details.)\n","generation_id":1,"msg":"ui-push","show_pregen_toggle":true,"title":"Play a game with a custom seed for version 0.30.1-4-g462c640d31.\n","type":"seed-selection","ui-centred":true}
+```
+
+If there is a specific seed of interest (e.g. `1234`), the simplest way is to send these commands. It is important to wait for the `ui-state-sync` after clearing the typed seed (see [ui and menus](menus.qmd) for more info).
+
+```python
+{"msg": "input", "text": "-"} # Clear typed seed
+{"msg": "input", "text": "1234"} # Write seed `1234`
+{"msg": "input", "text": "\t\t\t "} # If pre-generation is desired
+{"msg": "input", "text": "\r"} # End the menu
+```
+
+### New game choice
+
+If the options was not written in the `rc file`, the game will require you to make three choices before the game begins: `species`, `background` and `weapon`. This will come up in three subsequent `ui-push` with `newgame-choice` in the `type` key. You can simply send the relevant keys for the option (e.g. Minotaur Berserker with a hand axe will be `b`, `i`, `c`). It is important to wait for the `ui-push` for each of the three choices (see [ui and menus](menus.qmd) for more info).
+
+```python
+{"msg": "input", "text": "b"} # Minotaur
+{"msg": "input", "text": "i"} # Berserker
+{"msg": "input", "text": "c"} # Hand axe
+```
+
+If the seeded pre-generation option was selected, this will take a few seconds and you will received hundreds of `ui-state` messages of the `progress-bar` type as it pre-generates the dungeon.
+
+Once the game is started, it will send various messages with data such as [character data](character.qmd), [ui data](menus.qmd), [msgs from the log](messages.qmd) and [`map` data](map.qmd) and the game will accept any of the standard keyboard inputs.

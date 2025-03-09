@@ -1,0 +1,74 @@
+---
+title: "Map data"
+---
+
+The dungeon map data contains both the tile information and the monster information. The monster data is covered [here](monsters.qmd).
+
+## Structure of the map data
+
+The tiles data sent is sent with the least amount of repeated information. Below is a dump of the `map` information according to the image. This dump is extremely small, compared to a normal map, because it contains a custom scenario for demonstration purpose (see [dcss-scenario-builder](https://github.com/EricFecteau/dcss-scenario-builder) for more info).
+
+![](images/map/map_tiles_1.JPG)
+
+
+```python
+{"msg":"map","clear":true,"player_on_level":true,"vgrdc":{"x":0,"y":0},"cells":[{"x":-1,"y":-8,"mf":26},{"mf":26},{"mf":26},{"mf":26},{"x":-1,"y":-7,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1993,"flv":{"f":3,"s":217}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":2,"ov":[2322]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":7,"ov":[2323]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1996,"flv":{"f":7,"s":36}}},{"x":-1,"y":-6,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1997,"flv":{"f":4,"s":135}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":6,"ov":[2317]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":3,"ov":[2321]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1991,"flv":{"f":3,"s":153}}},{"x":-1,"y":-5,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1992,"flv":{"f":7,"s":162}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":8,"ov":[2317]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":4,"ov":[2321]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1993,"flv":{"f":8,"s":168}}},{"x":-1,"y":-4,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1997,"flv":{"f":6,"s":40}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":6,"ov":[2317]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":5,"ov":[2321]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1992,"flv":{"f":8,"s":161}}},{"x":-1,"y":-3,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1991,"flv":{"f":3,"s":148}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":7,"ov":[2317]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":6,"ov":[2321]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1997,"flv":{"f":5,"s":185}}},{"mf":26},{"x":-1,"y":-2,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1998,"flv":{"f":5,"s":44}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":6,"ov":[2317]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":5,"ov":[2321]}},{"f":1,"mf":5,"g":"+","col":7,"t":{"bg":2386,"flv":{"f":6}}},{"mf":26},{"x":-1,"y":-1,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1993,"flv":{"f":3,"s":74}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":3,"ov":[2317]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":5,"ov":[2321]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1993,"flv":{"f":2,"s":25}}},{"mf":26},{"x":-1,"y":0,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1994,"flv":{"f":8,"s":31}}},{"f":33,"mf":1,"g":"@","col":87,"t":{"fg":530691,"bg":5,"doll":[[6602,32],[6562,32],[6681,32],[6732,32],[7367,32],[7084,32]],"mcache":null,"ov":[2317]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":7,"ov":[2321]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1991,"flv":{"f":4,"s":2}}},{"x":-1,"y":1,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1998,"flv":{"f":4,"s":91}}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1991,"flv":{"f":5,"s":244}}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1991,"flv":{"f":8,"s":148}}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1995,"flv":{"f":7,"s":33}}}]}
+```
+
+The following is an exploration of the data contained in the `cells` key seen above.
+
+### `mf` information
+
+Each cell will provide an 'mf' number. Here is the concordance list. The missing keys are likely no longer used (related mostly to monster and player info).
+
+```
+1: "floor",
+2: "wall",
+3: "magic mapping floor",
+4: "magic mapping wall",
+5: "door",
+6: "item",
+11: "plant",
+12: "up stairs"
+13: "down stairs"
+14: "branch stairs (e.g. temple)"
+15: "feature (e.g. altar)"
+16: "shallow water"
+17: "lava"
+18: "trap"
+22: "deep water"
+23: "portal (e.g. sewer entrance)"
+24: "portal (up or down)"
+25: "portal (up or down)"
+26: "unexplored"
+```
+
+### Data structure with `x` and `y`
+
+The `cells` item value is a list of tiles. Only the first tile in a row, or the first tile after a series of "empty cells" in a row (cells not sent), will contain the `x` and `y` value. For example, the first cell in the list contains `'x': -1` and `'y': -8`. On the image, assuming the character is at `'x': 0` and `'y': 0` and that x negative is left and x positive is right, and that y negative is up and y positive is down, this cell is out of bound (labelled `1` in the image). This cell contains `'mf': 26"` as it is unexplored (`{"x": -1,"y": -8,"mf": 26}`). This data is followed by 3 cells without the `x` and `y` value (labelled `2`, `3` and `4` in the image), also all unexplored (`{"mf": 26}, {"mf": 26}, {"mf": 26}`). All known tiles will always be bordered by either unexplored tiles or a wall, this is the reason why no data is provided for the "tile" labelled `5`, since there is no way of reaching this tile from the known tiles. Once a row is complete, the next item in the list will contain the `x` and `y` value for the next row (`{"x": -1, "y": -7, "f": 5, "mf":2, "g": "#", "col": 3, "t": {"bg": 1993, "flv": {"f": 2, "s": 217}}}`). This is the top left wall (`"mf": 2`) right under the `1`. The other info (`f`, `g`, `col` and `t`) sent with this tile provides data to javascript in order to properly display this tile in webtiles. Some of this info can be useful for understanding the game.
+
+### Glyph
+
+Looking at the `g` data (glyph) in the known tiles will provide the `console` character for each tile. For example, a "floor" will have `.` and a "wall" will have `#`. The character will be labled as `@`. A particularly useful glyph is the `{` glyph that shows the disturbance left by an invisible monsters.
+
+## Updating the map data
+
+During the processing of the game, the map data gets updated very frequently, but only near tiles (or tiles that update) get re-sent to the client. Below is an example of the updated data sent if the character moves up and to the right (`x: 1` and `y: -1`). In the screenshot, this is moving towards the closed door.
+
+![](images/map/map_tiles_2.JPG)
+
+```python
+{"msg":"map","vgrdc":{"x":1,"y":-1},"cells":[{"x":-1,"y":-9,"mf":26},{"mf":26},{"mf":26},{"mf":26},{"mf":26},{"x":-1,"y":-8,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1994,"flv":{"f":4,"s":174}}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":4,"ov":[2322]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":2}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":5}},{"mf":26},{"x":0,"y":-7,"t":{"ov":[2317]}},{"x":3,"y":-7,"mf":26},{"x":3,"y":-3,"mf":26},{"x":3,"y":-2,"mf":26},{"x":1,"y":-1,"g":"@","col":87,"t":{"fg":530691,"doll":[[6602,32],[6562,32],[6681,32],[6732,32],[7367,32],[7084,32]],"mcache":null}},{"x":3,"y":-1,"mf":26},{"x":0,"y":0,"g":".","col":2,"t":{"fg":0,"doll":null,"mcache":null}}]}
+```
+
+The data shows that the character (`'g': '@'`) is now located at `'x': 1` and `'y': -1` and where the character used to be (`'x': 0` and `'y': 0`) a floor (`'g': '.'`) is now present. The tiles that were labled `1` to `5` now have been re-sent with actual data. `1` (`"x": -1, "y": -8`) is now a wall (`"mf": 2`), `2`, `3` and `4` are now floors (`"mf": 1`) and `5`, now accessible from `4`, is now provided as an "unexplored" tile (`"mf": 26`). A new row of unknown tiles (above the tiles labeled `1` to `5`) is now also provided `{"x":-1,"y":-9,"mf":26},{"mf":26},{"mf":26},{"mf":26},{"mf":26}`.
+
+If the character opens the adjacent door (north-east), the character will not move, but additional tiles will be revealed. 
+
+![](images/map/map_tiles_3.png)
+
+```python
+{"msg":"map","cells":[{"x":-1,"y":-9,"mf":26},{"mf":26},{"mf":26},{"mf":26},{"mf":26},{"x":3,"y":-8,"mf":26},{"x":3,"y":-7,"mf":26},{"x":3,"y":-3,"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1993,"flv":{"f":4,"s":214}}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1995,"flv":{"f":2,"s":82}}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1992,"flv":{"f":6,"s":250}}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1994,"flv":{"f":2,"s":223}}},{"x":1,"y":-2,"t":{"ov":[2320]}},{"f":34,"g":"'","t":{"bg":2393,"ov":[2319]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":5,"ov":[2319]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":6,"ov":[2319]}},{"f":33,"mf":1,"g":".","col":2,"t":{"bg":5,"ov":[2319,2321]}},{"f":5,"mf":2,"g":"#","col":3,"t":{"bg":1993,"flv":{"f":7,"s":166}}},{"x":1,"y":-1,"t":{"ov":[2323]}},{"x":3,"y":-1,"mf":26},{"mf":26},{"mf":26},{"mf":26}]}
+```
+
+The data for these tiles (and various other tiles) gets sent through the websocket connection. You can see the new tyles starting at `{"x":3,"y":-7,"mf":26}`.

@@ -1,0 +1,46 @@
+project:
+  type: website
+
+website:
+  title: "DCSS Website API Docs"
+  page-navigation: true
+  sidebar:
+    style: "floating"
+    search: true
+    align: left
+    contents:
+      - href: index.qmd
+        text: Home
+      - section: "API"
+        contents:
+          - href: connection.qmd
+            text: Connecting to DCSS Webtiles
+          - href: sending_receiving.qmd
+            text: Sending and receiving messages
+          - href: login_games.qmd
+            text: Login and games
+      - section: "Data"
+        contents:
+          - href: map.qmd
+            text: Map data
+          - href: monsters.qmd
+            text: Monster data
+          # - href: character.qmd
+          #   text: Character data  (TBD)
+          # - href: menus.qmd
+          #   text: Menu and UI data (TBD)
+          # - href: messages.qmd
+          #   text: Message data (TBD)
+
+format:
+  html:
+    code-overflow: wrap
+    theme: 
+      dark: darkly
+      light: flatly
+    css: styles.css
+    toc: true
+    grid:
+      sidebar-width: 300px
+      body-width: 900px
+      margin-width: 300px

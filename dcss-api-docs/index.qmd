@@ -1,0 +1,13 @@
+---
+title: "DCSS Webtile API Documentation"
+---
+
+## Table of contents
+
+* API
+    * [Connecting to DCSS Webtiles](connection.qmd)
+    * [Sending and receiving messages](sending_receiving.qmd)
+    * [Login and games](login_games.qmd)
+* Data
+    * [Map data](map.qmd)
+    * [Monster data](monsters.qmd)

@@ -1,0 +1,165 @@
+---
+title: "Connecting to DCSS Webtiles"
+---
+
+[DCSS Webtiles](https://crawl.develz.org/wordpress/howto) uses websocket to communicate between the client and the DCSS server. 
+
+## Connecting to DCSS webtiles through websocket
+
+You can connect to the websocket of the DCSS webtiles using [tungstenite](https://docs.rs/tungstenite/latest/tungstenite/) for Rust or [websockets](https://websockets.readthedocs.io/en/stable/) for Python. The example below assumes a DCSS webtiles on 'localhost:8080'. Running it will provide you some [ZLIB](https://www.zlib.net/) compressed data.
+
+For Rust:
+
+```rust
+// URL to DCSS Webtiles
+let url = "ws://localhost:8080/socket";
+
+// Parse with url crate
+let parsed_url = url::Url::parse(url).unwrap();
+
+// Connect with tungstenite crate
+let (mut socket, _response) = tungstenite::connect(parsed_url).unwrap();
+
+// Read the socket until something is received
+let mut compressed_msg = socket.read().unwrap().into_data();
+```
+
+For Python:
+
+```python
+import asyncio
+import websockets
+
+# URL to DCSS Webtiles
+ws_link = "ws://localhost:8080/socket"
+
+async def connect():
+    # Connect with websockets
+    connection = await websockets.connect(ws_link)
+
+    # Read the socket
+    received = await connection.recv()
+
+    return received
+
+compressed_msg = asyncio.run(connect())
+```
+
+The `compressed_msg` variable in the example above will likely contain `[170, 86, 202, 45, 78, 47, 86, 178, 138, 174, 6, 49, 148, 172, 20, 148, 10, 50, 243, 210, 149, 106, 99, 107, 1, 0]` for Rust or `b'\xaaV\xca-N/V\xb2\x8a\xae\x061\x94\xac\x14\x94\n2\xf3\xd2\x95jck\x01\x00'` for Python.
+
+## Decoding the received data
+
+Now that data has been received, it can be decoded. Before decoding the data, the 4 bytes removed by DCSS (prior to sending to the client) must be re-added (`[0u8, 0, 255, 255]` for Rust and `b"\x00\x00\xFF\xFF"` for Python). Once added, the data can be decoded with [flate2](https://docs.rs/flate2/latest/flate2/) for Rust and [zlib](https://docs.python.org/3/library/zlib.html) for Python. The the data can be turned into a json object with [serde_json](https://docs.rs/serde_json/latest/serde_json/) for Rust and [json](https://docs.python.org/3/library/json.html) for Python.
+
+For Rust:
+
+```rust
+// Append removed bytes
+compressed_msg.append(&mut vec![0u8, 0, 255, 255]);
+
+// Create decompressor (https://github.com/rust-lang/flate2-rs/issues/312)
+let wbits = 15; // Windows bits fixed (goes to -15 in flate2 because of zlib_header = false)
+let mut decompressor = flate2::Decompress::new_with_window_bits(false, wbits);
+
+let bufsize = 1024 * 1024; // Needs a buffer size to work (1mb)
+let mut decompressed_bytes = Vec::with_capacity(bufsize);
+
+// Use the decompressor to decompress the data
+decompressor
+    .decompress_vec(
+        &compressed_msg[..],
+        &mut decompressed_bytes,
+        flate2::FlushDecompress::Sync,
+    )
+    .unwrap();
+
+// Convert to str
+let json_str = std::str::from_utf8(&decompressed_bytes).unwrap();
+
+// Convert to json
+let json_data: serde_json::Value = serde_json::from_str(json_str).unwrap();
+```
+
+For Python:
+
+```python
+import zlib
+import json
+
+# Data from connection example
+full_compressed_data = compressed_msg + bytearray(b"\x00\x00\xFF\xFF")
+
+# Decompress with zlib
+_decompressobj = zlib.decompressobj(-zlib.MAX_WBITS)
+decompressed_data = _decompressobj.decompress(full_compressed_data)
+
+# Jsonify the data
+json_data = json.loads(decompressed_data)
+```
+
+The `json_data` variable in the example above will likely contain `{'msgs': [{'msg': 'ping'}]}` as a serde_json `Value` object for Rust and as a `json` object for Python.
+
+## Sending data to DCSS webtiles
+
+Sending data to DCSS is simpler than receiving it, but the correct objects must be sent. The example below connects to the webtiles and sends a login command for a user and a play command for DCSS. This assumes that a user called `Username`, that has a password equal to `Password`, exists on `localhost:8080`. It also assumes a game id of `dcss-web-trunk` is available.
+
+For Rust:
+
+```rust
+// URL to DCSS Webtiles
+let url = "ws://localhost:8080/socket";
+
+// Parse with url crate
+let parsed_url = url::Url::parse(url).unwrap();
+
+// Connect with tungstenite crate
+let (mut socket, _response) = tungstenite::connect(parsed_url).unwrap();
+
+// Data packets to be sent
+let message1 = serde_json::json!({"msg": "login", "username": "Username", "password": "Password"});
+let message2 = serde_json::json!({"msg": "play", "game_id": "dcss-web-trunk"});
+
+// Send messages
+socket.send(tungstenite::Message::Text(message1.to_string())).unwrap();
+socket.send(tungstenite::Message::Text(message2.to_string())).unwrap();
+
+// Wait for 5 seconds
+std::thread::sleep(std::time::Duration::from_millis(5000));
+```
+
+For Python: 
+
+```python
+import asyncio
+import websockets
+import json
+import time
+
+ws_link = "ws://localhost:8080/socket"
+message1 = {"msg": "login", "username": "Username", "password": "Password"}
+message2 = {'msg': 'play', 'game_id': 'dcss-web-trunk'}
+
+async def connect_and_send():
+    # Connect
+    connection = await websockets.connect(ws_link)
+
+    # Send both messages
+    await connection.send(json.dumps(message1))
+    await connection.send(json.dumps(message2))
+
+    time.sleep(5)
+
+asyncio.run(connect_and_send())
+```
+
+If you watch on http://localhost:8080/#lobby, you will see for 5 seconds the user named `Username` playing a game of `dcss-web-trunk`.
+
+See what can be sent and what will be received [on the next page](sending_receiving.qmd).
+
+## Connecting to a public DCSS Webtiles server
+
+It is possible to send and receive commands (e.g. play the game) at an incredibly fast pace, but full speed should be restricted to local games only (e.g. running DCSS Webtiles server on your local computer or a server you own). When connecting to a public server, limit your play speed to a maximum of one sent command per 100 milliseconds. Follow any other restrictions from the server (e.g. no bot chat interaction).
+
+## Websocket Secure (wss) connection
+
+DCSS Webtiles can have secure connections enabled, especially public servers. You can tell if a link is secured if the websocket link starts with "wss" instead of "ws". In Rust, no change in code is necessary, but the `native-tls-vendored` feature flag must be enabled for tungstenite: `tungstenite = { version = "0.21", features = ["native-tls-vendored"] }`. In python, the `websockets.connect(ws_link)` code must become `websockets.connect(ws_link, ssl = True)`.

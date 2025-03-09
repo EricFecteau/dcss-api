@@ -1,0 +1,33 @@
+---
+title: "Monster data"
+---
+
+The monster data is sent along with the [dungeon map data](map.qmd).
+
+## Receiving the data
+
+Below is the same map as described in the [dungeon map data](map.qmd), but with a `Worm` in the first visible row. The data dump below includes only the first two row of tiles (sent as if the monster was never seen before). The second row (starting with `'x': -2, 'y': -7`) contains the `'mon'` keyword in the second tile (the first visible tile) that has a monster dictionary as value. The first time a type of monster is encountered (`worm` in this case), the game will send various types of data ('id', 'name', 'avghp' and 'threat' being the most interesting). 
+
+![](images/monsters/map_monster_1.JPG)
+
+```python
+{'x': -2, 'y': -8, 'mf': 26}, {'mf': 26}, {'mf': 26}, {'mf': 26}, {'x': -2, 'y': -7, 'mf': 26}, {'f': 33, 'mon': {'id': 1, 'name': 'worm', 'plural': 'worms', 'type': 54, 'typedata': {'avghp': 18}, 'att': 0, 'btype': 54, 'threat': 2}, 'mf': 1, 'g': 'w', 'col': 12, 't': {'fg': 5116, 'bg': 4, 'doll': [[5116, 32]], 'mcache': None}}, {'f': 33, 'mf': 1, 'g': '.', 'col': 7, 't': {'bg': 6, 'ov': [2267]}}, {'f': 7, 'mf': 2, 'g': '#', 'col': 6, 't': {'bg': 980}}, {'mf': 26}
+```
+
+Assuming the character waits one turn, here is the updated map and data once the `worm` moves down south-east. Note that the 'mon' keyword get's updated to `None` at the worm's previous location (`'x': -1, 'y': -7`) and it's ID can now be found at `'x': 0, 'y': -6`, where the monster appears in the image.
+
+![](images/monsters/map_monster_2.JPG)
+
+```python
+{'msg': 'map', 'cells': [{'x': -2, 'y': -8, 'mf': 26}, {'mf': 26}, {'mf': 26}, {'mf': 26}, {'x': -2, 'y': -7, 'mf': 26}, {'mon': None, 'g': '.', 'col': 7, 't': {'fg': 0, 'doll': None, 'mcache': None}}, {'x': 2, 'y': -7, 'mf': 26}, {'x': 0, 'y': -6, 'mon': {'id': 1}, 'g': 'w', 'col': 12, 't': {'fg': 5116, 'doll': [[5116, 32]], 'mcache': None}}, {'x': 2, 'y': -6, 'mf': 26}, {'x': -4, 'y': -5, 'mf': 26}, {'x': 2, 'y': -5, 'mf': 26}, {'x': -4, 'y': -4, 'mf': 26}, {'x': 2, 'y': -4, 'mf': 26}]}
+```
+
+## ID and obfuscation
+
+Generally, when a new monster ID appears, it will be accompanied with a monster dictionary (as the "worm" did in the first example above). This is not universally true. In some circumstances, when a known monster moves to a new tile and a new monster, of the same type, moves into the tile that was previously occupied by the known monster that moved, a new ID will be provided without any monster dictionary. This new monster should have the same monster info as the monster that previously occupied the space. In other circumstances, when a group of similar monsters appear one after the other, only the first monster will contain the monster dictionary. Subsequent monsters will only contain the ID. The data of the highest known ID should be copied to that monster. Both of these are assumptions and may be an unsafe assumption.
+
+In order to limit the knowledge that can be gained from the information transfered, some level of obfuscation is built-in to the system of monster ID. A monster will generally retain the same ID as long as it is in the field of view of the character, therefore, if a known ID appears in a location, it is safe to assume it is the same monster as seen previously (e.g. the worm above moves from one tile to the other and retains the same ID). If the monster goes out of the field of view of the character, it will likely come back with a new ID. Therefore, tracking ID is not correct as some monsters may have simply changed ID.
+
+## Invisible monsters
+
+Assuming the character can't see invisible, when a monster goes invisible, the `mon` keyword will be updated to `None`. Thankfully, since the monster will occasionally create a disturbance, it is possible to find the location of invisible monsters by looking for the `{` glyph (under the `g` data in the dictionary for each tile).
