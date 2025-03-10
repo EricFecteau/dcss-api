@@ -23,8 +23,8 @@ jobs:
 
           sudo apt-get install build-essential libncursesw5-dev bison flex liblua5.1-0-dev \
             libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3 \
-            bzip2 python-minimal ncurses-term locales-all sqlite3 libpcre3 liblua5.1-0 
-            locales autoconf lsof flex libbot-basicbot-perl lua5.1 man libpng-dev python3-tornado
+            bzip2 ncurses-term locales-all sqlite3 libpcre3 liblua5.1-0 locales autoconf \
+            lsof flex libbot-basicbot-perl lua5.1 man libpng-dev python3-tornado
 
           mkdir ./crawl
           mkdir ./crawl/main
