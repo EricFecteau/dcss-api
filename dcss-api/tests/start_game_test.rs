@@ -18,7 +18,7 @@ fn reset_test(username: &str) {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
 
     // Empty message queue;
@@ -53,7 +53,7 @@ fn start_game_seeded() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "1", true, "b", "i", "b")
+        .start_game_seeded("dcss-0.32", "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -89,7 +89,7 @@ fn start_game_seeded() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "158985", false, "b", "i", "b")
+        .start_game_seeded("dcss-0.32", "158985", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -131,7 +131,7 @@ fn start_game() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -178,7 +178,7 @@ fn save_game_continue() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -237,7 +237,7 @@ fn start_game_two_accounts() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -281,7 +281,7 @@ fn start_game_two_accounts() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -336,10 +336,10 @@ fn start_game_two_accounts_combined() {
     while webtile2.get_message().is_some() {}
 
     webtile1
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
     webtile2
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -406,7 +406,7 @@ fn real_blocking_error() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "1", true, "b", "i", "b")
+        .start_game_seeded("dcss-0.32", "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message

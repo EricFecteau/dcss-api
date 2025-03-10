@@ -5,7 +5,7 @@ use dcss_api::Webtile;
 fn main() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 100, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -21,9 +21,9 @@ fn main() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    // Start a random game on 'dcss-web-trunk', for Minotaur berserker with a mace.
+    // Start a random game (seed `0`) on 'dcss-0.32', for Minotaur berserker with a mace.
     webtile
-        .start_game(&gameid[0], "b", "i", "b")
+        .start_game_seeded(&gameid[0], "0", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Print the messages you get upon starting the game (should be processed)

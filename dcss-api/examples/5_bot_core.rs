@@ -8,7 +8,7 @@ use std::process;
 fn main() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 100, "0.32").expect("Failed to connect");
 
     // Log in (to a user called "Username", with a password "Password")
     let gameid = webtile
@@ -20,7 +20,7 @@ fn main() {
 
     // Start a random game on 'dcss-web-trunk', for Minotaur berserker with a mace.
     webtile
-        .start_game_seeded(&gameid[0], "1", false, "b", "i", "b")
+        .start_game_seeded(&gameid[0], "1", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Process the messages

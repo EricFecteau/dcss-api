@@ -260,7 +260,7 @@ impl WebtilePy {
     ///
     /// Example:
     ///     # Start a game on "dcss-web-trunk", for a Minotaur (b), Berserker (i), with a mace (b)
-    ///     webtile.start_game("dcss-web-trunk", "b", "i", "b")
+    ///     webtile.start_game("dcss-web-trunk", "b", "f", "b")
     fn start_game(
         &mut self,
         game_id: &str,
@@ -287,7 +287,7 @@ impl WebtilePy {
     /// Example:
     ///     # Start a game on "dcss-web-trunk", for the "123" seed (pregenerated) for a
     ///     # Minotaur (b), Berserker (i), with a mace (b)
-    ///     webtile.start_game_seeded("dcss-web-trunk", "123", true, "b", "i", "b")
+    ///     webtile.start_game_seeded("dcss-web-trunk", "123", true, "b", "f", "b")
     fn start_game_seeded(
         &mut self,
         game_id: &str,

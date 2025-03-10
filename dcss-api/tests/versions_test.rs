@@ -18,7 +18,7 @@ fn reset_test(username: &str, version: &str) {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game(version, "b", "i", "b")
+        .start_game(version, "b", "f", "b")
         .expect("Failed to start game");
 
     // Empty message queue;
@@ -53,7 +53,7 @@ fn start_game_seeded_0_29() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.29", "1", true, "b", "i", "b")
+        .start_game_seeded("dcss-0.29", "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -89,7 +89,7 @@ fn start_game_seeded_0_29() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.29", "158985", false, "b", "i", "b")
+        .start_game_seeded("dcss-0.29", "158985", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -131,7 +131,7 @@ fn start_game_seeded_0_30() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.30", "1", true, "b", "i", "b")
+        .start_game_seeded("dcss-0.30", "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -167,7 +167,7 @@ fn start_game_seeded_0_30() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.30", "158985", false, "b", "i", "b")
+        .start_game_seeded("dcss-0.30", "158985", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -209,7 +209,7 @@ fn start_game_seeded_0_31() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.31", "1", true, "b", "i", "b")
+        .start_game_seeded("dcss-0.31", "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -245,7 +245,7 @@ fn start_game_seeded_0_31() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.31", "158985", false, "b", "i", "b")
+        .start_game_seeded("dcss-0.31", "158985", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -287,7 +287,7 @@ fn start_game_seeded_0_32() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "1", true, "b", "i", "b")
+        .start_game_seeded("dcss-0.32", "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -323,7 +323,7 @@ fn start_game_seeded_0_32() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "158985", false, "b", "i", "b")
+        .start_game_seeded("dcss-0.32", "158985", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message

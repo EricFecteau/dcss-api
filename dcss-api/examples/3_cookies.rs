@@ -5,7 +5,7 @@ use dcss_api::Webtile;
 fn main() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 100, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -31,7 +31,7 @@ fn main() {
 
     // Connect (again) to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 100, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

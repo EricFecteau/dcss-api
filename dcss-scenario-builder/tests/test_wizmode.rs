@@ -18,7 +18,7 @@ fn reset_test(username: &str) {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "i", "b")
+        .start_game("dcss-0.32", "b", "f", "b")
         .expect("Failed to start game");
 
     // Empty message queue;

@@ -6,7 +6,7 @@ use dcss_api::{BlockingError, Error};
 fn main() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 100, "0.29").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 100, "0.32").expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -21,7 +21,7 @@ fn main() {
 
     // Start a random game on 'dcss-web-trunk', for Minotaur berserker with a mace.
     webtile
-        .start_game("dcss-web-trunk", "b", "i", "b")
+        .start_game("dcss-web-trunk", "b", "f", "b")
         .expect("Failed to start game");
 
     // Print the messages you get upon starting the game (should be processed)

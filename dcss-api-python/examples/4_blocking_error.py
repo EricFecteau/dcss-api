@@ -17,7 +17,7 @@ def main():
         pass
 
     # Start a random game on 'dcss-0.32', for Minotaur berserker with a mace.
-    webtile.start_game("dcss-0.32", "b", "i", "b")
+    webtile.start_game("dcss-0.32", "b", "f", "b")
 
     # Print the messages you get upon starting the game (should be processed)
     while (message := webtile.get_message()) != None:

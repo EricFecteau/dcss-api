@@ -16,7 +16,7 @@ def reset_test(username):
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "i", "b")
+    webtile.start_game("dcss-0.32", "b", "f", "b")
 
     while (message := webtile.get_message()) != None:
         pass
@@ -43,7 +43,7 @@ def test_start_game_seeded():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.32", "1", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.32", "1", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -77,7 +77,7 @@ def test_start_game_seeded():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.32", "158985", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.32", "158985", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -116,7 +116,7 @@ def test_start_game():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "i", "b")
+    webtile.start_game("dcss-0.32", "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -150,7 +150,7 @@ def test_start_game():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "i", "b")
+    webtile.start_game("dcss-0.32", "b", "f", "b")
 
     json_message = None
     while (message := webtile.get_message()) != None:
@@ -192,7 +192,7 @@ def test_start_game_two_accounts():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "i", "b")
+    webtile.start_game("dcss-0.32", "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -231,7 +231,7 @@ def test_start_game_two_accounts():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "i", "b")
+    webtile.start_game("dcss-0.32", "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -279,8 +279,8 @@ def test_start_game_two_accounts_combined():
     while (message := webtile2.get_message()) != None:
         pass
 
-    webtile1.start_game("dcss-0.32", "b", "i", "b")
-    webtile2.start_game("dcss-0.32", "b", "i", "b")
+    webtile1.start_game("dcss-0.32", "b", "f", "b")
+    webtile2.start_game("dcss-0.32", "b", "f", "b")
 
     msgs = None
     while (message := webtile1.get_message()) != None:
@@ -344,7 +344,7 @@ def test_real_blocking_error():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "i", "b")
+    webtile.start_game("dcss-0.32", "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:

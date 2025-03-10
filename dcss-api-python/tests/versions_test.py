@@ -16,7 +16,7 @@ def reset_test(username, version):
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game(version, "b", "i", "b")
+    webtile.start_game(version, "b", "f", "b")
 
     while (message := webtile.get_message()) != None:
         pass
@@ -43,7 +43,7 @@ def test_start_game_seeded_0_29():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.29", "1", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.29", "1", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -77,7 +77,7 @@ def test_start_game_seeded_0_29():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.29", "158985", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.29", "158985", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -116,7 +116,7 @@ def test_start_game_seeded_0_30():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.30", "1", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.30", "1", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -150,7 +150,7 @@ def test_start_game_seeded_0_30():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.30", "158985", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.30", "158985", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -189,7 +189,7 @@ def test_start_game_seeded_0_31():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.31", "1", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.31", "1", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -223,7 +223,7 @@ def test_start_game_seeded_0_31():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.31", "158985", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.31", "158985", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -262,7 +262,7 @@ def test_start_game_seeded_0_32():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.32", "1", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.32", "1", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -296,7 +296,7 @@ def test_start_game_seeded_0_32():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.32", "158985", True, "b", "i", "b")
+    webtile.start_game_seeded("dcss-0.32", "158985", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
