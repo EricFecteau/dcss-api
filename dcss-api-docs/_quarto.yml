@@ -1,13 +1,23 @@
 project:
   type: website
+  output-dir: _site
 
 website:
-  title: "DCSS Website API Docs"
+  title: "DCSS Webtile API Docs"
+  repo-url: https://github.com/EricFecteau/dcss-api
+  repo-actions: [issue]
   page-navigation: true
   sidebar:
     style: "floating"
     search: true
     align: left
+    tools:
+      - icon: github
+        href: https://github.com/EricFecteau/dcss-api
+        text: DCSS-API GitHub
+      - icon: globe
+        href: https://ericfecteau.ca
+        text: EricFecteau.ca
     contents:
       - href: index.qmd
         text: Home
