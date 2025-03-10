@@ -18,7 +18,7 @@ This repo contains a series of libraries in Rust and Python to work with [Dungeo
 
 ## Docs
 
-Documentation about the DCSS websocket API can also be found [here](https://ericfecteau.ca/dcss-api-docs/).
+Documentation about the DCSS websocket API can also be found [here](https://ericfecteau.ca/dcss/dcss-api-docs/).
 
 ## Server & testing
 
