@@ -1,0 +1,25 @@
+name: Python-Publish
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+test:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout main
+      uses: actions/checkout@v4
+
+    - name: Install DCSS Webtiles
+      run: |
+        mkdir ./crawl
+        mkdir ./crawl/main
+        git -C ./crawl/main/ clone "https://github.com/crawl/crawl.git"
+        ls ./crawl/main
