@@ -1,0 +1,43 @@
+options:
+  default_feature: "floor"
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '< = exit_dungeon'
+        - '> = stone_stairs_down_i'
+        - '# = rock_wall'
+        - '. = floor'
+        - '+ = closed_door'
+      items:
+        - 'x = Scroll of identify'
+      map: |-
+          #########
+          #...#...#
+          #.<.#.x.#
+          #...#...#
+          #.@.+...#
+          #...#...#
+          #...#.>.#
+          #...#...#
+          #########
+
+  - level:
+      name: D:2
+      features:
+        - '< = stone_stairs_up_i'
+        - '# = rock_wall'
+        - '. = floor'
+      monsters:
+        - 'k = Kobold'
+      map: |-
+          #########
+          #.......#
+          #.<.....#
+          #.......#
+          #.......#
+          #.......#
+          #.....k.#
+          #.......#
+          #########
