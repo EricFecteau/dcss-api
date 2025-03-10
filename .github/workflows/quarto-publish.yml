@@ -29,6 +29,6 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./_site/
+          local-dir: ./dcss-api-docs/_site/
           server-dir: ./dcss/dcss-api-docs/
           state-name: ../.ftp-deploy-sync-state.json
