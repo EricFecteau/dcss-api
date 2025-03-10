@@ -1,10 +1,10 @@
 [package]
 authors = ["Eric Fecteau <eric.m.fecteau@gmail.com>"]
-name = "dcss-api-python"
+name = "dcss-api"
 version = "0.2.1"
 edition = "2021"
 license = "MPL-2.0"
-description = "A DCSS Webtile API for Rust & Python."
+description = "A DCSS Webtile API for Python."
 repository = "https://github.com/EricFecteau/dcss-api/"
 readme = "README.md"
 

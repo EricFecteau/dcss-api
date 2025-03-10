@@ -4,7 +4,7 @@
 
 ## Documentation
 
-The Rust documentation for the `dcss-api` can be found [here](https://docs.rs/dcss-api/latest/dcss_api/index.html). The best way to start is to look at the examples in Python [here](https://github.com/EricFecteau/dcss-api/tree/main/dcss-api-python/examples). Please see the [setup on GitHub](https://github.com/EricFecteau/dcss-api?tab=readme-ov-file#server--testing) in order to be able to run these examples. In depth documentation about the DCSS websocket API can also be found [here](https://ericfecteau.ca/dcss-api-docs/).
+The Rust documentation for the `dcss-api` can be found [here](https://docs.rs/dcss-api/latest/dcss_api/index.html). The best way to start is to look at the examples in Python [here](https://github.com/EricFecteau/dcss-api/tree/main/dcss-api-python/examples). Please see the [setup on GitHub](https://github.com/EricFecteau/dcss-api?tab=readme-ov-file#server--testing) in order to be able to run these examples. In depth documentation about the DCSS websocket API can also be found [here](https://ericfecteau.ca/dcss/dcss-api-docs/).
 
 ## Example
 
