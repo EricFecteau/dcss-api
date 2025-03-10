@@ -22,7 +22,9 @@ jobs:
         run: |
 
           sudo apt-get install build-essential libncursesw5-dev bison flex liblua5.1-0-dev \
-            libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3
+            libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3 \
+            bzip2 python-minimal ncurses-term locales-all sqlite3 libpcre3 liblua5.1-0 
+            locales autoconf lsof flex libbot-basicbot-perl lua5.1 man libpng-dev python3-tornado
 
           mkdir ./crawl
           mkdir ./crawl/main
@@ -31,4 +33,4 @@ jobs:
           mkdir ./crawl/dcss-0.29
           cp -r ./crawl/main/crawl/. ./crawl/dcss-0.29
           git -C ./crawl/dcss-0.29 checkout stone_soup-0.29
-          make -C ./crawl/dcss-0.29/crawl-ref/source
+          make -C ./crawl/dcss-0.29/crawl-ref/source WEBTILES=y
