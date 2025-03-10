@@ -98,37 +98,35 @@ def test_too_wide():
         pass
 
     yaml_file = "./dcss-scenario-builder/tests/test_scenarios/too_wide.yaml"
-    webtile.start_game_with_scenario("dcss-0.32", "b", "f", "b", yaml_file)
 
-    # try: 
-    #     webtile.start_game_with_scenario("dcss-0.32", "b", "f", "b", yaml_file)
-    # except ScenarioErr as e:
-    #     if "Missing `@` on `D:1`" in e.args[0]:
-    #         assert True
-    #     else:
-    #         assert False
+    try: 
+        webtile.start_game_with_scenario("dcss-0.32", "b", "f", "b", yaml_file)
+    except ScenarioErr as e:
+        if "Maximum width of map is 79 columns" in e.args[0]:
+            assert True
+        else:
+            assert False
 
 
-# def test_too_long():
-#     reset_test("Username")
+def test_too_long():
+    reset_test("Username")
 
-#     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
 
-#     while (message := webtile.get_message()) != None:
-#         pass
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     webtile.login_with_credentials("Username", "Password")
+    webtile.login_with_credentials("Username", "Password")
 
-#     while (message := webtile.get_message()) != None:
-#         pass
+    while (message := webtile.get_message()) != None:
+        pass
 
-#     yaml_file = "./dcss-scenario-builder/tests/test_scenarios/too_long.yaml"
-#     webtile.start_game_with_scenario("dcss-0.32", "b", "f", "b", yaml_file)
+    yaml_file = "./dcss-scenario-builder/tests/test_scenarios/too_long.yaml"
 
-#     # try: 
-#     #     webtile.start_game_with_scenario("dcss-0.32", "b", "f", "b", yaml_file)
-#     # except ScenarioErr as e:
-#     #     if "Missing `@` on `D:1`" in e.args[0]:
-#     #         assert True
-#     #     else:
-#     #         assert False
+    try: 
+        webtile.start_game_with_scenario("dcss-0.32", "b", "f", "b", yaml_file)
+    except ScenarioErr as e:
+        if "Maximum height of map is 69 rows" in e.args[0]:
+            assert True
+        else:
+            assert False
