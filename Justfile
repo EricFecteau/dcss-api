@@ -41,7 +41,7 @@ dcss-create-users:
     cd ./dcss-api && cargo -r run --example 0_setup
 
 dcss-run:
-    python crawl/server/server.py
+    python3 crawl/server/server.py
 
 dcss-clear:
     rm -rf ./saves
