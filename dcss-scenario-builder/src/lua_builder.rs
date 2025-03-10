@@ -149,7 +149,7 @@ fn process_map(
 
     for (y, inner) in map_coords.iter().enumerate() {
         for (x, glyph) in inner.iter().enumerate() {
-            if x > 80 {
+            if x > 79 {
                 Err(Error::YamlParsingError(YamlParsingError::MapTooWide))?
             }
 

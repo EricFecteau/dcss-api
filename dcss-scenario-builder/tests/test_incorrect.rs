@@ -92,6 +92,7 @@ fn verify_too_wide() {
     .expect("Failed to start game with scenario");
 }
 
+#[should_panic]
 #[test]
 fn verify_too_long() {
     // Safe test -- login start game, quit, and then test

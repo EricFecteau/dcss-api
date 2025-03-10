@@ -30,7 +30,7 @@ pub enum YamlParsingError {
     UnknownBranch(String),
     #[error("Missing `@` on `D:1` in the yaml.")]
     MissingChar,
-    #[error("Maximum width of map is 80 columns.")]
+    #[error("Maximum width of map is 79 columns.")]
     MapTooWide,
     #[error("Maximum height of map is 69 rows.")]
     MapTooLong,
