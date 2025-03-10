@@ -23,4 +23,8 @@ jobs:
           mkdir ./crawl
           mkdir ./crawl/main
           git -C ./crawl/main/ clone "https://github.com/crawl/crawl.git"
-          ls ./crawl/main
+
+          mkdir ./crawl/dcss-0.29
+          cp -r ./crawl/main/crawl/. ./crawl/dcss-0.29
+          git -C ./crawl/dcss-0.29 checkout stone_soup-0.29
+          make -C ./crawl/dcss-0.29/crawl-ref/source WEBTILES=y
