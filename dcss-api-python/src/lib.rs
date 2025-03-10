@@ -1,6 +1,7 @@
 //! An API library to interact with [DCSS Webtile](http://crawl.develz.org/wordpress/howto).
 
 use ::dcss_api::{BlockingError, Error, Webtile};
+use dcss_scenario_builder::start_game_with_scenario;
 
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
@@ -27,6 +28,7 @@ pub struct WebtilePy {
 
 pyo3::create_exception!(mymodule, APIErr, PyException);
 pyo3::create_exception!(mymodule, BlockingErr, PyException);
+pyo3::create_exception!(mymodule, ScenarioErr, PyException);
 
 #[pymethods]
 impl WebtilePy {
@@ -302,6 +304,40 @@ impl WebtilePy {
             .map_err(|e| PyErr::new::<APIErr, _>(e.to_string()))
     }
 
+    /// Start a game, using `start_game_seeded`, with a scenario yaml file.
+    ///
+    /// Arguments:
+    ///     game_id (str): A string of the game's ID.
+    ///     seed (str): A string of the game's seed.
+    ///     pregenerate (bool): A bool on if the pregeneration option should be selected.
+    ///     species (str): A string for the character's species.
+    ///     background (str): A string for the character's background.
+    ///     weapon (str): A string for the character's weapon.
+    ///     scenario_file (str): A path to a YAML scenario file.
+    ///
+    /// Example:
+    ///     # Start a scenario game, for a Minotaur (b), Berserker (f), with a mace (b) using the
+    ///     # branches.yaml scenario.
+    ///     webtile.start_game_with_scenario("dcss-0.32", true, "b", "f", "b", "./scenarios/branches.yaml")
+    fn start_game_with_scenario(
+        &mut self,
+        game_id: &str,
+        species: &str,
+        background: &str,
+        weapon: &str,
+        scenario_file: &str,
+    ) -> PyResult<()> {
+        start_game_with_scenario(
+            &mut self.webtile,
+            game_id,
+            species,
+            background,
+            weapon,
+            scenario_file,
+        )
+        .map_err(|e| PyErr::new::<ScenarioErr, _>(e.to_string()))
+    }
+
     /// Save a game by sending the `CTRL + S` command.
     ///
     /// Example:
@@ -343,5 +379,6 @@ pub fn dcss_api(py: Python<'_>, m: Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<WebtilePy>()?;
     m.add("BlockingErr", py.get_type::<BlockingErr>())?;
     m.add("APIErr", py.get_type::<APIErr>())?;
+    m.add("ScenarioErr", py.get_type::<ScenarioErr>())?;
     Ok(())
 }
