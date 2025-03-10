@@ -4,11 +4,11 @@ This repo contains a series of libraries in Rust and Python to work with [Dungeo
 
 ## Crates
 
-### [dcss-api](https://github.com/EricFecteau/dcss-api/blob/main/dcss-api/) [![Crates.io Version](https://img.shields.io/crates/v/dcss-api)](https://crates.io/crates/dcss-api) [![docs.rs](https://img.shields.io/docsrs/dcss-api)](https://docs.rs/dcss-api/0.2.0/dcss_api/) 
+### [dcss-api](https://github.com/EricFecteau/dcss-api/blob/main/dcss-api/) [![Crates.io Version](https://img.shields.io/crates/v/dcss-api)](https://crates.io/crates/dcss-api) [![docs.rs](https://img.shields.io/docsrs/dcss-api)](https://docs.rs/dcss-api/latest/dcss_api/) 
 
 `dcss-api` is an easy to use Rust wrapper for DCSS Webtile websocket API. It works with version `0.29`, `0.30`, `0.31` or `0.32` of DCSS.
 
-### [dcss-scenario-builder](https://github.com/EricFecteau/dcss-api/blob/main/dcss-api/)
+### [dcss-scenario-builder](https://github.com/EricFecteau/dcss-api/blob/main/dcss-api/) [![Crates.io Version](https://img.shields.io/crates/v/dcss-scenario-builder)](https://crates.io/crates/dcss-scenario-builder) [![docs.rs](https://img.shields.io/docsrs/dcss-scenario-builder)](https://docs.rs/dcss-scenario-builder/latest/dcss_scenario_builder/) 
 
 `dcss-scenario-builder` is a crate to build scenarios in DCSS (wizmode) from a yaml file by providing features, items and monsters and mapping them on a tile map. This is great for testing other crates in this repository.
 
