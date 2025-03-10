@@ -41,7 +41,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter
+          args: -m dcss-api-python/Cargo.toml --release --out dist --find-interpreter
           sccache: 'true'
           manylinux: auto
           before-script-linux: |
