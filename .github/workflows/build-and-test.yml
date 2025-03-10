@@ -30,7 +30,16 @@ jobs:
           mkdir ./crawl/main
           git -C ./crawl/main/ clone "https://github.com/crawl/crawl.git"
 
-          mkdir ./crawl/dcss-0.29
-          cp -r ./crawl/main/crawl/. ./crawl/dcss-0.29
-          git -C ./crawl/dcss-0.29 checkout stone_soup-0.29
-          make -C ./crawl/dcss-0.29/crawl-ref/source WEBTILES=y
+          python3 -V
+
+          # mkdir ./crawl/dcss-0.32
+          # cp -r ./crawl/main/crawl/. ./crawl/dcss-0.32
+          # git -C ./crawl/dcss-0.32 checkout stone_soup-0.32
+          # make -C ./crawl/dcss-0.32/crawl-ref/source WEBTILES=y
+
+          # mkdir ./crawl/server
+          # cp -r ./crawl/dcss-0.32/crawl-ref/source/webserver/. ./crawl/server
+          # sed -i -e 's/subprocess.signal/signal_module/g' ./crawl/server/webtiles/process_handler.py
+          # sed -i -e 's/import subprocess/import signal as signal_module/g' ./crawl/server/webtiles/process_handler.py
+          # cp ./tests/config/config.py ./crawl/server/config.py 
+          # cp ./tests/config/init-player.sh ./crawl/server/init-player.sh
