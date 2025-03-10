@@ -64,7 +64,7 @@ while webtile.get_message().is_some() {}
 // Log in (to a user called "Username", with a password "Password")
 let _gameid = webtile.login_with_credentials("Username", "Password")?;
 
-// Start game
+// Create scenario
 start_game_with_scenario(
     &mut webtile,
     "dcss-0.32",
@@ -74,7 +74,8 @@ start_game_with_scenario(
     "./scenarios/docs/readme.yaml",
 )?;
 
-webtile.disconnect().expect("Failed");
+// Empty message queue;
+while webtile.get_message().is_some() {}
 
-Ok(())
+webtile.disconnect().expect("Failed");
 ```
