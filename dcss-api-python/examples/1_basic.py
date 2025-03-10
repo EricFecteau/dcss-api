@@ -29,7 +29,7 @@ def main():
     webtile.write_key("key_dir_n")
     webtile.write_key("key_dir_s")
 
-    # Print the messages you while moving (should be processed)
+    # Print the messages you got while moving (should be processed)
     while (message := webtile.get_message()) != None:
         print(message)
 
