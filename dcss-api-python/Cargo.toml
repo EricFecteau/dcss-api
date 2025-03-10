@@ -16,5 +16,5 @@ doctest = false
 [dependencies]
 dcss-api = "0.2"
 dcss-scenario-builder = "0.2"
-pyo3 = { version = "0.23", features = ["extension-module"] }
+pyo3 = { version = "0.24", features = ["extension-module"] }
 serde_json = "1.0"

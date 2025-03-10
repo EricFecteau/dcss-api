@@ -76,3 +76,13 @@ setup-python:
 
 test-python:
     source ./dcss-api-python/pyo3/bin/activate && pytest ./dcss-api-python/tests
+
+cargo-update:
+    cd ./dcss-api && cargo update
+    cd ./dcss-scenario-builder && cargo update
+    cd ./dcss-api-python && cargo update
+
+cargo-outdated:
+    cd ./dcss-api && cargo outdated
+    cd ./dcss-scenario-builder && cargo outdated
+    cd ./dcss-api-python && cargo outdated
