@@ -1,44 +1,56 @@
 # dcss-api
 
-`dcss-api` is an easy to use Rust and Python wrapper for [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) websocket API. It supports logging in, starting a game and sending commands during game play.
+`dcss-api` is an easy to use Python wrapper for [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) websocket API. It supports logging in, starting a game and sending commands during game play.
+
 
 ## Documentation
 
-The documentation for the `dcss-api` can be found [here](https://docs.rs/dcss-api/latest/dcss_api/index.html). The best way to start is to look at the examples [here](https://github.com/EricFecteau/dcss-api/tree/main/examples) for Rust and [here](https://github.com/EricFecteau/dcss-api/tree/main/python) for Python. Please see the [Setup](#setup) in order to be able to run these examples.
+The Rust documentation for the `dcss-api` can be found [here](https://docs.rs/dcss-api/latest/dcss_api/index.html). The best way to start is to look at the examples in Python [here](https://github.com/EricFecteau/dcss-api/tree/main/dcss-api-python/examples). Please see the [setup on GitHub](https://github.com/EricFecteau/dcss-api?tab=readme-ov-file#server--testing) in order to be able to run these examples. In depth documentation about the DCSS websocket API can also be found [here](https://ericfecteau.ca/dcss-api-docs/).
 
-In depth documentation about the DCSS websocket API can also be found [here](https://ericfecteau.github.io/dcss-api-docs/) (not yet finalized).
+## Example
 
-## Setup
+This example connects to DCSS on `localhost:8080`, logs in as `Username`, starts a random game as a minotaur berserker with a mace, moves up and then back, then quits the game and disconnects.
 
-### Building DCSS Webtile
+```Python
+# Connect to DCSS Webtile
+webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.32")
 
-The API works for both local and public version of DCSS Webtiles. To run on a public server, you must limit the connection to a maximum of one command every 100 milliseconds (i.e. 10 commands per seconds), by setting the `speed_ms` option to `100` while connecting. Follow any other rules required by the server's owner. 
+# Empty message queue
+while (message := webtile.get_message()) != None:
+    pass
 
-Due to this, it is preferred to run the API against a local version of DCSS Webtile. You can find installation information on the [DCSS Webtiles Server page](https://github.com/crawl/crawl/tree/master/crawl-ref/source/webserver).
+# Log in (to a user called "Username", with a password "Password")
+gameid = webtile.login_with_credentials("Username", "Password")
 
-A summary (after installing all prerequisites):
+# Print the game id's that can be started
+print(gameid)
 
-```bash
-git clone "https://github.com/crawl/crawl.git"
-cd crawl/crawl-ref/source/
-git checkout stone_soup-0.32
-make WEBTILES=y
-python webserver/server.py
+# Empty message queue
+while (message := webtile.get_message()) != None:
+    pass
+
+# Start a random game on 'dcss-0.32', for Minotaur berserker with a mace.
+webtile.start_game(gameid[0], "b", "f", "b")
+
+# Print the messages you get upon starting the game (should be processed)
+while (message := webtile.get_message()) != None:
+    print(message)
+
+# Move up and back
+webtile.write_key("key_dir_n")
+webtile.write_key("key_dir_s")
+
+# Print the messages you while moving (should be processed)
+while (message := webtile.get_message()) != None:
+    print(message)
+
+# Quit game (same as dying)
+webtile.quit_game()
+
+# Print the messages after you quit game
+while (message := webtile.get_message()) != None:
+    print(message)
+
+# Disconnect from webtile
+webtile.disconnect()
 ```
-Note that this API has been verified to work with version `0.29`, `0.30`, `0.31` or `0.32` of DCSS.
-
-### Building Python
-
-The python package for `dcss-api` is a [PyO3](https://github.com/PyO3/pyo3) Python wrapper for the Rust package. It can be built using the following commands:
-
-```bash
-mkdir pyo3
-python -m venv pyo3
-source pyo3/bin/activate
-pip install maturin patchelf
-maturin develop -r
-```
-
-## Testing
-
-In order to run `cargo test` or `pytest`, a local DCSS Webtile, with the `stone_soup-0.29`, `stone_soup-0.30`, `stone_soup-0.31` and `stone_soup-0.32` branch, must be exposed on `localhost:8080`. The `Justfile` can be used to create this environment and the users necessary for the tests.
