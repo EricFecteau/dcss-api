@@ -21,7 +21,8 @@ jobs:
       - name: Install DCSS Webtiles
         run: |
 
-          sudo apt-get install build-essential libncursesw5-dev bison flex liblua5.1-0-dev libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3
+          sudo apt-get install build-essential libncursesw5-dev bison flex liblua5.1-0-dev \
+            libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3
 
           mkdir ./crawl
           mkdir ./crawl/main
@@ -30,4 +31,4 @@ jobs:
           mkdir ./crawl/dcss-0.29
           cp -r ./crawl/main/crawl/. ./crawl/dcss-0.29
           git -C ./crawl/dcss-0.29 checkout stone_soup-0.29
-          make -C ./crawl/dcss-0.29/crawl-ref/source WEBTILES=y
+          make -C ./crawl/dcss-0.29/crawl-ref/source
