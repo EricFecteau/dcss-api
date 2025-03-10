@@ -16,6 +16,10 @@ This repo contains a series of libraries in Rust and Python to work with [Dungeo
 
 `dcss-api` is an easy to use Python wrapper for DCSS Webtile websocket API, that includes the `dcss-scenario-builder` functionalities. It works with version `0.29`, `0.30`, `0.31` or `0.32` of DCSS.
 
+### [dcss-data](https://github.com/EricFecteau/dcss-api/tree/main/dcss-data) (experimental)
+
+`dcss-data` is a Rust data model for the data received from DCSS Webtile (tiles, monsters, items, menus, etc.). It is currently experimental and the interface will break without notice.
+
 ## Docs
 
 Documentation about the DCSS websocket API can also be found [here](https://ericfecteau.ca/dcss/dcss-api-docs/).
