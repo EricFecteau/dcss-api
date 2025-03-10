@@ -23,11 +23,12 @@ jobs:
           to: html
           path: ./dcss-api-docs
 
-      # - name: Deploy to website
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      #   with:
-      #     server: ${{ secrets.FTP_SERVER }}
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     local-dir: ./public/
-      #     state-name: ../.ftp-deploy-sync-state.json
+      - name: Deploy to website
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./_site/
+          server-dir: ./dcss/dcss-api-docs
+          state-name: ../.ftp-deploy-sync-state.json
