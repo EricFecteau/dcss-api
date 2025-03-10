@@ -46,4 +46,6 @@ jobs:
 
           python3 crawl/server/server.py & 
 
-          curl localhost:8080
+          sleep 5
+
+          curl http://localhost:8080
