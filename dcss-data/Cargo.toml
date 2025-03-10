@@ -14,3 +14,7 @@ doctest = false
 serde_json = "1"
 rustc-hash = "2.0"
 regex = "1.10"
+
+[dev-dependencies]
+dcss-api = "0.2"
+dcss-scenario-builder = "0.2"
