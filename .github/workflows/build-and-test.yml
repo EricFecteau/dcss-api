@@ -21,7 +21,7 @@ jobs:
       - name: Install DCSS Webtiles
         run: |
 
-          apt install build-essential libncursesw5-dev bison flex liblua5.1-0-dev libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3
+          sudo apt-get install build-essential libncursesw5-dev bison flex liblua5.1-0-dev libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3
 
           mkdir ./crawl
           mkdir ./crawl/main
