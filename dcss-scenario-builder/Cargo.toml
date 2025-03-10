@@ -1,10 +1,11 @@
 [package]
+authors = ["Eric Fecteau <eric.m.fecteau@gmail.com>"]
 name = "dcss-scenario-builder"
-version = "0.1.0"
+version = "0.2.1"
 edition = "2021"
 license = "MPL-2.0"
-description = "A scenario builder for dcss-api."
-repository = "https://github.com/EricFecteau/dcss-scenario-builder"
+description = "A scenario builder for DCSS Webtile."
+repository = "https://github.com/EricFecteau/dcss-api/"
 readme = "README.md"
 
 [lib]
