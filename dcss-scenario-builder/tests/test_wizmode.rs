@@ -1,41 +1,14 @@
+mod common;
+
 use dcss_api::{Error, Webtile};
 use dcss_scenario_builder::start_game_with_scenario;
 
-fn reset_test(username: &str) {
-    // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _game_ids = webtile
-        .login_with_credentials(username, "Password")
-        .expect("Failed to login");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    webtile
-        .start_game("dcss-0.32", "b", "f", "b")
-        .expect("Failed to start game");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    webtile.quit_game().expect("Failed to quit game");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    webtile.disconnect().expect("Failed to disconnect");
-}
-
 #[test]
 fn verify_wizmode() -> Result<(), Error> {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     // Safe test -- login start game, quit, and then test
-    reset_test("Username");
+    common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
@@ -52,7 +25,7 @@ fn verify_wizmode() -> Result<(), Error> {
     // Start game with simple scenario.
     start_game_with_scenario(
         &mut webtile,
-        "dcss-0.32",
+        game_id.as_str(),
         "b",
         "i",
         "c",
@@ -62,7 +35,7 @@ fn verify_wizmode() -> Result<(), Error> {
 
     webtile.save_game().expect("Failed to save game.");
 
-    webtile.continue_game("dcss-0.32")?;
+    webtile.continue_game(game_id.as_str())?;
 
     while let Some(message) = webtile.get_message() {
         if message["msg"].as_str().unwrap() == "player"

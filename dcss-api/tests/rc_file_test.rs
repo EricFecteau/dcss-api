@@ -2,6 +2,8 @@ use dcss_api::Webtile;
 
 #[test]
 fn write_read_rc() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     let mut webtile =
         Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
@@ -16,10 +18,12 @@ fn write_read_rc() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .set_rc_file("dcss-0.32", "this is a test")
+        .set_rc_file(game_id.as_str(), "this is a test")
         .expect("Failed to write");
 
-    let rc_file = webtile.get_rc_file("dcss-0.32").expect("Failed to read.");
+    let rc_file = webtile
+        .get_rc_file(game_id.as_str())
+        .expect("Failed to read.");
 
     assert_eq!("this is a test", rc_file);
 
@@ -27,10 +31,12 @@ fn write_read_rc() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .set_rc_file("dcss-0.32", "show_more = false\nrest_delay = -1")
+        .set_rc_file(game_id.as_str(), "show_more = false\nrest_delay = -1")
         .expect("Failed to write");
 
-    let rc_file = webtile.get_rc_file("dcss-0.32").expect("Failed to read.");
+    let rc_file = webtile
+        .get_rc_file(game_id.as_str())
+        .expect("Failed to read.");
 
     assert_eq!("show_more = false\nrest_delay = -1", rc_file);
 
@@ -39,6 +45,8 @@ fn write_read_rc() {
 
 #[test]
 fn blank_rc_file() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     let mut webtile =
         Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
 
@@ -53,10 +61,12 @@ fn blank_rc_file() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .set_rc_file("dcss-0.32", "")
+        .set_rc_file(game_id.as_str(), "")
         .expect("Failed to write");
 
-    let rc_file = webtile.get_rc_file("dcss-0.32").expect("Failed to read.");
+    let rc_file = webtile
+        .get_rc_file(game_id.as_str())
+        .expect("Failed to read.");
 
     assert_eq!("", rc_file);
 
@@ -64,10 +74,12 @@ fn blank_rc_file() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .set_rc_file("dcss-0.32", "show_more = false\nrest_delay = -1")
+        .set_rc_file(game_id.as_str(), "show_more = false\nrest_delay = -1")
         .expect("Failed to write");
 
-    let rc_file = webtile.get_rc_file("dcss-0.32").expect("Failed to read.");
+    let rc_file = webtile
+        .get_rc_file(game_id.as_str())
+        .expect("Failed to read.");
 
     assert_eq!("show_more = false\nrest_delay = -1", rc_file);
 
