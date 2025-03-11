@@ -36,7 +36,7 @@ jobs:
 
       - name: Create users
         run: |
-          python3 crawl/server/server.py
+          python3 crawl/server/server.py &
           sleep 5
 
       - name: Test dcss-api
