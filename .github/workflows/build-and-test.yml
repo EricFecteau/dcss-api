@@ -35,7 +35,9 @@ jobs:
         run: just dcss-run && sleep 5
 
       - name: Create users
-        run: just dcss-create-users
+        run: |
+          python3 crawl/server/server.py
+          sleep 5
 
       - name: Test dcss-api
         run: cd ./dcss-api/ & cargo test successful_connect
