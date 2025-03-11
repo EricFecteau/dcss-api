@@ -18,7 +18,9 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v4
 
-      - name: Install DCSS Webtiles
+      - uses: extractions/setup-just@v2
+
+      - name: Install dependencies
         run: |
 
           sudo apt-get install build-essential libncursesw5-dev bison flex liblua5.1-0-dev \
@@ -26,26 +28,18 @@ jobs:
             bzip2 ncurses-term locales-all sqlite3 libpcre3 liblua5.1-0 locales autoconf \
             lsof flex libbot-basicbot-perl lua5.1 man libpng-dev python3-tornado
 
-          mkdir ./crawl
-          mkdir ./crawl/main
-          git -C ./crawl/main/ clone "https://github.com/crawl/crawl.git"
+      - name: Build DCSS Webtiles (multiple versions)
+        run: just setup-dcss-server
 
-          mkdir ./crawl/dcss-0.32
-          cp -r ./crawl/main/crawl/. ./crawl/dcss-0.32
-          git -C ./crawl/dcss-0.32 checkout stone_soup-0.32
-          make -C ./crawl/dcss-0.32/crawl-ref/source WEBTILES=y
+      - name: Run DCSS Webtiles
+        run: just dcss-run && sleep 5
 
-          mkdir ./crawl/server
-          cp -r ./crawl/dcss-0.32/crawl-ref/source/webserver/. ./crawl/server
-          sed -i -e 's/subprocess.signal/signal_module/g' ./crawl/server/webtiles/process_handler.py
-          sed -i -e 's/import subprocess/import signal as signal_module/g' ./crawl/server/webtiles/process_handler.py
-          cp ./crawl-config/config.py ./crawl/server/config.py 
-          cp ./crawl-config/init-player.sh ./crawl/server/init-player.sh
+      - name: Create users
+        run: just dcss-create-users
 
-          echo save_dir = ./crawl/server/saves-0.32 > ./crawl/server/init-0.32.txt
+      - name: Test dcss-api
+        run: cd ./dcss-api/ & cargo test successful_connect
 
-          python3 crawl/server/server.py & 
 
-          sleep 5
 
-          curl http://localhost:8080
+          
