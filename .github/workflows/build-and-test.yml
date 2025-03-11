@@ -32,12 +32,12 @@ jobs:
         run: just setup-dcss-server
 
       - name: Run DCSS Webtiles
-        run: just dcss-run && sleep 5
-
-      - name: Create users
-        run: |
+        run:  |
           python3 crawl/server/server.py &
           sleep 5
+
+      - name: Create users
+        run: just dcss-create-users
 
       - name: Test dcss-api
         run: cd ./dcss-api/ & cargo test successful_connect

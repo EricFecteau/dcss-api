@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use dcss_api::Webtile;
 
 fn reset_test(username: &str) {
