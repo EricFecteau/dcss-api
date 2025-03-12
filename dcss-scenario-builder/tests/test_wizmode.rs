@@ -42,7 +42,7 @@ fn verify_wizmode() -> Result<(), Error> {
             && message.as_object().unwrap().contains_key("wizard")
             && message["wizard"].as_u64().unwrap() == 1
         {
-            // webtile.quit_game()?;
+            webtile.quit_game()?;
             webtile.disconnect().expect("Failed");
             return Ok(());
         }
