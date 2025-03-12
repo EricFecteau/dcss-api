@@ -30,6 +30,10 @@ setup-dcss-server:
     sed -i -e 's/import subprocess/import signal as signal_module/g' ./crawl/server/webtiles/process_handler.py
     cp ./crawl-config/config.py ./crawl/server/config.py 
     cp ./crawl-config/init-player.sh ./crawl/server/init-player.sh
+    echo save_dir = ./crawl/server/saves-0.29 > ./crawl/server/init-0.29.txt
+    echo save_dir = ./crawl/server/saves-0.30 > ./crawl/server/init-0.30.txt
+    echo save_dir = ./crawl/server/saves-0.31 > ./crawl/server/init-0.31.txt
+    echo save_dir = ./crawl/server/saves-0.32 > ./crawl/server/init-0.32.txt
 
     rm -rf ./crawl/main
 
