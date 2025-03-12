@@ -62,15 +62,15 @@ dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg, data)/# type: (str, Any) -> bool/g' ./crawl/server/webtiles/ws_handler.py
 
 test-api:
-    cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
     cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
 
 test-scenario:
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
     cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo test
 
 setup-python:

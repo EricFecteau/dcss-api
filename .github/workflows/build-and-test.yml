@@ -47,8 +47,9 @@ jobs:
         run: just dcss-create-users
 
       - name: Test dcss-api
-        run: cd ./dcss-api/ & cargo test successful_connect
+        run: just test-api
 
-
+      - name: Test dcss-scenario-builder
+        run: just test-scenario
 
           
