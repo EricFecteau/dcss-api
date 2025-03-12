@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - main
 
 permissions:
   contents: read
@@ -46,10 +43,14 @@ jobs:
       - name: Create users
         run: just dcss-create-users
 
-      - name: Test dcss-api
+      - name: Test Rust dcss-api
         run: just test-api
 
-      - name: Test dcss-scenario-builder
+      - name: Test Rust dcss-scenario-builder
         run: just test-scenario
 
-          
+      - name: Setup python dcss-api
+        run: just setup-python
+
+      - name: Test python dcss-api
+        run: just test-python
