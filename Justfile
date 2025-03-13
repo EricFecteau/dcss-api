@@ -77,14 +77,14 @@ setup-python:
     rm -rf ./dcss-api-python/pyo3
     mkdir ./dcss-api-python/pyo3
     python -m venv ./dcss-api-python/pyo3
-    source ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && pip install maturin patchelf pytest
-    source ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && maturin develop -r
+    . ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && pip install maturin patchelf pytest
+    . ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && maturin develop -r
 
 test-python:
-    source ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.29 pytest ./dcss-api-python/tests
-    source ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.30 pytest ./dcss-api-python/tests
-    source ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.31 pytest ./dcss-api-python/tests
-    source ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.32 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.29 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.30 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.31 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.32 pytest ./dcss-api-python/tests
 
 cargo-update:
     cd ./dcss-api && cargo update
