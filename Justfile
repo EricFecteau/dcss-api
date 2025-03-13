@@ -67,6 +67,12 @@ test-api:
     cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
     cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
 
+test-data:
+    # cd ./dcss-data && GAME_ID=dcss-0.29 cargo test
+    # cd ./dcss-data && GAME_ID=dcss-0.30 cargo test
+    # cd ./dcss-data && GAME_ID=dcss-0.31 cargo test
+    cd ./dcss-data && GAME_ID=dcss-0.32 cargo test
+
 test-scenario:
     cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
     cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
