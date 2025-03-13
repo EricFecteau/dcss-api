@@ -11,18 +11,16 @@ fn main() {
     while webtile.get_message().is_some() {}
 
     // Register usernames for tests
+
     webtile
         .register_account("Username", "Password", None)
         .expect("Failed to register");
-    webtile
-        .register_account("Username2", "Password", None)
-        .expect("Failed to register");
-    webtile
-        .register_account("Username3", "Password", None)
-        .expect("Failed to register");
-    webtile
-        .register_account("Username4", "Password", None)
-        .expect("Failed to register");
+
+    for i in 1..20 {
+        webtile
+            .register_account(format!("Username{i}").as_str(), "Password", None)
+            .expect("Failed to register");
+    }
 
     // Disconnect from webtile
     webtile.disconnect().expect("Failed to disconnect");
