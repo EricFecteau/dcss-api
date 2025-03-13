@@ -2,7 +2,7 @@
 
 use dcss_api::Webtile;
 
-fn reset_test(username: &str) {
+fn reset_test(username: &str, game_id: &str) {
     // Connect to DCSS Webtile
     let mut webtile =
         Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
@@ -19,7 +19,7 @@ fn reset_test(username: &str) {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "f", "b")
+        .start_game(game_id, "b", "f", "b")
         .expect("Failed to start game");
 
     // Empty message queue;
