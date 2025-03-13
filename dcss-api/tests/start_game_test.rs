@@ -1,41 +1,14 @@
+mod common;
+
 use dcss_api::{BlockingError, Error, Webtile};
 use serde_json::from_str;
 
-fn reset_test(username: &str) {
-    // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _game_ids = webtile
-        .login_with_credentials(username, "Password")
-        .expect("Failed to login");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    webtile
-        .start_game("dcss-0.32", "b", "f", "b")
-        .expect("Failed to start game");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    webtile.quit_game().expect("Failed to quit game");
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    webtile.disconnect().expect("Failed to disconnect");
-}
-
 #[test]
 fn start_game_seeded() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     // Safe test -- login start game, quit, and then test
-    reset_test("Username");
+    common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
@@ -53,7 +26,7 @@ fn start_game_seeded() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "1", true, "b", "f", "b")
+        .start_game_seeded(game_id.as_str(), "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -89,7 +62,7 @@ fn start_game_seeded() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "158985", false, "b", "f", "b")
+        .start_game_seeded(game_id.as_str(), "158985", false, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -112,8 +85,10 @@ fn start_game_seeded() {
 
 #[test]
 fn start_game() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     // Safe test -- login start game, quit, and then test
-    reset_test("Username");
+    common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
@@ -131,7 +106,7 @@ fn start_game() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "f", "b")
+        .start_game(game_id.as_str(), "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -159,8 +134,10 @@ fn start_game() {
 
 #[test]
 fn save_game_continue() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     // Safe test -- login start game, quit, and then test
-    reset_test("Username");
+    common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
@@ -178,7 +155,7 @@ fn save_game_continue() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "f", "b")
+        .start_game(game_id.as_str(), "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message
@@ -200,7 +177,7 @@ fn save_game_continue() {
     assert!(last_message["msg"] == "go_lobby");
 
     webtile
-        .continue_game("dcss-0.32")
+        .continue_game(game_id.as_str())
         .expect("Failed to continue game");
 
     // Get last message
@@ -218,8 +195,10 @@ fn save_game_continue() {
 
 #[test]
 fn start_game_two_accounts() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     // Safe test -- login start game, quit, and then test
-    reset_test("Username");
+    common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
@@ -237,7 +216,7 @@ fn start_game_two_accounts() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "f", "b")
+        .start_game(game_id.as_str(), "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -263,7 +242,7 @@ fn start_game_two_accounts() {
     webtile.disconnect().expect("Failed to disconnect");
 
     // Safe test -- login start game, quit, and then test
-    reset_test("Username2");
+    common::reset_test("Username2", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
@@ -281,7 +260,7 @@ fn start_game_two_accounts() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game("dcss-0.32", "b", "f", "b")
+        .start_game(game_id.as_str(), "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -309,9 +288,11 @@ fn start_game_two_accounts() {
 
 #[test]
 fn start_game_two_accounts_combined() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     // Safe test -- login start game, quit, and then test
-    reset_test("Username");
-    reset_test("Username2");
+    common::reset_test("Username", game_id.as_str());
+    common::reset_test("Username2", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile1 =
@@ -336,10 +317,10 @@ fn start_game_two_accounts_combined() {
     while webtile2.get_message().is_some() {}
 
     webtile1
-        .start_game("dcss-0.32", "b", "f", "b")
+        .start_game(game_id.as_str(), "b", "f", "b")
         .expect("Failed to start game");
     webtile2
-        .start_game("dcss-0.32", "b", "f", "b")
+        .start_game(game_id.as_str(), "b", "f", "b")
         .expect("Failed to start game");
 
     let mut msgs = from_str("{}").unwrap();
@@ -387,8 +368,10 @@ fn start_game_two_accounts_combined() {
 
 #[test]
 fn real_blocking_error() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+
     // Safe test -- login start game, quit, and then test
-    reset_test("Username");
+    common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
@@ -406,7 +389,7 @@ fn real_blocking_error() {
     while webtile.get_message().is_some() {}
 
     webtile
-        .start_game_seeded("dcss-0.32", "1", true, "b", "f", "b")
+        .start_game_seeded(game_id.as_str(), "1", true, "b", "f", "b")
         .expect("Failed to start game");
 
     // Get last message

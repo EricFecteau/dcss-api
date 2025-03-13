@@ -28,8 +28,8 @@ setup-dcss-server:
     cp -r ./crawl/dcss-0.32/crawl-ref/source/webserver/. ./crawl/server
     sed -i -e 's/subprocess.signal/signal_module/g' ./crawl/server/webtiles/process_handler.py
     sed -i -e 's/import subprocess/import signal as signal_module/g' ./crawl/server/webtiles/process_handler.py
-    cp ./tests/config/config.py ./crawl/server/config.py 
-    cp ./tests/config/init-player.sh ./crawl/server/init-player.sh
+    cp ./crawl-config/config.py ./crawl/server/config.py 
+    cp ./crawl-config/init-player.sh ./crawl/server/init-player.sh
     echo save_dir = ./crawl/server/saves-0.29 > ./crawl/server/init-0.29.txt
     echo save_dir = ./crawl/server/saves-0.30 > ./crawl/server/init-0.30.txt
     echo save_dir = ./crawl/server/saves-0.31 > ./crawl/server/init-0.31.txt
@@ -37,11 +37,11 @@ setup-dcss-server:
 
     rm -rf ./crawl/main
 
-dcss-create-users:
-    cd ./dcss-api && cargo -r run --example 0_setup
-
 dcss-run:
-    python crawl/server/server.py
+    python3 crawl/server/server.py
+
+dcss-create-users:
+    cd ./dcss-api && cargo run -r --example 0_setup
 
 dcss-clear:
     rm -rf ./saves
@@ -62,20 +62,29 @@ dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg, data)/# type: (str, Any) -> bool/g' ./crawl/server/webtiles/ws_handler.py
 
 test-api:
-    cd ./dcss-api && cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
 
 test-scenario:
-    cd ./dcss-scenario-builder && cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo test
 
 setup-python:
     rm -rf ./dcss-api-python/pyo3
     mkdir ./dcss-api-python/pyo3
     python -m venv ./dcss-api-python/pyo3
-    source ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && pip install maturin patchelf pytest
-    source ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && maturin develop -r
+    . ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && pip install maturin patchelf pytest
+    . ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && maturin develop -r
 
 test-python:
-    source ./dcss-api-python/pyo3/bin/activate && pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.29 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.30 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.31 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.32 pytest ./dcss-api-python/tests
 
 cargo-update:
     cd ./dcss-api && cargo update

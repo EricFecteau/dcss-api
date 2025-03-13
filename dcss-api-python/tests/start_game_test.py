@@ -1,10 +1,11 @@
 import pytest
 import dcss_api
-from dcss_api import BlockingErr
 import json
+import os
+from dcss_api import BlockingErr
 
 
-def reset_test(username):
+def reset_test(username, game_id):
     # Connect to DCSS Webtile
     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
 
@@ -16,7 +17,7 @@ def reset_test(username):
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "f", "b")
+    webtile.start_game(game_id, "b", "f", "b")
 
     while (message := webtile.get_message()) != None:
         pass
@@ -30,7 +31,9 @@ def reset_test(username):
 
 
 def test_start_game_seeded():
-    reset_test("Username")
+    game_id = os.environ['GAME_ID']
+
+    reset_test("Username", game_id)
 
     # Connect to DCSS Webtile
     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
@@ -43,7 +46,7 @@ def test_start_game_seeded():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.32", "1", True, "b", "f", "b")
+    webtile.start_game_seeded(game_id, "1", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -77,7 +80,7 @@ def test_start_game_seeded():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game_seeded("dcss-0.32", "158985", True, "b", "f", "b")
+    webtile.start_game_seeded(game_id, "158985", True, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -103,7 +106,9 @@ def test_start_game_seeded():
 
 
 def test_start_game():
-    reset_test("Username")
+    game_id = os.environ['GAME_ID']
+
+    reset_test("Username", game_id)
 
     # Connect to DCSS Webtile
     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
@@ -116,7 +121,7 @@ def test_start_game():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "f", "b")
+    webtile.start_game(game_id, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -137,7 +142,9 @@ def test_start_game():
 
 
 def test_start_game():
-    reset_test("Username")
+    game_id = os.environ['GAME_ID']
+
+    reset_test("Username", game_id)
 
     # Connect to DCSS Webtile
     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
@@ -150,7 +157,7 @@ def test_start_game():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "f", "b")
+    webtile.start_game(game_id, "b", "f", "b")
 
     json_message = None
     while (message := webtile.get_message()) != None:
@@ -166,7 +173,7 @@ def test_start_game():
 
     assert json_message["msg"] == "go_lobby"
 
-    webtile.continue_game("dcss-0.32")
+    webtile.continue_game(game_id)
 
     json_message = None
     while (message := webtile.get_message()) != None:
@@ -180,7 +187,9 @@ def test_start_game():
 
 
 def test_start_game_two_accounts():
-    reset_test("Username")
+    game_id = os.environ['GAME_ID']
+
+    reset_test("Username", game_id)
 
     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
 
@@ -192,7 +201,7 @@ def test_start_game_two_accounts():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "f", "b")
+    webtile.start_game(game_id, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -219,7 +228,7 @@ def test_start_game_two_accounts():
 
     webtile.disconnect()
 
-    reset_test("Username2")
+    reset_test("Username2", game_id)
 
     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
 
@@ -231,7 +240,7 @@ def test_start_game_two_accounts():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "f", "b")
+    webtile.start_game(game_id, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:
@@ -260,8 +269,10 @@ def test_start_game_two_accounts():
 
 
 def test_start_game_two_accounts_combined():
-    reset_test("Username")
-    reset_test("Username2")
+    game_id = os.environ['GAME_ID']
+
+    reset_test("Username", game_id)
+    reset_test("Username2", game_id)
 
     webtile1 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
     webtile2 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
@@ -279,8 +290,8 @@ def test_start_game_two_accounts_combined():
     while (message := webtile2.get_message()) != None:
         pass
 
-    webtile1.start_game("dcss-0.32", "b", "f", "b")
-    webtile2.start_game("dcss-0.32", "b", "f", "b")
+    webtile1.start_game(game_id, "b", "f", "b")
+    webtile2.start_game(game_id, "b", "f", "b")
 
     msgs = None
     while (message := webtile1.get_message()) != None:
@@ -332,7 +343,9 @@ def test_start_game_two_accounts_combined():
 
 
 def test_real_blocking_error():
-    reset_test("Username")
+    game_id = os.environ['GAME_ID']
+
+    reset_test("Username", game_id)
 
     webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
 
@@ -344,7 +357,7 @@ def test_real_blocking_error():
     while (message := webtile.get_message()) != None:
         pass
 
-    webtile.start_game("dcss-0.32", "b", "f", "b")
+    webtile.start_game(game_id, "b", "f", "b")
 
     msgs = None
     while (message := webtile.get_message()) != None:

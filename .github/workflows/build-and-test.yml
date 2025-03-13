@@ -1,0 +1,53 @@
+name: Build & Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Just
+        uses: extractions/setup-just@v2
+
+      - name: Install dependencies
+        run: |
+
+          sudo apt-get install build-essential libncursesw5-dev bison flex liblua5.1-0-dev \
+            libsqlite3-dev libz-dev pkg-config python3-yaml binutils-gold python-is-python3 \
+            bzip2 ncurses-term locales-all sqlite3 libpcre3 liblua5.1-0 locales autoconf \
+            lsof flex libbot-basicbot-perl lua5.1 man libpng-dev python3-tornado
+
+      - name: Build DCSS Webtiles (multiple versions)
+        run: just setup-dcss-server
+
+      - name: Run DCSS Webtiles
+        run:  |
+          python3 crawl/server/server.py &
+          sleep 5
+
+      - name: Create users
+        run: just dcss-create-users
+
+      - name: Test Rust dcss-api
+        run: just test-api
+
+      - name: Test Rust dcss-scenario-builder
+        run: just test-scenario
+
+      - name: Setup python dcss-api
+        run: just setup-python
+
+      - name: Test python dcss-api
+        run: just test-python
