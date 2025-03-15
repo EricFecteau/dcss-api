@@ -7,8 +7,9 @@ use dcss_data::CrawlData;
 
 #[test]
 fn box_7x7() {
-    let game_id = std::env::var("GAME_ID").unwrap();
-    common::reset_test("Username", game_id.as_str());
+    let username = "Username1";
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
+    common::reset_test(username, game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
@@ -18,7 +19,7 @@ fn box_7x7() {
 
     // Log in (to a user called "Username", with a password "Password")
     let _ = webtile
-        .login_with_credentials("Username1", "Password")
+        .login_with_credentials(username, "Password")
         .unwrap();
 
     // Start game with simple scenario.
@@ -70,6 +71,97 @@ fn box_7x7() {
                 assert!(data.tile_walkable(x, y));
             } else {
                 assert!(!data.tile_walkable(x, y));
+            }
+        }
+    }
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}
+
+#[test]
+fn box_7x7_monster() {
+    let username = "Username2";
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
+    common::reset_test(username, game_id.as_str());
+
+    // Connect to DCSS Webtile
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    // Log in (to a user called "Username", with a password "Password")
+    let _ = webtile
+        .login_with_credentials(username, "Password")
+        .unwrap();
+
+    // Start game with simple scenario.
+    start_game_with_scenario(
+        &mut webtile,
+        game_id.as_str(),
+        "b",
+        "f",
+        "b",
+        "./tests/scenarios/tiles/box_7x7_monster.yaml",
+    )
+    .unwrap();
+
+    // Setup data object
+    let mut data = CrawlData::init(9, "0.32");
+
+    // Wait for Ready
+    webtile
+        .read_until("input_mode", Some("mode"), Some(1))
+        .unwrap();
+
+    // Process the data
+    while let Some(message) = webtile.get_message() {
+        data.process_json(&message).unwrap()
+    }
+
+    // Tiles [x, y]
+    //        [-y]
+    //       ↖ ↑ ↗
+    //  [-x] ← · → [+x]
+    //       ↙ ↓ ↘
+    //        [+y]
+
+    // Verify area is explored
+    for x in -5..5 {
+        for y in -5..5 {
+            if (-4..=4).contains(&x) && (-4..=4).contains(&y) {
+                assert!(data.tile_explored(x, y));
+            } else {
+                assert!(!data.tile_explored(x, y));
+            }
+        }
+    }
+
+    // Verify area is walkable (except monster)
+    for x in -5..5 {
+        for y in -5..5 {
+            if (-3..=3).contains(&x) && (-3..=3).contains(&y) {
+                if x == 0 && y == 2 {
+                    // Monster
+                    assert!(!data.tile_walkable(x, y));
+                } else {
+                    assert!(data.tile_walkable(x, y));
+                }
+            } else {
+                assert!(!data.tile_walkable(x, y));
+            }
+        }
+    }
+
+    // Verify area is walkable (in spite of monster)
+    for x in -5..5 {
+        for y in -5..5 {
+            if (-3..=3).contains(&x) && (-3..=3).contains(&y) {
+                assert!(data.tile_walkable_ignore_blocked(x, y));
+            } else {
+                assert!(!data.tile_walkable_ignore_blocked(x, y));
             }
         }
     }
