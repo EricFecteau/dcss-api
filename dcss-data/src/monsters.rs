@@ -1,17 +1,15 @@
 use std::cmp;
 
-use crate::common::{pathfinding, CoordVec};
+use crate::common::{pathfinding, AbsCoord};
 use crate::tiles::Tile;
-use crate::CrawlData;
+use crate::{convert_coord_to_absolute, convert_coords_to_relative, CrawlData, RelCoord};
 use regex::Regex;
 use rustc_hash::FxHashMap;
 use serde_json::Value;
 
-use crate::common::Coord;
-
 #[derive(Debug)]
 pub(crate) struct Monsters {
-    pub(crate) examine_loc: Option<Coord>,
+    pub(crate) examine_loc: Option<AbsCoord>,
     pub(crate) monsters: FxHashMap<u64, Monster>,
 }
 
@@ -19,7 +17,7 @@ pub(crate) struct Monsters {
 pub(crate) struct Monster {
     pub(crate) name: String,
     pub(crate) threat: i32,
-    pub(crate) pos: Option<Coord>,
+    pub(crate) pos: Option<AbsCoord>,
     pub(crate) examined: bool,
     pub(crate) max_hp: Option<i32>,
     pub(crate) will: Option<i32>,
@@ -48,7 +46,7 @@ impl Monsters {
         }
     }
 
-    pub(crate) fn update(&mut self, mon_pos: Coord, monster: Value) {
+    pub(crate) fn update(&mut self, mon_pos: AbsCoord, monster: Value) {
         // If monster is "None", and monster still at that position in memory,
         // remove it from that location
         if monster.is_null() {
@@ -169,7 +167,7 @@ impl Monsters {
         }
     }
 
-    pub(crate) fn description(&mut self, description: Value, pos: Coord) {
+    pub(crate) fn description(&mut self, description: Value, pos: AbsCoord) {
         let mut desc_body = description["body"].as_str().unwrap().to_owned();
         desc_body.push_str("\n\n");
 
@@ -368,17 +366,22 @@ impl Monsters {
         }
     }
 
-    pub(crate) fn count_path(&mut self, tiles: &[Vec<Tile>], player_pos: Coord, fov: u32) -> u32 {
+    pub(crate) fn count_path(
+        &mut self,
+        tiles: &[Vec<Tile>],
+        player_pos: AbsCoord,
+        fov: u32,
+    ) -> u32 {
         self.path_to_all_mons(tiles, player_pos, fov, true).len() as u32
     }
 
     fn path_to_all_mons(
         &self,
         tiles: &[Vec<Tile>],
-        player_pos: Coord,
+        player_pos: AbsCoord,
         fov: u32,
         ignore_blocked: bool, // Ignore blocking paths, better counts
-    ) -> Vec<CoordVec> {
+    ) -> Vec<Vec<AbsCoord>> {
         let mut path_of_monsters = vec![];
 
         // How far is monster from char (max = fov)
@@ -420,7 +423,7 @@ impl Monsters {
 
     /// Return monsters that are withing FOV, regardless of path (since some monster
     /// can block the path to other monsters)
-    pub(crate) fn monsters_in_fov(&self, player_pos: Coord, fov: u32) -> Vec<&Monster> {
+    pub(crate) fn monsters_in_fov(&self, player_pos: AbsCoord, fov: u32) -> Vec<&Monster> {
         // TODO Deal with Plants (threat = -1)
 
         self.monsters
@@ -439,7 +442,7 @@ impl Monsters {
 
     pub(crate) fn monster_in_battle(
         &self,
-        player_pos: Coord,
+        player_pos: AbsCoord,
         fov: u32,
     ) -> Vec<FxHashMap<&str, i32>> {
         let monsters = self.monsters_in_fov(player_pos, fov);
@@ -480,7 +483,11 @@ impl Monsters {
             .collect()
     }
 
-    pub(crate) fn pos_unexamined_monster(&self, player_pos: Coord, fov: u32) -> Option<Coord> {
+    pub(crate) fn pos_unexamined_monster(
+        &self,
+        player_pos: AbsCoord,
+        fov: u32,
+    ) -> Option<AbsCoord> {
         let mons = self
             .monsters
             .iter()
@@ -504,7 +511,12 @@ impl Monsters {
         None
     }
 
-    pub(crate) fn nearest(&mut self, tiles: &[Vec<Tile>], player_pos: Coord, fov: u32) -> CoordVec {
+    pub(crate) fn nearest(
+        &mut self,
+        tiles: &[Vec<Tile>],
+        player_pos: AbsCoord,
+        fov: u32,
+    ) -> Vec<AbsCoord> {
         let mut shortest_path = vec![];
 
         for path in self.path_to_all_mons(tiles, player_pos, fov, false) {
@@ -519,12 +531,12 @@ impl Monsters {
         shortest_path
     }
 
-    pub(crate) fn invisible_monster(&mut self, mon_pos: Coord) {
+    pub(crate) fn invisible_monster(&mut self, mon_pos: AbsCoord) {
         self.monsters
             .insert(9999, Monster::new("invisible".to_owned(), 0, Some(mon_pos)));
     }
 
-    pub(crate) fn invisible_removed(&mut self, mon_pos: Coord) {
+    pub(crate) fn invisible_removed(&mut self, mon_pos: AbsCoord) {
         if self.monsters.contains_key(&9999) && self.monsters[&9999].pos == Some(mon_pos) {
             self.monsters.remove(&9999);
         }
@@ -532,7 +544,7 @@ impl Monsters {
 }
 
 impl Monster {
-    fn new(name: String, threat: i32, pos: Option<Coord>) -> Self {
+    fn new(name: String, threat: i32, pos: Option<AbsCoord>) -> Self {
         Self {
             name,
             threat,
@@ -558,51 +570,53 @@ impl Monster {
         }
     }
 
-    fn update_pos(&mut self, pos: Option<Coord>) {
+    fn update_pos(&mut self, pos: Option<AbsCoord>) {
         self.pos = pos;
     }
 }
 
 impl CrawlData {
-    pub fn ready_examine_monster(&mut self, coord: Coord) {
-        self.monsters.examine_loc = Some(coord);
+    pub fn ready_examine_monster(&mut self, coord: RelCoord) {
+        self.monsters.examine_loc = Some(convert_coord_to_absolute(self.player.pos, coord));
     }
 
     pub fn monster_count_path(&mut self) -> u32 {
-        let pos: Coord = self.player_pos();
+        let pos: AbsCoord = self.player.pos;
         self.monsters.count_path(&self.tiles.tiles, pos, self.fov)
     }
 
     pub fn monster_count_fov(&mut self) -> u32 {
-        let pos: Coord = self.player_pos();
+        let pos: AbsCoord = self.player.pos;
         self.monsters.monsters_in_fov(pos, self.fov).len() as u32
     }
 
     pub fn monster_touching(&mut self) -> bool {
-        let pos: Coord = self.player_pos();
+        let pos: AbsCoord = self.player.pos;
         self.monsters.monsters_in_fov(pos, 1).is_empty()
     }
 
-    pub fn nearest_monster_path(&mut self) -> Vec<Coord> {
-        let pos = self.player_pos();
-        self.monsters.nearest(&self.tiles.tiles, pos, self.fov)
+    pub fn nearest_monster_path(&mut self) -> Vec<RelCoord> {
+        let pos = self.player.pos;
+        let coords = self.monsters.nearest(&self.tiles.tiles, pos, self.fov);
+
+        convert_coords_to_relative(self.player.pos, coords)
     }
 
     pub fn get_battle_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
-        let pos = self.player_pos();
+        let pos = self.player.pos;
         let fov = self.fov;
 
         self.monsters.monster_in_battle(pos, fov)
     }
 
     pub fn get_attacking_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
-        let pos = self.player_pos();
+        let pos = self.player.pos;
 
         self.monsters.monster_in_battle(pos, 1)
     }
 
     pub fn get_monster_threat_vec(&mut self) -> Vec<i32> {
-        let pos = self.player_pos();
+        let pos = self.player.pos;
         self.monsters
             .monsters_in_fov(pos, self.fov)
             .iter()

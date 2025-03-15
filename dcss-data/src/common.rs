@@ -5,8 +5,60 @@ use crate::tiles::Tile;
 use std::collections::VecDeque;
 
 // Type used in the data, stands for (x, y) on a 2d grid
-pub type Coord = (usize, usize);
-pub type CoordVec = Vec<(usize, usize)>;
+pub type AbsCoord = (usize, usize);
+pub type RelCoord = (i32, i32);
+
+/// Takes the coordinates of two tiles and returns the cardinal direction to take
+/// in order move between the tiles (according to the cardinal directions below).
+/// Returns [None] if cells not adjacent.
+///<pre>
+/// Tiles [x, y]     
+///        -y           
+///       ↖ ↑ ↗         
+///   -x  ← · → +x      
+///       ↙ ↓ ↘         
+///        +y           
+/// </pre>
+///
+/// # Arguments
+///
+/// * `x_pos` - A [i32] containing `x` position next to the player (-1, 0, 1).
+/// * `y_pos` - A [i32] containing `y` position next to the player (-1, 0, 1).
+///
+/// # Example
+///
+/// ```ignore
+/// let dir_n = move_adjacent_key(0, -1);
+/// ```
+pub fn move_adjacent_key<'a>(x_pos: i32, y_pos: i32) -> &'a str {
+    if (x_pos, y_pos) == (0, -1) {
+        return "key_dir_n";
+    }
+    if (x_pos, y_pos) == (-1, -1) {
+        return "key_dir_nw";
+    }
+    if (x_pos, y_pos) == (-1, 0) {
+        return "key_dir_w";
+    }
+    if (x_pos, y_pos) == (-1, 1) {
+        return "key_dir_sw";
+    }
+    if (x_pos, y_pos) == (0, 1) {
+        return "key_dir_s";
+    }
+    if (x_pos, y_pos) == (1, 1) {
+        return "key_dir_se";
+    }
+    if (x_pos, y_pos) == (1, 0) {
+        return "key_dir_e";
+    }
+    if (x_pos, y_pos) == (1, -1) {
+        return "key_dir_ne";
+    }
+
+    // TODO: Replace by error.
+    unreachable!("Move not adjacent");
+}
 
 /// Add a [i32] (including negative) to an [usize]. Returns a [usize].
 ///
@@ -164,6 +216,49 @@ pub(crate) fn structured_table(table: Value) -> FxHashMap<String, Vec<(u64, Stri
     return_table
 }
 
+pub(crate) fn convert_coords_to_relative(pos: AbsCoord, coords: Vec<AbsCoord>) -> Vec<RelCoord> {
+    // Each step is relative to the previous step (the first one relative
+    // to the player)
+
+    let mut relative_coords = vec![];
+    let mut cum_change = (0, 0);
+
+    let mut coords = coords;
+    coords.reverse();
+
+    for coord in coords {
+        let relative_coord = (
+            (coord.0 as i32 - cum_change.0 - pos.0 as i32),
+            (coord.1 as i32 - cum_change.1 - pos.1 as i32),
+        );
+
+        cum_change = (
+            cum_change.0 + relative_coord.0,
+            cum_change.1 + relative_coord.1,
+        );
+
+        relative_coords.push(relative_coord);
+    }
+
+    relative_coords.reverse();
+
+    relative_coords
+}
+
+pub(crate) fn convert_coord_to_absolute(pos: AbsCoord, coord: RelCoord) -> AbsCoord {
+    (
+        add_i32_to_usize(coord.0, pos.0),
+        add_i32_to_usize(coord.1, pos.1),
+    )
+}
+
+pub(crate) fn convert_coord_to_relative(pos: AbsCoord, coord: AbsCoord) -> RelCoord {
+    (
+        (coord.0 as i32 - pos.0 as i32),
+        (coord.1 as i32 - pos.1 as i32),
+    )
+}
+
 #[derive(Debug)]
 /// Struct for each node for the A* algorithm.
 struct Node {
@@ -174,9 +269,9 @@ struct Node {
     /// Number of estimated moves necessary to get to goal.
     moves_to_goal: u64,
     /// Coordinates (x, y) of the node in the &Vec<Vec<[Tile]>> object.
-    location: Coord,
+    location: AbsCoord,
     /// Coordinates (x, y) of the node that is being searched in the &Vec<Vec<[Tile]>> object.
-    end_goal: Option<Coord>,
+    end_goal: Option<AbsCoord>,
     /// The location in the list of nodes (explored) that the parent node is found.
     parent_node: Option<usize>,
     /// Extra key to make ordering deterministic
@@ -213,20 +308,20 @@ impl Node {
 /// * `max_path` - maximum path steps (made to speed up when looking dozens of time per action).
 pub(crate) fn pathfinding(
     tiles: &[Vec<Tile>],
-    start_location: Coord,
-    end_location: Option<Coord>,
+    start_location: AbsCoord,
+    end_location: Option<AbsCoord>,
     end_search_mf: Option<usize>,
     end_search_type: Option<&'static str>,
     max_path: u64,
     ignore_blocked: bool,
-) -> Vec<Coord> {
+) -> Vec<AbsCoord> {
     // Create a list of all nodes
     let mut explored: Vec<Node> = vec![];
 
     // Has the final_path been found
     let mut final_path = None;
 
-    // open is a list of Nodes not yet checked by A*.
+    // Open is a list of Nodes not yet checked by A*.
     let mut open: VecDeque<Node> = VecDeque::new();
 
     // Extra key to make ordering deterministic
@@ -246,8 +341,8 @@ pub(crate) fn pathfinding(
     open.push_back(first_node);
     key_break += 1;
 
-    // Create a closed set of Nodes already checked by A*.\
-    let mut closed: Vec<Coord> = Vec::new();
+    // Create a closed set of Nodes already checked by A*.
+    let mut closed: Vec<AbsCoord> = Vec::new();
     closed.push(start_location);
 
     let dir_list = [
