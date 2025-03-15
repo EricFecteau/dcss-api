@@ -8,58 +8,6 @@ use std::collections::VecDeque;
 pub type AbsCoord = (usize, usize);
 pub type RelCoord = (i32, i32);
 
-/// Takes the coordinates of two tiles and returns the cardinal direction to take
-/// in order move between the tiles (according to the cardinal directions below).
-/// Returns [None] if cells not adjacent.
-///<pre>
-/// Tiles [x, y]     
-///        -y           
-///       ↖ ↑ ↗         
-///   -x  ← · → +x      
-///       ↙ ↓ ↘         
-///        +y           
-/// </pre>
-///
-/// # Arguments
-///
-/// * `x_pos` - A [i32] containing `x` position next to the player (-1, 0, 1).
-/// * `y_pos` - A [i32] containing `y` position next to the player (-1, 0, 1).
-///
-/// # Example
-///
-/// ```ignore
-/// let dir_n = move_adjacent_key(0, -1);
-/// ```
-pub fn move_adjacent_key<'a>(x_pos: i32, y_pos: i32) -> &'a str {
-    if (x_pos, y_pos) == (0, -1) {
-        return "key_dir_n";
-    }
-    if (x_pos, y_pos) == (-1, -1) {
-        return "key_dir_nw";
-    }
-    if (x_pos, y_pos) == (-1, 0) {
-        return "key_dir_w";
-    }
-    if (x_pos, y_pos) == (-1, 1) {
-        return "key_dir_sw";
-    }
-    if (x_pos, y_pos) == (0, 1) {
-        return "key_dir_s";
-    }
-    if (x_pos, y_pos) == (1, 1) {
-        return "key_dir_se";
-    }
-    if (x_pos, y_pos) == (1, 0) {
-        return "key_dir_e";
-    }
-    if (x_pos, y_pos) == (1, -1) {
-        return "key_dir_ne";
-    }
-
-    // TODO: Replace by error.
-    unreachable!("Move not adjacent");
-}
-
 /// Add a [i32] (including negative) to an [usize]. Returns a [usize].
 ///
 /// # Arguments

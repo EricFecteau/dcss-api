@@ -1,4 +1,4 @@
-use crate::{common::AbsCoord, CrawlData};
+use crate::{common::AbsCoord, convert_coord_to_absolute, CrawlData};
 use serde_json::Value;
 use std::error::Error;
 
@@ -184,18 +184,21 @@ impl Tiles {
                 // Tiles have the "{" glyph when invisible monsters are on them (for a period of time)
                 if tile_object["g"] == "{" {
                     invisible_monsters.push((x_pos, y_pos));
+                    self.tiles[x_pos][y_pos].unblock(); // Make it walkable again
                 } else if tile_object["g"] == "@" {
                     // If character on monster tile, delete invisible (means no longer there)
                     remove_invisible_monsters.push((x_pos, y_pos));
-                } else if tile_object["g"] == "§"
+                }
+
+                if tile_object["g"] == "§"
                     || tile_object["g"] == "☼"
                     || tile_object["g"] == "○"
                     || tile_object["g"] == "°"
                 // Cloud (unsure if this will cause an issue for non-toxic clouds)
                 {
                     self.tiles[x_pos][y_pos].block();
-                } else {
-                    self.tiles[x_pos][y_pos].unblock();
+                } else if !tile_object.contains_key("mon") {
+                    self.tiles[x_pos][y_pos].unblock(); // Remove if previously cloud
                 }
             }
         }
@@ -401,5 +404,38 @@ impl CrawlData {
         let y_adj = add_i32_to_usize(y_pos, pos.1);
 
         self.tiles.tiles[x_adj][y_adj].mf
+    }
+
+    /// Get the position according to DCSS (from game start or stairs)
+    /// from a relative position (from the player). Necessary for a
+    /// few functions, such as the "click_cell" function. Returns an
+    /// (i32, i32).
+    ///
+    /// <pre>
+    /// Tiles [x, y]
+    ///        -y
+    ///       ↖ ↑ ↗
+    ///   -x  ← · → +x
+    ///       ↙ ↓ ↘
+    ///        +y
+    /// </pre>
+    ///
+    /// # Arguments
+    ///
+    /// * `x_pos` - A [i32] containing `x` position of the tile.
+    /// * `y_pos` - A [i32] containing `y` position of the tile.
+    ///     
+    /// # Example
+    ///
+    /// ```ignore
+    /// let explored = tile_mf(3, -5);
+    /// ```
+    pub fn get_dcss_coord(&mut self, x_pos: i32, y_pos: i32) -> (i32, i32) {
+        let coord = convert_coord_to_absolute(self.player.pos, (x_pos, y_pos));
+
+        (
+            coord.0 as i32 - (MAX_FLOOR_SIZE / 2) as i32,
+            coord.1 as i32 - (MAX_FLOOR_SIZE / 2) as i32,
+        )
     }
 }

@@ -12,7 +12,6 @@ mod player;
 mod skills;
 mod tiles;
 
-pub use crate::common::move_adjacent_key;
 pub use crate::common::RelCoord;
 
 use crate::abilities::Abilities;
@@ -86,6 +85,8 @@ impl CrawlData {
             // Ignore
             "ping" => (),
             "lobby_clear" => (),
+            "lobby_entry" => (),
+            "lobby_remove" => (),
             "go_lobby" => (),
             "html" => (),
             "set_game_links" => (),
