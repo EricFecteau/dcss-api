@@ -1,4 +1,4 @@
-use crate::common::{Coord, CoordVec};
+use crate::{common::AbsCoord, CrawlData};
 use serde_json::Value;
 use std::error::Error;
 
@@ -68,13 +68,13 @@ pub(crate) struct Tile {
     /// The number for the map feature.
     pub(crate) mf: usize,
 
-    /// Bool on if the tile is walkable or not.
+    /// Bool on if the tile is walkable.
     pub(crate) walkable: bool,
 
-    /// Temp blocked
+    /// Bool on if the tile is temporarily blocked.
     pub(crate) blocked: bool,
 
-    /// Bool on if the tile is explored or not.
+    /// Bool on if the tile is explored.
     pub(crate) explored: bool,
 }
 
@@ -103,7 +103,14 @@ impl Tiles {
     pub(crate) fn update(
         &mut self,
         cells: &Value,
-    ) -> Result<(Vec<(Coord, Value)>, CoordVec, (CoordVec, CoordVec)), Box<dyn Error>> {
+    ) -> Result<
+        (
+            Vec<(AbsCoord, Value)>,
+            Vec<AbsCoord>,
+            (Vec<AbsCoord>, Vec<AbsCoord>),
+        ),
+        Box<dyn Error>,
+    > {
         // x = moving left and right through a row
         // y = moving up and down in a column
 
@@ -116,12 +123,12 @@ impl Tiles {
         let mut coord = (0, 0);
 
         // Monster list, to be returned to be processed by the monsters module
-        let mut monsters: Vec<(Coord, serde_json::Value)> = Vec::new();
-        let mut invisible_monsters: CoordVec = Vec::new();
-        let mut remove_invisible_monsters: CoordVec = Vec::new();
+        let mut monsters: Vec<(AbsCoord, serde_json::Value)> = Vec::new();
+        let mut invisible_monsters: Vec<AbsCoord> = Vec::new();
+        let mut remove_invisible_monsters: Vec<AbsCoord> = Vec::new();
 
         // List of items on the ground
-        let mut itemlist: CoordVec = Vec::new();
+        let mut itemlist: Vec<AbsCoord> = Vec::new();
 
         for tile in cells.as_array().unwrap() {
             let tile_object = tile.as_object().unwrap();
@@ -236,5 +243,163 @@ impl Tile {
 
     fn unblock(&mut self) {
         self.blocked = false
+    }
+}
+
+impl CrawlData {
+    /// Is the tile at `x_pos` and `y_pos` (relative to the player's position)
+    /// explored. Returns a [bool].
+    ///
+    /// <pre>
+    /// Tiles [x, y]
+    ///        -y
+    ///       ↖ ↑ ↗
+    ///   -x  ← · → +x
+    ///       ↙ ↓ ↘
+    ///        +y
+    /// </pre>
+    ///
+    /// # Arguments
+    ///
+    /// * `x_pos` - A [i32] containing `x` position of the tile.
+    /// * `y_pos` - A [i32] containing `y` position of the tile.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// let explored = tile_explored(3, -5);
+    /// ```
+    pub fn tile_explored(&mut self, x_pos: i32, y_pos: i32) -> bool {
+        let pos = self.player.pos;
+
+        let x_adj = add_i32_to_usize(x_pos, pos.0);
+        let y_adj = add_i32_to_usize(y_pos, pos.1);
+
+        self.tiles.tiles[x_adj][y_adj].explored
+    }
+
+    /// Is the tile at `x_pos` and `y_pos` (relative to the player's position)
+    /// walkable. Returns false if the tile is temporarily blocked (e.g. has a
+    /// monster on the tile). Returns a [bool].
+    ///
+    /// <pre>
+    /// Tiles [x, y]
+    ///        -y
+    ///       ↖ ↑ ↗
+    ///   -x  ← · → +x
+    ///       ↙ ↓ ↘
+    ///        +y
+    /// </pre>
+    ///
+    /// # Arguments
+    ///
+    /// * `x_pos` - A [i32] containing `x` position of the tile.
+    /// * `y_pos` - A [i32] containing `y` position of the tile.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// let walkable = tile_walkable(3, -5);
+    /// ```
+    pub fn tile_walkable(&mut self, x_pos: i32, y_pos: i32) -> bool {
+        let pos = self.player.pos;
+
+        let x_adj = add_i32_to_usize(x_pos, pos.0);
+        let y_adj = add_i32_to_usize(y_pos, pos.1);
+
+        self.tiles.tiles[x_adj][y_adj].walkable && !self.tiles.tiles[x_adj][y_adj].blocked
+    }
+
+    /// Is the tile at `x_pos` and `y_pos` (relative to the player's position)
+    /// walkable. Returns true even if the tile is temporarily blocked (e.g. has a
+    /// monster on the tile). Returns a [bool].
+    ///
+    /// <pre>
+    /// Tiles [x, y]
+    ///        -y
+    ///       ↖ ↑ ↗
+    ///   -x  ← · → +x
+    ///       ↙ ↓ ↘
+    ///        +y
+    /// </pre>
+    ///
+    /// # Arguments
+    ///
+    /// * `x_pos` - A [i32] containing `x` position of the tile.
+    /// * `y_pos` - A [i32] containing `y` position of the tile.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// let walkable = tile_walkable_ignore_blocked(3, -5);
+    /// ```
+    pub fn tile_walkable_ignore_blocked(&mut self, x_pos: i32, y_pos: i32) -> bool {
+        let pos = self.player.pos;
+
+        let x_adj = add_i32_to_usize(x_pos, pos.0);
+        let y_adj = add_i32_to_usize(y_pos, pos.1);
+
+        self.tiles.tiles[x_adj][y_adj].walkable
+    }
+
+    /// What is the Map Feature (MF) of the tile at `x_pos` and `y_pos`
+    /// (relative to the player's position). This is generally used for
+    /// debugging. Returns a [usize].
+    ///
+    /// <pre>
+    /// Tiles [x, y]
+    ///        -y
+    ///       ↖ ↑ ↗
+    ///   -x  ← · → +x
+    ///       ↙ ↓ ↘
+    ///        +y
+    /// </pre>
+    ///
+    /// These are the possible MFs. Some are never uses in the game:
+    /// * 0: unexplored
+    /// * 1: floor
+    /// * 2: wall
+    /// * 3: magic mapping floor
+    /// * 4: magic mapping wall
+    /// * 5: door
+    /// * 6: item
+    /// * 7: MF_MONS_FRIENDLY
+    /// * 8: MF_MONS_PEACEFUL
+    /// * 9: MF_MONS_NEUTRAL
+    /// * 10: MF_MONS_HOSTILE
+    /// * 11: plant (MF_MONS_NO_EXP)
+    /// * 12: up stairs
+    /// * 13: down stairs
+    /// * 14: stair branch (e.g. temple)
+    /// * 15: feature (e.g. altar)
+    /// * 16: shallow water
+    /// * 17: lava
+    /// * 18: trap
+    /// * 19: MF_EXCL_ROOT
+    /// * 20: MF_EXCL
+    /// * 21: MF_PLAYER
+    /// * 22: deep water
+    /// * 23: portal (sewer entrance)
+    /// * 24: portal (up or down)
+    /// * 25: portal (up or down)
+    /// * 26: unexplored
+    ///
+    /// # Arguments
+    ///
+    /// * `x_pos` - A [i32] containing `x` position of the tile.
+    /// * `y_pos` - A [i32] containing `y` position of the tile.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// let explored = tile_mf(3, -5);
+    /// ```
+    pub fn tile_mf(&mut self, x_pos: i32, y_pos: i32) -> usize {
+        let pos = self.player.pos;
+
+        let x_adj = add_i32_to_usize(x_pos, pos.0);
+        let y_adj = add_i32_to_usize(y_pos, pos.1);
+
+        self.tiles.tiles[x_adj][y_adj].mf
     }
 }

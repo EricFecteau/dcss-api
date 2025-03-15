@@ -12,10 +12,11 @@ mod player;
 mod skills;
 mod tiles;
 
-pub use crate::common::Coord;
+pub use crate::common::move_adjacent_key;
+pub use crate::common::RelCoord;
 
 use crate::abilities::Abilities;
-use crate::common::{pathfinding, structured_table};
+use crate::common::{convert_coords_to_relative, pathfinding, structured_table, AbsCoord};
 use crate::inventory::Inventory;
 use crate::items::armours::ArmourType;
 use crate::items::jewellery::AmuletType;
@@ -30,6 +31,8 @@ use crate::skills::Skills;
 use crate::tiles::Tiles;
 use std::error::Error;
 
+use common::convert_coord_to_absolute;
+use common::convert_coord_to_relative;
 use serde_json::Value;
 
 #[derive(Debug)]
@@ -389,7 +392,7 @@ impl CrawlData {
         self.inventory.description(description);
     }
 
-    pub fn monster_description(&mut self, description: Value, pos: Coord) {
+    pub fn monster_description(&mut self, description: Value, pos: AbsCoord) {
         self.monsters.description(description, pos);
     }
 
@@ -426,10 +429,6 @@ impl CrawlData {
         item
     }
 
-    pub fn player_pos(&self) -> Coord {
-        self.player.pos
-    }
-
     pub fn player_hp(&self) -> i32 {
         self.player.health.hp
     }
@@ -454,51 +453,38 @@ impl CrawlData {
         self.fov
     }
 
-    pub fn tile_explored(&mut self, x_pos: usize, y_pos: usize) -> bool {
-        self.tiles.tiles[x_pos][y_pos].explored
-    }
-
-    pub fn tile_walkable(&mut self, x_pos: usize, y_pos: usize) -> bool {
-        self.tiles.tiles[x_pos][y_pos].walkable && !self.tiles.tiles[x_pos][y_pos].blocked
-    }
-
-    pub fn tile_walkable_ignore_blocked(&mut self, x_pos: usize, y_pos: usize) -> bool {
-        self.tiles.tiles[x_pos][y_pos].walkable
-    }
-
-    pub fn tile_mf(&mut self, x_pos: usize, y_pos: usize) -> usize {
-        self.tiles.tiles[x_pos][y_pos].mf
-    }
-
     pub fn unknown_item_curr_loc(&mut self) -> bool {
-        let pos = self.player_pos();
+        let pos = self.player.pos;
         self.pickup.unknown_item_loc(pos)
     }
 
     pub fn remove_item_curr_loc(&mut self) {
-        let pos = self.player_pos();
+        let pos = self.player.pos;
         self.pickup.remove_item_loc(pos);
     }
 
     pub fn new_ignore_item_curr_loc(&mut self) {
-        let pos = self.player_pos();
+        let pos = self.player.pos;
         self.pickup.new_ignore_item_loc(pos);
     }
 
-    pub fn nearest_item_path(&mut self) -> Option<Vec<Coord>> {
-        let pos = self.player_pos();
+    pub fn nearest_item_path(&mut self) -> Option<Vec<RelCoord>> {
+        let pos = self.player.pos;
         let nearest = self.pickup.nearest(&self.tiles.tiles, pos, self.fov);
 
         if !nearest.is_empty() {
-            return Some(nearest);
+            let coords = convert_coords_to_relative(pos, nearest);
+            return Some(coords);
         }
 
         None
     }
 
-    pub fn examine_monsters(&mut self) -> Option<Coord> {
-        let pos = self.player_pos();
-        self.monsters.pos_unexamined_monster(pos, self.fov)
+    pub fn examine_monsters(&mut self) -> Option<RelCoord> {
+        let pos = self.player.pos;
+        let coord = self.monsters.pos_unexamined_monster(pos, self.fov);
+
+        coord.map(|coord| convert_coord_to_relative(pos, coord))
     }
 
     pub fn new_floor(&mut self) {
@@ -513,8 +499,8 @@ impl CrawlData {
     ///
     /// * `player_pos` - A [Coord] containing the player's position within
     ///   the [Tiles].tiles vector.
-    pub fn path_to_unexplored(&mut self) -> Vec<Coord> {
-        pathfinding(
+    pub fn path_to_unexplored(&mut self) -> Vec<RelCoord> {
+        let coords = pathfinding(
             &self.tiles.tiles,
             self.player.pos,
             None,
@@ -522,7 +508,9 @@ impl CrawlData {
             Some("unexplored"),
             10_000,
             false,
-        )
+        );
+
+        convert_coords_to_relative(self.player.pos, coords)
     }
 
     /// Set path to an down stair in the [Tiles] object.
@@ -531,8 +519,8 @@ impl CrawlData {
     ///
     /// * `player_pos` - A ([Coord]) containing the player's position within
     ///   the [Tiles].tiles vector.
-    pub fn path_to_down_stairs(&mut self) -> Vec<Coord> {
-        pathfinding(
+    pub fn path_to_down_stairs(&mut self) -> Vec<RelCoord> {
+        let coords = pathfinding(
             &self.tiles.tiles,
             self.player.pos,
             None,
@@ -540,11 +528,15 @@ impl CrawlData {
             None,
             10_000,
             false,
-        )
+        );
+
+        convert_coords_to_relative(self.player.pos, coords)
     }
 
-    pub fn path_to_location(&mut self, cell_loc: Coord) -> Vec<Coord> {
-        pathfinding(
+    pub fn path_to_location(&mut self, cell_loc: RelCoord) -> Vec<RelCoord> {
+        let cell_loc = convert_coord_to_absolute(self.player.pos, cell_loc);
+
+        let coords = pathfinding(
             &self.tiles.tiles,
             self.player.pos,
             Some(cell_loc),
@@ -552,6 +544,8 @@ impl CrawlData {
             None,
             10_000,
             false,
-        )
+        );
+
+        convert_coords_to_relative(self.player.pos, coords)
     }
 }

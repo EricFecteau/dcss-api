@@ -1,12 +1,12 @@
 use crate::common::pathfinding;
-use crate::common::Coord;
+use crate::common::AbsCoord;
 use crate::tiles::Tile;
 use std::cmp;
 
 #[derive(Debug)]
 pub(crate) struct Pickup {
-    pub(crate) unknown: Vec<Coord>,
-    pub(crate) ignore: Vec<Coord>,
+    pub(crate) unknown: Vec<AbsCoord>,
+    pub(crate) ignore: Vec<AbsCoord>,
 }
 
 impl Pickup {
@@ -17,20 +17,20 @@ impl Pickup {
         }
     }
 
-    pub(crate) fn update(&mut self, item_coord: Coord) {
-        let already_listed = self.unknown.iter().any(|x: &Coord| *x == item_coord);
+    pub(crate) fn update(&mut self, item_coord: AbsCoord) {
+        let already_listed = self.unknown.iter().any(|x: &AbsCoord| *x == item_coord);
 
-        let ignore = self.ignore.iter().any(|x: &Coord| *x == item_coord);
+        let ignore = self.ignore.iter().any(|x: &AbsCoord| *x == item_coord);
 
         if !already_listed && !ignore {
             self.unknown.push(item_coord);
         }
     }
 
-    pub(crate) fn unknown_item_loc(&self, player_coord: Coord) -> bool {
-        let in_list = self.unknown.iter().any(|x: &Coord| *x == player_coord);
+    pub(crate) fn unknown_item_loc(&self, player_coord: AbsCoord) -> bool {
+        let in_list = self.unknown.iter().any(|x: &AbsCoord| *x == player_coord);
 
-        let ignore = self.ignore.iter().any(|x: &Coord| *x == player_coord);
+        let ignore = self.ignore.iter().any(|x: &AbsCoord| *x == player_coord);
 
         if in_list && !ignore {
             return true;
@@ -39,7 +39,7 @@ impl Pickup {
         false
     }
 
-    pub(crate) fn remove_item_loc(&mut self, player_coord: Coord) {
+    pub(crate) fn remove_item_loc(&mut self, player_coord: AbsCoord) {
         let index = self.unknown.iter().position(|x| *x == player_coord);
 
         if let Some(i) = index {
@@ -47,10 +47,10 @@ impl Pickup {
         }
     }
 
-    pub(crate) fn new_ignore_item_loc(&mut self, player_coord: Coord) {
+    pub(crate) fn new_ignore_item_loc(&mut self, player_coord: AbsCoord) {
         self.remove_item_loc(player_coord);
 
-        let ignore = self.ignore.iter().any(|x: &Coord| *x == player_coord);
+        let ignore = self.ignore.iter().any(|x: &AbsCoord| *x == player_coord);
 
         if !ignore {
             self.ignore.push(player_coord);
@@ -60,9 +60,9 @@ impl Pickup {
     fn path_to_all_items(
         &self,
         tiles: &[Vec<Tile>],
-        player_coord: Coord,
+        player_coord: AbsCoord,
         fov: u32,
-    ) -> Vec<Vec<Coord>> {
+    ) -> Vec<Vec<AbsCoord>> {
         let mut path_of_items = vec![];
 
         // How far is monster from char (max = fov)
@@ -95,9 +95,9 @@ impl Pickup {
     pub(crate) fn nearest(
         &mut self,
         tiles: &[Vec<Tile>],
-        player_coord: Coord,
+        player_coord: AbsCoord,
         fov: u32,
-    ) -> Vec<Coord> {
+    ) -> Vec<AbsCoord> {
         let mut shortest_path = vec![];
 
         for path in self.path_to_all_items(tiles, player_coord, fov) {

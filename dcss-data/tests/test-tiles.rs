@@ -1,50 +1,80 @@
-// mod common;
+mod common;
 
-// use dcss_api::Webtile;
-// use dcss_scenario_builder::start_game_with_scenario;
+use dcss_api::Webtile;
+use dcss_scenario_builder::start_game_with_scenario;
 
-// #[test]
-// fn verify_wizmode() -> Result<(), Error> {
-//     // Safe test -- login start game, quit, and then test
-//     reset_test("Username");
+use dcss_data::CrawlData;
 
-//     // Connect to DCSS Webtile
-//     let mut webtile =
-//         Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
+#[test]
+fn box_7x7() {
+    let game_id = std::env::var("GAME_ID").unwrap();
+    common::reset_test("Username", game_id.as_str());
 
-//     // Empty message queue;
-//     while webtile.get_message().is_some() {}
+    // Connect to DCSS Webtile
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
 
-//     // Log in (to a user called "Username", with a password "Password")
-//     let _gameid = webtile
-//         .login_with_credentials("Username", "Password")
-//         .expect("Failed to login.");
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
 
-//     // Start game with simple scenario.
-//     start_game_with_scenario(
-//         &mut webtile,
-//         "dcss-0.32",
-//         "b",
-//         "i",
-//         "c",
-//         "./tests/test_scenarios/simple_map.yaml",
-//     )
-//     .expect("Failed to start game with scenario.");
+    // Log in (to a user called "Username", with a password "Password")
+    let _ = webtile
+        .login_with_credentials("Username1", "Password")
+        .unwrap();
 
-//     webtile.save_game().expect("Failed to save game.");
+    // Start game with simple scenario.
+    start_game_with_scenario(
+        &mut webtile,
+        game_id.as_str(),
+        "b",
+        "f",
+        "b",
+        "./tests/scenarios/tiles/box_7x7.yaml",
+    )
+    .unwrap();
 
-//     webtile.continue_game("dcss-0.32")?;
+    // Setup data object
+    let mut data = CrawlData::init(9, "0.32");
 
-//     while let Some(message) = webtile.get_message() {
-//         if message["msg"].as_str().unwrap() == "player"
-//             && message.as_object().unwrap().contains_key("wizard")
-//             && message["wizard"].as_u64().unwrap() == 1
-//         {
-//             // webtile.quit_game()?;
-//             webtile.disconnect().expect("Failed");
-//             return Ok(());
-//         }
-//     }
+    // Wait for Ready
+    webtile
+        .read_until("input_mode", Some("mode"), Some(1))
+        .unwrap();
 
-//     unreachable!();
-// }
+    // Process the data
+    while let Some(message) = webtile.get_message() {
+        data.process_json(&message).unwrap()
+    }
+
+    // Tiles [x, y]
+    //        [-y]
+    //       ↖ ↑ ↗
+    //  [-x] ← · → [+x]
+    //       ↙ ↓ ↘
+    //        [+y]
+
+    // Verify area is explored
+    for x in -5..5 {
+        for y in -5..5 {
+            if (-4..=4).contains(&x) && (-4..=4).contains(&y) {
+                assert!(data.tile_explored(x, y));
+            } else {
+                assert!(!data.tile_explored(x, y));
+            }
+        }
+    }
+
+    // Verify area is walkable
+    for x in -5..5 {
+        for y in -5..5 {
+            if (-3..=3).contains(&x) && (-3..=3).contains(&y) {
+                assert!(data.tile_walkable(x, y));
+            } else {
+                assert!(!data.tile_walkable(x, y));
+            }
+        }
+    }
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}

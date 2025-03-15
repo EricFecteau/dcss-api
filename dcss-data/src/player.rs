@@ -1,5 +1,5 @@
 use crate::common::add_i32_to_usize;
-use crate::common::Coord;
+use crate::common::AbsCoord;
 use crate::CrawlData;
 use serde_json::Value;
 
@@ -28,7 +28,7 @@ pub(crate) struct Defense {
 
 #[derive(Debug)]
 pub(crate) struct Player {
-    pub(crate) pos: Coord,
+    pub(crate) pos: AbsCoord,
     pub(crate) health: Health,
     pub(crate) stats: Stats,
     pub(crate) defense: Defense,
@@ -69,7 +69,7 @@ impl Defense {
 impl Player {
     pub(crate) fn init() -> Self {
         Self {
-            pos: (0, 0),
+            pos: (MAX_FLOOR_SIZE / 2, MAX_FLOOR_SIZE / 2),
             health: Health::new(),
             stats: Stats::new(),
             defense: Defense::new(),
