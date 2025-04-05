@@ -170,3 +170,102 @@ fn box_7x7_monster() {
 
     webtile.disconnect().unwrap();
 }
+
+#[test]
+fn feature() {
+    let username = "Username3";
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
+    common::reset_test(username, game_id.as_str());
+
+    // Connect to DCSS Webtile
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
+
+    // Empty message queue;
+    while webtile.get_message().is_some() {}
+
+    // Log in (to a user called "Username", with a password "Password")
+    let _ = webtile
+        .login_with_credentials(username, "Password")
+        .unwrap();
+
+    // Start game with simple scenario.
+    start_game_with_scenario(
+        &mut webtile,
+        game_id.as_str(),
+        "b",
+        "f",
+        "b",
+        "./tests/scenarios/tiles/feature.yaml",
+    )
+    .unwrap();
+
+    // Setup data object
+    let mut data = CrawlData::init(9, "0.32");
+
+    // Wait for Ready
+    webtile
+        .read_until("input_mode", Some("mode"), Some(1))
+        .unwrap();
+
+    // Process the data
+    while let Some(message) = webtile.get_message() {
+        data.process_json(&message).unwrap()
+    }
+
+    // Tiles [x, y]
+    //        [-y]
+    //       ↖ ↑ ↗
+    //  [-x] ← · → [+x]
+    //       ↙ ↓ ↘
+    //        [+y]
+
+    // Verify area is explored
+    for x in -5..5 {
+        for y in -5..5 {
+            if (-4..=4).contains(&x) && (-4..=4).contains(&y) {
+                assert!(data.tile_explored(x, y));
+            } else {
+                assert!(!data.tile_explored(x, y));
+            }
+        }
+    }
+
+    // Verify area is walkable (except monster)
+    for x in -5..5 {
+        for y in -5..5 {
+            if (-3..=3).contains(&x) && (-3..=3).contains(&y) {
+                if x == 0 && y == 2 {
+                    // Lava
+                    assert!(!data.tile_walkable(x, y));
+                } else {
+                    assert!(data.tile_walkable(x, y));
+                }
+            } else {
+                assert!(!data.tile_walkable(x, y));
+            }
+        }
+    }
+
+    // Verify mf type
+    for x in -5..5 {
+        for y in -5..5 {
+            if x == 5 || x == -5 || y == 5 || y == -5 {
+                assert!(data.tile_mf(x, y) == 0); // unexplored
+            } else if x == 4 || x == -4 || y == 4 || y == -4 {
+                assert!(data.tile_mf(x, y) == 2); // wall
+            } else if (-3..=3).contains(&x) && (-3..=3).contains(&y) {
+                if x == 0 && y == 2 {
+                    assert!(data.tile_mf(x, y) == 17); // lava
+                } else {
+                    assert!(data.tile_mf(x, y) == 1); // floor
+                }
+            } else {
+                panic!();
+            }
+        }
+    }
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}
