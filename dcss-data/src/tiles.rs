@@ -3,9 +3,7 @@ use serde_json::Value;
 use std::error::Error;
 
 use crate::common::add_i32_to_usize;
-
-/// Max floor size
-const MAX_FLOOR_SIZE: usize = 500;
+use crate::MAX_FLOOR_SIZE;
 
 /// Map Features (MF) received by the game (e.g. floor, wall).
 ///

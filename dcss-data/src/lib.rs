@@ -34,6 +34,9 @@ use common::convert_coord_to_absolute;
 use common::convert_coord_to_relative;
 use serde_json::Value;
 
+/// Max floor size
+const MAX_FLOOR_SIZE: usize = 500;
+
 #[derive(Debug)]
 pub struct CrawlData {
     /// Field of view (FOV) of the character for item pickup, battle mechanics,

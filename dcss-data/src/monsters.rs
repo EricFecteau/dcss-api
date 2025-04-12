@@ -8,12 +8,15 @@ use rustc_hash::FxHashMap;
 use serde_json::Value;
 
 #[derive(Debug)]
+/// Object containing the monster hashmap and the location of the
+/// next monster to examine.
 pub(crate) struct Monsters {
     pub(crate) examine_loc: Option<AbsCoord>,
     pub(crate) monsters: FxHashMap<u64, Monster>,
 }
 
 #[derive(Debug)]
+/// Object containing all the characteristics of a monster.
 pub(crate) struct Monster {
     pub(crate) name: String,
     pub(crate) threat: i32,

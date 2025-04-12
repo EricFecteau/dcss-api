@@ -47,8 +47,8 @@ impl Menus {
     /// # Arguments
     ///
     /// * `hierarchy` - A [Vec] of [&str] that takes the "open_menu" key to
-    ///                 identify where in the menu hierarchy the new menu
-    ///                 should be placed.
+    ///   identify where in the menu hierarchy the new menu
+    ///   should be placed.
     /// * `open_menu` - A [&str] for the character used to open that menu
     /// * `close_menu` - A [&str] for the character used to close that menu
     /// * `requested` - A [bool] for if the menu was requested
@@ -56,9 +56,9 @@ impl Menus {
     /// * `closed` - A [bool] for if the menu was closed
     /// * `high_priority` - A [bool] for if the menu is of high priority
     /// * `open_message` - A [String] message to wait for from the API to
-    ///                    confirm the menu is opened
+    ///   confirm the menu is opened
     /// * `close_message` - A [String] message to wait for from the API to
-    ///                     confirm the menu is closed
+    ///   confirm the menu is closed
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn add_menu(
         &mut self,
