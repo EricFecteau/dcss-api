@@ -98,7 +98,7 @@ pub(crate) fn process_scenario(
 /// # Arguments
 ///
 /// * `glyphs` - a vector of glyphs and equivalent text from the YAML that
-///              can be understood by DCSS.
+///   can be understood by DCSS.
 fn process_glyphs(glyphs: Vec<&str>) -> FxHashMap<String, String> {
     glyphs
         .iter()
@@ -115,14 +115,14 @@ fn process_glyphs(glyphs: Vec<&str>) -> FxHashMap<String, String> {
 /// # Arguments
 ///
 /// * `features` - [FxHashMap] of the mapping between the glyphs
-///                in the map and the feature understandable by
-///                DCSS.
+///   in the map and the feature understandable by
+///   DCSS.
 /// * `items` - [FxHashMap] of the mapping between the glyphs
-///             in the map and the item understandable by
-///             DCSS.
+///   in the map and the item understandable by
+///   DCSS.
 /// * `monsters` - [FxHashMap] of the mapping between the glyphs
-///                in the map and the monster understandable by
-///                DCSS.
+///   in the map and the monster understandable by
+///   DCSS.
 /// * `map` - the map from the YAML.
 /// * `default_feature` - the default feature for missing glyphs.
 fn process_map(

@@ -3,7 +3,7 @@ use crate::common::AbsCoord;
 use crate::CrawlData;
 use serde_json::Value;
 
-const MAX_FLOOR_SIZE: usize = 500;
+use crate::MAX_FLOOR_SIZE;
 
 #[derive(Debug)]
 pub(crate) struct Health {
@@ -27,6 +27,7 @@ pub(crate) struct Defense {
 }
 
 #[derive(Debug)]
+/// Stores the character's information
 pub(crate) struct Player {
     pub(crate) pos: AbsCoord,
     pub(crate) health: Health,
