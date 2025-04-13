@@ -18,30 +18,90 @@ pub(crate) struct Monsters {
 #[derive(Debug)]
 /// Object containing all the characteristics of a monster.
 pub(crate) struct Monster {
+    /// Name of the monster
     pub(crate) name: String,
+
+    /// Threat level
+    ///   "Minor" => 1
+    ///   "Low" => 2
+    ///   "High" => 4
+    ///   "Lethal" => 5
     pub(crate) threat: i32,
+
+    /// Absolute coordinates of the monster
     pub(crate) pos: Option<AbsCoord>,
+
+    /// Has `dcss-data` received detailed info about the monster
     pub(crate) examined: bool,
+
+    /// Maximum HP
     pub(crate) max_hp: Option<i32>,
+
+    /// Will
     pub(crate) will: Option<i32>,
+
+    /// AC
     pub(crate) ac: Option<i32>,
+
+    /// EV
     pub(crate) ev: Option<i32>,
+
+    /// Fire resistance
     pub(crate) fire: Option<i32>,
+
+    /// Cold resistance
     pub(crate) cold: Option<i32>,
+
+    /// Poison resistance
     pub(crate) poison: Option<i32>,
+
+    /// Negative resistance
     pub(crate) negative: Option<i32>,
+
+    /// Electric resistance
     pub(crate) electric: Option<i32>,
+
+    /// Monster class
+    ///   "Natural" => 1
+    ///   "Undead" => 2
+    ///   "Demonic" => 3
+    ///   "Nonliv." => 4
+    ///   "Plant" => 5
     pub(crate) class: Option<i32>,
+
+    /// Monster size
+    ///   "Tiny" => 1
+    ///   "V. Small" => 2
+    ///   "Small" => 3
+    ///   "Medium" => 4
+    ///   "Large" => 5
+    ///   "Giant" => 6
     pub(crate) size: Option<i32>,
+
+    /// Monster intelligence
+    ///   "Mindless" => 1
+    ///   "Animal" => 2
+    ///   "Human" => 3
     pub(crate) int: Option<i32>,
+
+    /// Monster speed (%)
     pub(crate) speed: Option<i32>,
+
+    /// Monster regeneration
     pub(crate) regen: Option<i32>,
+
+    /// Chance to hit monster (%)
     pub(crate) player_hit_monster_chance: Option<i32>,
+
+    /// Chance the monster hits the player (%)
     pub(crate) monster_hit_player_chance: Option<i32>,
+
+    /// Max damage the monster can do to the player
     pub(crate) max_damage: Option<i32>,
 }
 
 impl Monsters {
+    /// Create the [Monsters] object
     pub(crate) fn init() -> Self {
         Self {
             examine_loc: None,
@@ -49,6 +109,14 @@ impl Monsters {
         }
     }
 
+    /// Update the `monsters` field based on the value for the monster, received
+    /// from the tiles object.
+    ///
+    /// # Arguments
+    ///
+    /// * `mon_pos` - an [AbsCoord] of the monster's position
+    /// * `monster` - A [serde_json::Value] received by DCSS Webtiles, from the
+    ///   tiles data.
     pub(crate) fn update(&mut self, mon_pos: AbsCoord, monster: Value) {
         // If monster is "None", and monster still at that position in memory,
         // remove it from that location
@@ -150,7 +218,7 @@ impl Monsters {
 
             if !self.monsters.is_empty() {
                 if !found {
-                    // Assume that it's just the same as the last one (unsafe?)
+                    // Assume that it's just the same as the last one (sound assumption?)
                     let last_mon_id = self.monsters.keys().max().unwrap();
 
                     self.monsters.insert(
@@ -170,8 +238,18 @@ impl Monsters {
         }
     }
 
-    pub(crate) fn description(&mut self, description: Value, pos: AbsCoord) {
+    /// Update the `monsters` field based on the value for the monster, received
+    /// from inspecting the monster through tile examination (e.g. `click_cell`).
+    ///
+    /// # Arguments
+    ///
+    /// * `mon_pos` - an [AbsCoord] of the monster's position
+    /// * `description` - A [serde_json::Value] received by DCSS Webtiles, from a
+    ///   ui_type popup after a tile examination.
+    pub(crate) fn description(&mut self, pos: AbsCoord, description: Value) {
         let mut desc_body = description["body"].as_str().unwrap().to_owned();
+
+        // Needed for uniform decoding
         desc_body.push_str("\n\n");
 
         // Max HP
@@ -301,7 +379,7 @@ impl Monsters {
             0
         };
 
-        // hance the monster hits the player
+        // Chance the monster hits the player
         let re: Regex = Regex::new(r"(?:He|She|It|They) (?:has|have) about \s*([^%]*)").unwrap();
         let monster_hit_player_chance: i32 = if let Some(cap) = re.captures(&desc_body) {
             cap[1].parse::<i32>().unwrap_or(0)
@@ -369,6 +447,15 @@ impl Monsters {
         }
     }
 
+    /// Counts the number of paths to monsters within the field of view (FOV).
+    /// Generally used to count monsters that are potentially accessible by the
+    /// player (e.g. not in a glass box). Returns a [u32].
+    ///
+    /// # Arguments
+    ///
+    /// * `tiles` - The 2d vector of Tiles.
+    /// * `player_pos` - The [AbsCoord] of the player's position.
+    /// * `fov` - The maximum field of view for the pathing.
     pub(crate) fn count_path(
         &mut self,
         tiles: &[Vec<Tile>],
@@ -378,6 +465,16 @@ impl Monsters {
         self.path_to_all_mons(tiles, player_pos, fov, true).len() as u32
     }
 
+    /// Runs pathing to all the monsters within the field of view (FOV). Returns
+    /// a vector of paths (i.e., [Vec<Vec<AbsCoord>>]).
+    ///
+    /// # Arguments
+    ///
+    /// * `tiles` - The 2d vector of Tiles.
+    /// * `player_pos` - The [AbsCoord] of the player's position.
+    /// * `fov` - The maximum field of view for the pathing.
+    /// * `ignore_blocked` - A [bool] on if the pathing should ignore temporary
+    ///   blocks.
     fn path_to_all_mons(
         &self,
         tiles: &[Vec<Tile>],
@@ -406,6 +503,7 @@ impl Monsters {
                 continue;
             }
 
+            // If within FOV, path it
             let path = pathfinding(
                 tiles,
                 player_pos,
@@ -416,6 +514,7 @@ impl Monsters {
                 ignore_blocked,
             );
 
+            // May be within FOV, but not accessible, skip those
             if !path.is_empty() {
                 path_of_monsters.push(path)
             }

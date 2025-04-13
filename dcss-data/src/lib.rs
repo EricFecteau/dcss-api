@@ -208,7 +208,8 @@ impl CrawlData {
                 }
 
                 self.identify_menu_as_opened();
-                self.monster_description(message.clone(), self.monsters.examine_loc.unwrap());
+                self.monsters
+                    .description(self.monsters.examine_loc.unwrap(), message.clone());
                 self.monsters.examine_loc = None;
             }
             _ => (),
@@ -394,10 +395,6 @@ impl CrawlData {
 
     pub fn inventory_description(&mut self, description: Value) {
         self.inventory.description(description);
-    }
-
-    pub fn monster_description(&mut self, description: Value, pos: AbsCoord) {
-        self.monsters.description(description, pos);
     }
 
     pub fn process_ability_menu(&mut self, menu_items: Value) {
