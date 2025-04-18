@@ -37,6 +37,9 @@ setup-dcss-server:
 
     rm -rf ./crawl/main
 
+dcss-scenario:
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo run -r --example 1_basic
+
 dcss-run:
     python3 crawl/server/server.py
 

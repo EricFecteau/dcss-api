@@ -7,7 +7,7 @@ use dcss_data::CrawlData;
 
 #[test]
 fn box_7x7() {
-    let username = "Username1";
+    let username = "Tiles1";
     let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
     common::reset_test(username, game_id.as_str());
 
@@ -82,7 +82,7 @@ fn box_7x7() {
 
 #[test]
 fn box_7x7_monster() {
-    let username = "Username2";
+    let username = "Tiles2";
     let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
     common::reset_test(username, game_id.as_str());
 
@@ -173,7 +173,7 @@ fn box_7x7_monster() {
 
 #[test]
 fn feature() {
-    let username = "Username3";
+    let username = "Tiles3";
     let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
     common::reset_test(username, game_id.as_str());
 

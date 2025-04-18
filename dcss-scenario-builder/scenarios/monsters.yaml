@@ -1,0 +1,37 @@
+options:
+  default_feature: "floor"
+
+# https://crawl.develz.org/wiki/doku.php?id=dcss:help:maps:syntax:monster_info
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+      monsters:
+        - 'a = kobold' # Simple
+        - 'b = kobold hp:20' # With specific HP
+        - 'c = kobold hd:5' # With high hp (decided by hit dice (hd))
+        - 'd = kobold att:friendly' # Friendly
+        - 'e = kobold name:Bob' # Named
+        - 'f = kobold spells:throw_flame' # With spell
+        - 'g = random' # Random monster
+        - 'h = random place:Slime:5' # Random monster from Slime:5
+        - 'i = place:Elf:3 zombie' # random from Elf, but Zombie
+        - 'j = generate_awake kobold' # Awake
+        - 'k = twenty-headed hydra' # Hydra heads
+        - 'l = very large slime creature' # Size of slime
+        - 'm = orc god:trog god_gift' # Specify god
+        - 'n = kobold ; hand cannon' # Kobold with hand cannon
+        - 'o = kobold ; nothing' # Kobold with nothing (as weapon)
+      map: |-
+          ##########
+          #........#
+          #....afk.#
+          #....bgl.#
+          #.@..chm.#
+          #....din.#
+          #....ejo.#
+          #........#
+          ##########

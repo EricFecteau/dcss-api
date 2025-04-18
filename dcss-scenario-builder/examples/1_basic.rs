@@ -18,7 +18,7 @@ fn main() -> Result<(), Error> {
         "b",
         "i",
         "c",
-        "./scenarios/branches.yaml",
+        "./scenarios/monsters.yaml",
     )?;
 
     // dcss_scenario_builder::print_lua("./scenarios/features.yaml").expect("Failed");
