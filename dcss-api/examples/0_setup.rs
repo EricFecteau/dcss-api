@@ -16,9 +16,17 @@ fn main() {
         .register_account("Username", "Password", None)
         .expect("Failed to register");
 
-    for i in 1..20 {
+    // For "tiles" test
+    for i in 1..4 {
         webtile
-            .register_account(format!("Username{i}").as_str(), "Password", None)
+            .register_account(format!("Tiles{i}").as_str(), "Password", None)
+            .expect("Failed to register");
+    }
+
+    // For "monsters" test
+    for i in 1..4 {
+        webtile
+            .register_account(format!("Monsters{i}").as_str(), "Password", None)
             .expect("Failed to register");
     }
 

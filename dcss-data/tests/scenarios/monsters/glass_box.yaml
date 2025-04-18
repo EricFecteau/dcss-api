@@ -1,0 +1,21 @@
+options:
+  default_feature: "floor"
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '# = metal_wall'
+        - '+ = clear_rock_wall'
+        - '. = floor'
+      monsters:
+        - 'x = kobold'
+      map: |-
+          ##########
+          #........#
+          #......@.#
+          #.+++....#
+          #.+x+....#
+          #.+++..x.#
+          #........#
+          ##########

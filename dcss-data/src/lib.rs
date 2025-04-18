@@ -15,7 +15,7 @@ mod tiles;
 pub use crate::common::RelCoord;
 
 use crate::abilities::Abilities;
-use crate::common::{convert_coords_to_relative, pathfinding, structured_table, AbsCoord};
+use crate::common::{convert_coords_to_relative, pathfinding, structured_table};
 use crate::inventory::Inventory;
 use crate::items::armours::ArmourType;
 use crate::items::jewellery::AmuletType;

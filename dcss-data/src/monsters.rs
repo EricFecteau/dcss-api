@@ -2,7 +2,10 @@ use std::cmp;
 
 use crate::common::{pathfinding, AbsCoord};
 use crate::tiles::Tile;
-use crate::{convert_coord_to_absolute, convert_coords_to_relative, CrawlData, RelCoord};
+use crate::{
+    convert_coord_to_absolute, convert_coord_to_relative, convert_coords_to_relative, CrawlData,
+    RelCoord,
+};
 use regex::Regex;
 use rustc_hash::FxHashMap;
 use serde_json::Value;
@@ -523,8 +526,12 @@ impl Monsters {
         path_of_monsters
     }
 
-    /// Return monsters that are withing FOV, regardless of path (since some monster
-    /// can block the path to other monsters)
+    /// Return monsters that are withing FOV, regardless of path.
+    ///
+    /// # Arguments
+    ///
+    /// * `player_pos` - The [AbsCoord] of the player's position.
+    /// * `fov` - The maximum field of view for the pathing.
     pub(crate) fn monsters_in_fov(&self, player_pos: AbsCoord, fov: u32) -> Vec<&Monster> {
         // TODO Deal with Plants (threat = -1)
 
@@ -542,6 +549,13 @@ impl Monsters {
             .collect::<Vec<&Monster>>()
     }
 
+    /// Returns a vector of all the characteristics of each monster in the
+    /// battle.
+    ///
+    /// # Arguments
+    ///
+    /// * `player_pos` - The [AbsCoord] of the player's position.
+    /// * `fov` - The maximum field of view for the pathing.
     pub(crate) fn monster_in_battle(
         &self,
         player_pos: AbsCoord,
@@ -585,6 +599,12 @@ impl Monsters {
             .collect()
     }
 
+    /// Returns the [AbsCoord] of an unexamined monster.
+    ///
+    /// # Arguments
+    ///
+    /// * `player_pos` - The [AbsCoord] of the player's position.
+    /// * `fov` - The maximum field of view for the pathing.
     pub(crate) fn pos_unexamined_monster(
         &self,
         player_pos: AbsCoord,
@@ -613,6 +633,13 @@ impl Monsters {
         None
     }
 
+    /// Returns the [AbsCoord] of the nearest monster (according to pathing).
+    ///
+    /// # Arguments
+    ///
+    /// * `tiles` - The 2d vector of tiles.
+    /// * `player_pos` - The [AbsCoord] of the player's position.
+    /// * `fov` - The maximum field of view for the pathing.
     pub(crate) fn nearest(
         &mut self,
         tiles: &[Vec<Tile>],
@@ -633,11 +660,23 @@ impl Monsters {
         shortest_path
     }
 
+    /// A function to add an invisible monster to the list of monsters. Invisible monsters
+    /// don't generate the same information in the tiles object as other monsters.
+    ///
+    /// # Arguments
+    ///
+    /// * `mon_pos` - The [AbsCoord] of the invisible monster's position.
     pub(crate) fn invisible_monster(&mut self, mon_pos: AbsCoord) {
+        // TODO: Can only have one invisible monster
         self.monsters
             .insert(9999, Monster::new("invisible".to_owned(), 0, Some(mon_pos)));
     }
 
+    /// A function to remove an invisible monster from the list of monsters.
+    ///
+    /// # Arguments
+    ///
+    /// * `mon_pos` - The [AbsCoord] of the invisible monster's position.
     pub(crate) fn invisible_removed(&mut self, mon_pos: AbsCoord) {
         if self.monsters.contains_key(&9999) && self.monsters[&9999].pos == Some(mon_pos) {
             self.monsters.remove(&9999);
@@ -646,6 +685,13 @@ impl Monsters {
 }
 
 impl Monster {
+    /// Generate new monster.
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - The name of the monster.
+    /// * `threat` - The threat level of the monster (received from the tiles object).
+    /// * `pos` - The [AbsCoord] of the monster's position.
     fn new(name: String, threat: i32, pos: Option<AbsCoord>) -> Self {
         Self {
             name,
@@ -672,36 +718,64 @@ impl Monster {
         }
     }
 
+    /// Update the position of the monster.
+    ///
+    /// # Arguments
+    ///
+    /// * `pos` - The [AbsCoord] of the monster's new position.
     fn update_pos(&mut self, pos: Option<AbsCoord>) {
         self.pos = pos;
     }
 }
 
 impl CrawlData {
-    pub fn ready_examine_monster(&mut self, coord: RelCoord) {
-        self.monsters.examine_loc = Some(convert_coord_to_absolute(self.player.pos, coord));
-    }
-
+    /// Count the number of monsters that can be reached through pathing,
+    /// within field of view (fov).
     pub fn monster_count_path(&mut self) -> u32 {
         let pos: AbsCoord = self.player.pos;
         self.monsters.count_path(&self.tiles.tiles, pos, self.fov)
     }
 
+    /// Count the number of monsters that can be seen, within field of
+    /// view (regardless of path).
     pub fn monster_count_fov(&mut self) -> u32 {
         let pos: AbsCoord = self.player.pos;
         self.monsters.monsters_in_fov(pos, self.fov).len() as u32
     }
 
-    pub fn monster_touching(&mut self) -> bool {
-        let pos: AbsCoord = self.player.pos;
-        self.monsters.monsters_in_fov(pos, 1).is_empty()
-    }
-
-    pub fn nearest_monster_path(&mut self) -> Vec<RelCoord> {
+    /// Get the path ([Vec<RelCoord>]) to the nearest monster, according to
+    /// pathing (shortest path).
+    pub fn nearest_monster_path(&mut self) -> Option<Vec<RelCoord>> {
         let pos = self.player.pos;
         let coords = self.monsters.nearest(&self.tiles.tiles, pos, self.fov);
 
-        convert_coords_to_relative(self.player.pos, coords)
+        if coords.is_empty() {
+            return None;
+        }
+
+        Some(convert_coords_to_relative(self.player.pos, coords))
+    }
+
+    /// Get the coordinates ([RelCoord]) of the nearest monster, according to
+    /// pathing (shortest path).
+    pub fn coord_nearest_monster(&mut self) -> Option<RelCoord> {
+        let pos = self.player.pos;
+        let coords = self.monsters.nearest(&self.tiles.tiles, pos, self.fov);
+
+        if coords.is_empty() {
+            return None;
+        }
+
+        Some(convert_coord_to_relative(self.player.pos, coords[0]))
+    }
+
+    pub fn ready_examine_monster(&mut self, coord: RelCoord) {
+        self.monsters.examine_loc = Some(convert_coord_to_absolute(self.player.pos, coord));
+    }
+
+    pub fn monster_touching(&mut self) -> bool {
+        let pos: AbsCoord = self.player.pos;
+        self.monsters.monsters_in_fov(pos, 1).is_empty()
     }
 
     pub fn get_battle_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
