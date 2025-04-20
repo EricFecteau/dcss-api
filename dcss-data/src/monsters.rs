@@ -556,6 +556,27 @@ impl Monsters {
     ///
     /// * `player_pos` - The [AbsCoord] of the player's position.
     /// * `fov` - The maximum field of view for the pathing.
+    ///
+    /// # Info
+    ///
+    /// * `threat` = threat level ("Minor" => 1 | "Low" => 2 | "High" => 4 | "Lethal" => 5)
+    /// * `max_hp` = maximum hp
+    /// * `will` = will
+    /// * `ac` = ac
+    /// * `ev` = ev
+    /// * `fire` = fire resistance
+    /// * `cold` = cold resistance
+    /// * `poison` = poison resistance
+    /// * `negative` = negative resistance
+    /// * `electric` = electric resistance
+    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5)
+    /// * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
+    /// * `int` = monster intelligence ("Mindless" => 1 | "Animal" => 2 | "Human" => 3)
+    /// * `speed` = monster speed (%)
+    /// * `regen` = monster regeneration
+    /// * `player_hit_monster_chance` = chance to hit monster (%)
+    /// * `monster_hit_player_chance` = chance the monster hits the player (%)
+    /// * `max_damage` = max damage the monster can do to the player
     pub(crate) fn monster_in_battle(
         &self,
         player_pos: AbsCoord,
@@ -568,6 +589,10 @@ impl Monsters {
             .filter(|mon| mon.name != "invisible")
             .map(|mon| {
                 let mut hash = FxHashMap::default();
+
+                if !mon.examined {
+                    panic!("You must examine the monster before collecting their info. Use `ready_examine_monster(coord)` and `look_at_monster_menu()`.");
+                }
 
                 hash.insert("threat", mon.threat);
                 hash.insert("max_hp", mon.max_hp.unwrap());
@@ -745,15 +770,11 @@ impl CrawlData {
 
     /// Get the path ([Vec<RelCoord>]) to the nearest monster, according to
     /// pathing (shortest path).
-    pub fn nearest_monster_path(&mut self) -> Option<Vec<RelCoord>> {
+    pub fn nearest_monster_path(&mut self) -> Vec<RelCoord> {
         let pos = self.player.pos;
         let coords = self.monsters.nearest(&self.tiles.tiles, pos, self.fov);
 
-        if coords.is_empty() {
-            return None;
-        }
-
-        Some(convert_coords_to_relative(self.player.pos, coords))
+        convert_coords_to_relative(self.player.pos, coords)
     }
 
     /// Get the coordinates ([RelCoord]) of the nearest monster, according to
@@ -769,28 +790,14 @@ impl CrawlData {
         Some(convert_coord_to_relative(self.player.pos, coords[0]))
     }
 
-    pub fn ready_examine_monster(&mut self, coord: RelCoord) {
-        self.monsters.examine_loc = Some(convert_coord_to_absolute(self.player.pos, coord));
-    }
-
+    /// Get a bool if a monster is touching (within one tile) the character.
     pub fn monster_touching(&mut self) -> bool {
         let pos: AbsCoord = self.player.pos;
-        self.monsters.monsters_in_fov(pos, 1).is_empty()
+        !self.monsters.monsters_in_fov(pos, 1).is_empty()
     }
 
-    pub fn get_battle_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
-        let pos = self.player.pos;
-        let fov = self.fov;
-
-        self.monsters.monster_in_battle(pos, fov)
-    }
-
-    pub fn get_attacking_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
-        let pos = self.player.pos;
-
-        self.monsters.monster_in_battle(pos, 1)
-    }
-
+    /// Get a vector of "threat" for all monster in field of view (regardless
+    /// of path). Good way to get a very quick "vibe check" of the battle.
     pub fn get_monster_threat_vec(&mut self) -> Vec<i32> {
         let pos = self.player.pos;
         self.monsters
@@ -798,6 +805,67 @@ impl CrawlData {
             .iter()
             .map(|mon| mon.threat)
             .collect::<Vec<i32>>()
+    }
+
+    /// Returns a vector of all the characteristics of each monster in the battle.
+    ///  
+    /// # Info
+    ///
+    /// * `threat` = threat level ("Minor" => 1 | "Low" => 2 | "High" => 4 | "Lethal" => 5)
+    /// * `max_hp` = maximum hp
+    /// * `will` = will
+    /// * `ac` = ac
+    /// * `ev` = ev
+    /// * `fire` = fire resistance
+    /// * `cold` = cold resistance
+    /// * `poison` = poison resistance
+    /// * `negative` = negative resistance
+    /// * `electric` = electric resistance
+    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5)
+    /// * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
+    /// * `int` = monster intelligence ("Mindless" => 1 | "Animal" => 2 | "Human" => 3)
+    /// * `speed` = monster speed (%)
+    /// * `regen` = monster regeneration
+    /// * `player_hit_monster_chance` = chance to hit monster (%)
+    /// * `monster_hit_player_chance` = chance the monster hits the player (%)
+    /// * `max_damage` = max damage the monster can do to the player
+    pub fn get_battle_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
+        let pos = self.player.pos;
+        let fov = self.fov;
+
+        self.monsters.monster_in_battle(pos, fov)
+    }
+
+    /// Returns a vector of all the characteristics of each monster touching the character.
+    ///
+    ///  # Info
+    ///
+    /// * `threat` = threat level ("Minor" => 1 | "Low" => 2 | "High" => 4 | "Lethal" => 5)
+    /// * `max_hp` = maximum hp
+    /// * `will` = will
+    /// * `ac` = ac
+    /// * `ev` = ev
+    /// * `fire` = fire resistance
+    /// * `cold` = cold resistance
+    /// * `poison` = poison resistance
+    /// * `negative` = negative resistance
+    /// * `electric` = electric resistance
+    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5)
+    /// * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
+    /// * `int` = monster intelligence ("Mindless" => 1 | "Animal" => 2 | "Human" => 3)
+    /// * `speed` = monster speed (%)
+    /// * `regen` = monster regeneration
+    /// * `player_hit_monster_chance` = chance to hit monster (%)
+    /// * `monster_hit_player_chance` = chance the monster hits the player (%)
+    /// * `max_damage` = max damage the monster can do to the player
+    pub fn get_touching_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
+        let pos = self.player.pos;
+
+        self.monsters.monster_in_battle(pos, 1)
+    }
+
+    pub fn ready_examine_monster(&mut self, coord: RelCoord) {
+        self.monsters.examine_loc = Some(convert_coord_to_absolute(self.player.pos, coord));
     }
 }
 
