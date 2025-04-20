@@ -24,7 +24,7 @@ fn main() {
     }
 
     // For "monsters" test
-    for i in 1..4 {
+    for i in 1..10 {
         webtile
             .register_account(format!("Monsters{i}").as_str(), "Password", None)
             .expect("Failed to register");
