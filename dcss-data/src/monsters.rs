@@ -867,6 +867,13 @@ impl CrawlData {
     pub fn ready_examine_monster(&mut self, coord: RelCoord) {
         self.monsters.examine_loc = Some(convert_coord_to_absolute(self.player.pos, coord));
     }
+
+    pub fn examine_monster(&mut self) -> Option<RelCoord> {
+        let pos = self.player.pos;
+        let coord = self.monsters.pos_unexamined_monster(pos, self.fov);
+
+        coord.map(|coord| convert_coord_to_relative(pos, coord))
+    }
 }
 
 fn decode_resistance(re: Regex, text: &str) -> i32 {
