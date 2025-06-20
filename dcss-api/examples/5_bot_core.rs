@@ -40,14 +40,18 @@ fn main() {
     webtile.disconnect().expect("Failed to disconnect");
 }
 
-fn write_key_bot(webtile: &mut Webtile, to_send: &str, to_receive: &str) -> Result<(), APIError> {
+fn write_key_bot(
+    webtile: &mut Webtile,
+    to_send: &str,
+    to_receive: &str,
+) -> Result<(), Box<APIError>> {
     println!("SEND: {}", to_send);
 
     webtile.write_key(to_send)?;
 
     // Make sure you verify for blocking errors;
     if let Err(e) = webtile.read_until(to_receive, None, None) {
-        match e {
+        match *e {
             APIError::Blocking(BlockingError::More) => webtile.write_key(" ")?,
             APIError::Blocking(BlockingError::TextInput) => {
                 println!("ERROR: Likely level up choice");

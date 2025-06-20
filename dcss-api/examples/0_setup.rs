@@ -11,10 +11,16 @@ fn main() {
     while webtile.get_message().is_some() {}
 
     // Register usernames for tests
-
     webtile
         .register_account("Username", "Password", None)
         .expect("Failed to register");
+
+    // For "log in" test
+    for i in 1..4 {
+        webtile
+            .register_account(format!("Username{i}").as_str(), "Password", None)
+            .expect("Failed to register");
+    }
 
     // For "tiles" test
     for i in 1..4 {

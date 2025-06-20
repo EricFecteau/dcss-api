@@ -20,8 +20,9 @@ fn successful_connect() {
 #[test]
 fn failed_connect() {
     let webtile = Webtile::connect("ws://localhost:XXXX/socket", 0, "0.32");
-    assert!(matches!(webtile, Err(Error::Websocket(_))));
+    assert!(matches!(*webtile.err().unwrap(), Error::Websocket(_)));
 
     let webtile = Webtile::connect("ws://localhost:0000/socket", 0, "0.32");
-    assert!(matches!(webtile, Err(Error::Websocket(_))));
+
+    assert!(matches!(*webtile.err().unwrap(), Error::Websocket(_)));
 }

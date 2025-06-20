@@ -76,38 +76,40 @@ pub enum BlockingError {
 ///
 /// * `message` - The message (as a [serde_json::Value]) received by the
 ///   DCSS webtile.
-pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
+pub(crate) fn blocking_messages(message: &Value) -> Result<(), Box<Error>> {
     let msg = message["msg"].as_str().unwrap();
 
     match msg {
         "input_mode" => {
             if message["mode"].as_u64().unwrap() == 5 {
-                Err(Error::Blocking(BlockingError::More))
+                Err(Box::new(Error::Blocking(BlockingError::More)))
             } else if message["mode"].as_u64().unwrap() == 7 {
-                Err(Error::Blocking(BlockingError::TextInput))
+                Err(Box::new(Error::Blocking(BlockingError::TextInput)))
             } else {
                 Ok(())
             }
         }
         "menu" => {
             if message["tag"] == "pickup" {
-                Err(Error::Blocking(BlockingError::Pickup))
+                Err(Box::new(Error::Blocking(BlockingError::Pickup)))
             } else if message["tag"] == "acquirement" {
-                Err(Error::Blocking(BlockingError::Acquirement(message.clone())))
+                Err(Box::new(Error::Blocking(BlockingError::Acquirement(
+                    message.clone(),
+                ))))
             } else if message["tag"] == "use_item" {
                 match message["title"]["text"].as_str().unwrap() {
-                    x if x.contains("Identify which item?") => {
-                        Err(Error::Blocking(BlockingError::Identify(message.clone())))
-                    }
-                    x if x.contains("Enchant which weapon?") => Err(Error::Blocking(
+                    x if x.contains("Identify which item?") => Err(Box::new(Error::Blocking(
+                        BlockingError::Identify(message.clone()),
+                    ))),
+                    x if x.contains("Enchant which weapon?") => Err(Box::new(Error::Blocking(
                         BlockingError::EnchantWeapon(message.clone()),
-                    )),
-                    x if x.contains("Enchant which item?") => {
-                        Err(Error::Blocking(BlockingError::EnchantItem(message.clone())))
-                    }
-                    x if x.contains("Brand which weapon?") => {
-                        Err(Error::Blocking(BlockingError::BrandWeapon(message.clone())))
-                    }
+                    ))),
+                    x if x.contains("Enchant which item?") => Err(Box::new(Error::Blocking(
+                        BlockingError::EnchantItem(message.clone()),
+                    ))),
+                    x if x.contains("Brand which weapon?") => Err(Box::new(Error::Blocking(
+                        BlockingError::BrandWeapon(message.clone()),
+                    ))),
                     _ => Ok(()),
                 }
             } else {
@@ -124,7 +126,7 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
                     .to_owned()
                     .contains("Select the skills to train")
             {
-                return Err(Error::Blocking(BlockingError::Skill));
+                return Err(Box::new(Error::Blocking(BlockingError::Skill)));
             }
 
             Ok(())
@@ -137,38 +139,38 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Error> {
                     let text = text_obj["text"].as_str().unwrap();
 
                     if text.contains("You die...") {
-                        return Err(Error::Blocking(BlockingError::Died));
+                        return Err(Box::new(Error::Blocking(BlockingError::Died)));
                     }
 
                     if text.contains("Blink to where?") {
-                        return Err(Error::Blocking(BlockingError::Blink));
+                        return Err(Box::new(Error::Blocking(BlockingError::Blink)));
                     }
 
                     if text.contains("Really read the scroll of noise?") {
-                        return Err(Error::Blocking(BlockingError::Noise));
+                        return Err(Box::new(Error::Blocking(BlockingError::Noise)));
                     }
 
                     if text.contains("Keep equipping yourself?") {
-                        return Err(Error::Blocking(BlockingError::Equipping));
+                        return Err(Box::new(Error::Blocking(BlockingError::Equipping)));
                     }
 
                     if text.contains("Keep disrobing?") {
-                        return Err(Error::Blocking(BlockingError::Disrobing));
+                        return Err(Box::new(Error::Blocking(BlockingError::Disrobing)));
                     }
                 }
                 Ok(())
             }
         }
-        "login_fail" => Err(Error::LoginFailed),
-        "register_fail" => Err(Error::RegisterFailed),
+        "login_fail" => Err(Box::new(Error::LoginFailed)),
+        "register_fail" => Err(Box::new(Error::RegisterFailed)),
         "ui-push" => {
             if !message.as_object().unwrap().contains_key("type") {
                 Ok(())
             } else {
                 if message["type"] == "seed-selection" {
-                    return Err(Error::Blocking(BlockingError::SeedSelection));
+                    return Err(Box::new(Error::Blocking(BlockingError::SeedSelection)));
                 } else if message["type"] == "newgame-choice" {
-                    return Err(Error::Blocking(BlockingError::NewGameChoice));
+                    return Err(Box::new(Error::Blocking(BlockingError::NewGameChoice)));
                 }
                 Ok(())
             }

@@ -26,7 +26,7 @@ impl Webtile {
         species: &str,
         background: &str,
         weapon: &str,
-    ) -> Result<(), Error> {
+    ) -> Result<(), Box<Error>> {
         self.start_game_seeded(game_id, "0", false, species, background, weapon)
     }
 
@@ -42,7 +42,7 @@ impl Webtile {
     /// // Continue a game on "dcss-web-trunk"
     /// webtile.continue_game("dcss-web-trunk")?;
     /// ```
-    pub fn continue_game(&mut self, game_id: &str) -> Result<(), Error> {
+    pub fn continue_game(&mut self, game_id: &str) -> Result<(), Box<Error>> {
         self.start_game_seeded(game_id, "", false, "", "", "")
     }
 
@@ -73,14 +73,14 @@ impl Webtile {
         species: &str,
         background: &str,
         weapon: &str,
-    ) -> Result<(), Error> {
+    ) -> Result<(), Box<Error>> {
         self.write_json(json!({"msg": "play", "game_id": game_id}))?;
 
         let mut newgame_count = 0;
         loop {
             match self.read_until("map", None, None) {
                 Ok(_) => return Ok(()),
-                Err(e) => match e {
+                Err(e) => match *e {
                     Error::Blocking(BlockingError::SeedSelection) => {
                         self.write_key("-")?;
                         self.read_until("ui-state-sync", None, None)?;
@@ -114,7 +114,7 @@ impl Webtile {
     /// ```no_run
     /// webtile.save_game()?;
     /// ```
-    pub fn save_game(&mut self) -> Result<(), Error> {
+    pub fn save_game(&mut self) -> Result<(), Box<Error>> {
         self.write_key("key_ctrl_s")?;
 
         self.read_until("go_lobby", None, None)?;
@@ -130,12 +130,12 @@ impl Webtile {
     /// ```no_run
     /// webtile.quit_game()?;
     /// ```
-    pub fn quit_game(&mut self) -> Result<(), Error> {
+    pub fn quit_game(&mut self) -> Result<(), Box<Error>> {
         self.write_key("key_ctrl_q")?;
 
         match self.read_until("input_mode", Some("mode"), Some(7)) {
             Ok(_) => (),
-            Err(e) => match e {
+            Err(e) => match *e {
                 Error::Blocking(BlockingError::TextInput) => {
                     self.write_key("yes")?;
                     self.write_key("key_enter")?;
@@ -147,7 +147,7 @@ impl Webtile {
 
         match self.read_until("close_input", None, None) {
             Ok(_) => (),
-            Err(e) => match e {
+            Err(e) => match *e {
                 Error::Blocking(BlockingError::More) => self.write_key("key_esc")?,
                 _ => return Err(e),
             },
@@ -157,7 +157,7 @@ impl Webtile {
             self.write_key("key_esc")?;
             match self.read_until("go_lobby", None, None) {
                 Ok(_) => return Ok(()),
-                Err(e) => match e {
+                Err(e) => match *e {
                     Error::Blocking(BlockingError::More) => (),
                     _ => return Err(e),
                 },

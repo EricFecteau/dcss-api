@@ -56,7 +56,7 @@ impl Webtile {
     /// ```no_run
     /// let mut webtile = Webtile::connect("ws://localhost:8080/socket", 100, "0.29")?;
     /// ```
-    pub fn connect(url: &str, speed_ms: u32, _version: &str) -> Result<Self, Error> {
+    pub fn connect(url: &str, speed_ms: u32, _version: &str) -> Result<Self, Box<Error>> {
         // Open connection
         let (socket, _response) = tungstenite::connect(url).map_err(Error::Websocket)?;
 
@@ -88,7 +88,7 @@ impl Webtile {
     /// ```no_run
     /// webtile.disconnect()?;
     /// ```
-    pub fn disconnect(&mut self) -> Result<(), Error> {
+    pub fn disconnect(&mut self) -> Result<(), Box<Error>> {
         self.socket.close(None).map_err(Error::Websocket)?;
 
         Ok(())
@@ -123,7 +123,7 @@ impl Webtile {
         msg: &str,
         key: Option<&str>,
         value: Option<u64>,
-    ) -> Result<(), Error> {
+    ) -> Result<(), Box<Error>> {
         // loop until break (found expected results or found a blocking type)
         // use self variable in order to retain the info when there is a blocking error
         while !self.message_found {
@@ -148,7 +148,7 @@ impl Webtile {
 
                 // Pre-process the data to identify blocking
                 if let Err(e) = blocking_messages(message) {
-                    match e {
+                    match *e {
                         Error::Blocking(BlockingError::Died) => return Err(e), // Automatic return when death
                         _ => blocking = Err(e),
                     }
@@ -197,7 +197,7 @@ impl Webtile {
     ///     "password": "Password",
     /// }))?;
     /// ```
-    pub fn write_json(&mut self, json_val: Value) -> Result<(), Error> {
+    pub fn write_json(&mut self, json_val: Value) -> Result<(), Box<Error>> {
         // Pause while min time not met
         while SystemTime::now()
             .duration_since(self.last_send)
@@ -244,7 +244,7 @@ impl Webtile {
     /// // Send a string of keys that will move left, open a menu and drop an item (slot a)
     /// webtile.write_key("6iad")
     /// ```
-    pub fn write_key(&mut self, key: &str) -> Result<(), Error> {
+    pub fn write_key(&mut self, key: &str) -> Result<(), Box<Error>> {
         // Pause while min time not met
         while SystemTime::now()
             .duration_since(self.last_send)

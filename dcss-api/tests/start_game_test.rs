@@ -423,8 +423,8 @@ fn real_blocking_error() {
     let result = webtile.read_until("whatever", None, None);
 
     assert!(matches!(
-        result,
-        Err(Error::Blocking(BlockingError::Pickup))
+        *result.err().unwrap(),
+        Error::Blocking(BlockingError::Pickup)
     ));
 
     // Ignore the menu after all

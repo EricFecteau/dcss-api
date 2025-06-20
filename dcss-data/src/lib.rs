@@ -481,13 +481,6 @@ impl CrawlData {
         None
     }
 
-    pub fn examine_monsters(&mut self) -> Option<RelCoord> {
-        let pos = self.player.pos;
-        let coord = self.monsters.pos_unexamined_monster(pos, self.fov);
-
-        coord.map(|coord| convert_coord_to_relative(pos, coord))
-    }
-
     pub fn new_floor(&mut self) {
         self.tiles = Tiles::init();
         self.monsters = Monsters::init();
