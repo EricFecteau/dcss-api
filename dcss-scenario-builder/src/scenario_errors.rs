@@ -5,7 +5,7 @@ use thiserror::Error;
 #[derive(Error)]
 pub enum Error {
     #[error(transparent)]
-    APIError(#[from] APIError),
+    APIError(#[from] Box<APIError>),
     #[error(transparent)]
     IOError(#[from] std::io::Error),
     #[error(transparent)]

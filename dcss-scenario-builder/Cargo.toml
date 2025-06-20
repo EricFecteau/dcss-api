@@ -1,8 +1,8 @@
 [package]
 authors = ["Eric Fecteau <eric.m.fecteau@gmail.com>"]
 name = "dcss-scenario-builder"
-version = "0.2.2"
-edition = "2021"
+version = "0.3.0"
+edition = "2024"
 license = "MPL-2.0"
 description = "A scenario builder for DCSS Webtile."
 repository = "https://github.com/EricFecteau/dcss-api/"
@@ -12,7 +12,7 @@ readme = "README.md"
 doctest = false
 
 [dependencies]
-dcss-api = "0.2"
+dcss-api = "0.3"
 rustc-hash = "2"
 serde_yaml = "0.9"
 itertools = "0.14"
