@@ -4,7 +4,7 @@ use dcss_api::{Error, Webtile};
 use dcss_scenario_builder::start_game_with_scenario;
 
 #[test]
-fn verify_wizmode() -> Result<(), Error> {
+fn verify_wizmode() -> Result<(), Box<Error>> {
     let game_id = std::env::var("GAME_ID").unwrap();
 
     // Safe test -- login start game, quit, and then test

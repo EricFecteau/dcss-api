@@ -15,7 +15,7 @@ pub(crate) fn enable_wiz(webtile: &mut Webtile) -> Result<(), Error> {
 
     // Will have an error because of the "yes" prompt
     if let Err(e) = webtile.read_until("", None, None) {
-        match e {
+        match *e {
             APIError::Blocking(BlockingError::TextInput) => {
                 webtile.write_key("yes")?;
                 webtile.write_key("key_enter")?;
@@ -62,7 +62,7 @@ pub(crate) fn setup_map(
             webtile.write_key(&branch_key)?;
 
             if let Err(e) = webtile.read_until("map", Some("player_on_level"), None) {
-                match e {
+                match *e {
                     APIError::Blocking(BlockingError::TextInput) => {
                         webtile.write_key(&branch_level)?;
                         webtile.write_key("key_enter")?;
@@ -81,7 +81,7 @@ pub(crate) fn setup_map(
         // Ignore "TextInput" error, enter the lua and run it (by chunk, max ~100 lines)
         for lua_chunk in &level_lua.lines().chunks(100) {
             if let Err(e) = webtile.read_until("", None, None) {
-                match e {
+                match *e {
                     APIError::Blocking(BlockingError::TextInput) => {
                         webtile.write_key(&lua_chunk.collect::<String>())?;
                         webtile.write_key("key_enter")?;
@@ -93,7 +93,7 @@ pub(crate) fn setup_map(
 
         // Ignore "TextInput" error, leave lua interpreter
         if let Err(e) = webtile.read_until("", None, None) {
-            match e {
+            match *e {
                 APIError::Blocking(BlockingError::TextInput) => {
                     webtile.write_key("key_esc")?;
                 }
@@ -121,7 +121,7 @@ pub(crate) fn setup_map(
 
         // Prevent "more" -- especially in the Abyss
         if let Err(e) = webtile.read_until("map", None, None) {
-            match e {
+            match *e {
                 APIError::Blocking(BlockingError::More) => {
                     webtile.write_key(" ")?;
                     webtile.read_until("map", None, None)?;
@@ -155,7 +155,7 @@ pub(crate) fn setup_map(
         webtile.read_until("menu", None, None)?;
         webtile.write_key("D")?;
         if let Err(e) = webtile.read_until("player", Some("place"), None) {
-            match e {
+            match *e {
                 APIError::Blocking(BlockingError::TextInput) => {
                     webtile.write_key("1")?;
                     webtile.write_key("key_enter")?;
@@ -172,7 +172,7 @@ pub(crate) fn setup_map(
     webtile.write_key("key_ctrl_t")?;
 
     if let Err(e) = webtile.read_until("", None, None) {
-        match e {
+        match *e {
             APIError::Blocking(BlockingError::TextInput) => {
                 let lua_line = format!("you.moveto({}, {})\n", player_pos_d1.0, player_pos_d1.1);
                 webtile.write_key(lua_line.as_ref())?;
@@ -183,7 +183,7 @@ pub(crate) fn setup_map(
     }
 
     if let Err(e) = webtile.read_until("", None, None) {
-        match e {
+        match *e {
             APIError::Blocking(BlockingError::TextInput) => {
                 webtile.write_key("key_esc")?;
             }
