@@ -102,7 +102,7 @@ cargo-update:
     cd ./dcss-data && cargo update
 
 cargo-outdated:
-    cd ./dcss-api && cargo outdated
-    cd ./dcss-scenario-builder && cargo outdated
-    cd ./dcss-api-python && cargo outdated
-    cd ./dcss-data && cargo outdated
+    cd ./dcss-api && cargo outdated -d 1
+    cd ./dcss-scenario-builder && cargo outdated -d 1
+    cd ./dcss-api-python && cargo outdated -d 1
+    cd ./dcss-data && cargo outdated -d 1
