@@ -18,9 +18,9 @@ impl Pickup {
     }
 
     pub(crate) fn update(&mut self, item_coord: AbsCoord) {
-        let already_listed = self.unknown.iter().any(|x: &AbsCoord| *x == item_coord);
+        let already_listed = self.unknown.contains(&item_coord);
 
-        let ignore = self.ignore.iter().any(|x: &AbsCoord| *x == item_coord);
+        let ignore = self.ignore.contains(&item_coord);
 
         if !already_listed && !ignore {
             self.unknown.push(item_coord);
@@ -28,9 +28,9 @@ impl Pickup {
     }
 
     pub(crate) fn unknown_item_loc(&self, player_coord: AbsCoord) -> bool {
-        let in_list = self.unknown.iter().any(|x: &AbsCoord| *x == player_coord);
+        let in_list = self.unknown.contains(&player_coord);
 
-        let ignore = self.ignore.iter().any(|x: &AbsCoord| *x == player_coord);
+        let ignore = self.ignore.contains(&player_coord);
 
         if in_list && !ignore {
             return true;
@@ -50,7 +50,7 @@ impl Pickup {
     pub(crate) fn new_ignore_item_loc(&mut self, player_coord: AbsCoord) {
         self.remove_item_loc(player_coord);
 
-        let ignore = self.ignore.iter().any(|x: &AbsCoord| *x == player_coord);
+        let ignore = self.ignore.contains(&player_coord);
 
         if !ignore {
             self.ignore.push(player_coord);
