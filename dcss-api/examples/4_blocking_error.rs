@@ -70,7 +70,7 @@ fn main() {
     // a BlockingError).
     match webtile.read_until("input_mode", Some("mode"), Some(1)) {
         Ok(_) => (),
-        Err(e) => match e {
+        Err(e) => match *e {
             Error::Blocking(BlockingError::Pickup) => {
                 println!("Pickup menu pop-up -- decide what to do");
                 webtile.write_key("key_esc").expect(""); // Esc to ignore it

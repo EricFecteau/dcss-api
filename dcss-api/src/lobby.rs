@@ -21,7 +21,7 @@ impl Webtile {
         &mut self,
         username: &str,
         password: &str,
-    ) -> Result<Vec<String>, Error> {
+    ) -> Result<Vec<String>, Box<Error>> {
         self.write_json(json!({
             "msg": "login",
             "username": username,
@@ -51,7 +51,7 @@ impl Webtile {
     /// // Login under the user "Username", with a cookie
     /// webtile.login_with_cookie("Username%123456789123456789123456789")?;
     /// ```
-    pub fn login_with_cookie(&mut self, cookie: &str) -> Result<Vec<String>, Error> {
+    pub fn login_with_cookie(&mut self, cookie: &str) -> Result<Vec<String>, Box<Error>> {
         self.write_json(json!({"msg": "token_login", "cookie": cookie}))?;
 
         self.read_until("login_success", None, None)?;
@@ -85,13 +85,13 @@ impl Webtile {
         username: &str,
         password: &str,
         email: Option<&str>,
-    ) -> Result<Vec<String>, Error> {
+    ) -> Result<Vec<String>, Box<Error>> {
         self.write_json(
             json!({"msg": "register", "username": username, "password": password, "email": email.unwrap_or("")}),
         )?;
 
         if let Err(e) = self.read_until("login_success", None, None) {
-            match e {
+            match *e {
                 Error::RegisterFailed => self.login_with_credentials(username, password)?,
                 _ => Err(e)?,
             };
@@ -112,7 +112,7 @@ impl Webtile {
     /// ```no_run
     /// webtile.request_cookie()?;
     /// ```
-    pub fn request_cookie(&mut self) -> Result<String, Error> {
+    pub fn request_cookie(&mut self) -> Result<String, Box<Error>> {
         self.write_json(json!({"msg": "set_login_cookie"}))?;
 
         self.read_until("login_cookie", None, None)?;
@@ -138,7 +138,7 @@ impl Webtile {
     /// ```no_run
     /// webtile.get_rc_file("dcss-web-trunk")?;
     /// ```
-    pub fn get_rc_file(&mut self, game_id: &str) -> Result<String, Error> {
+    pub fn get_rc_file(&mut self, game_id: &str) -> Result<String, Box<Error>> {
         self.write_json(json!({"msg": "get_rc", "game_id": game_id}))?;
 
         self.read_until("rcfile_contents", None, None)?;
@@ -165,7 +165,7 @@ impl Webtile {
     /// ```no_run
     /// webtile.set_rc_file("dcss-web-trunk", "show_more = false\nrest_delay = -1")?;
     /// ```
-    pub fn set_rc_file(&mut self, game_id: &str, content: &str) -> Result<(), Error> {
+    pub fn set_rc_file(&mut self, game_id: &str, content: &str) -> Result<(), Box<Error>> {
         self.write_json(json!({"msg": "set_rc", "game_id": game_id, "contents": content}))?;
 
         Ok(())

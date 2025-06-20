@@ -71,7 +71,7 @@ pub(crate) fn keys(key: &str) -> Value {
 pub(crate) fn deflate_to_json(
     decompressor: &mut Decompress,
     compressed_msg: &mut Vec<u8>,
-) -> Result<Value, Error> {
+) -> Result<Value, Box<Error>> {
     // DCSS Removes 4 bytes that have to be re-added
     compressed_msg.append(&mut vec![0u8, 0, 255, 255]);
 

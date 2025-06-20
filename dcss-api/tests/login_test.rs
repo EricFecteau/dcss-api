@@ -77,13 +77,13 @@ fn multiple_login_diff_user() {
     while webtile.get_message().is_some() {}
 
     let _ = webtile
-        .login_with_credentials("Username", "Password")
+        .login_with_credentials("Username1", "Password")
         .expect("Login failed.");
 
     let _ = webtile.get_message();
 
     let json: Value =
-        from_str("{\"admin\": false, \"msg\": \"login_success\", \"username\": \"Username\"}")
+        from_str("{\"admin\": false, \"msg\": \"login_success\", \"username\": \"Username1\"}")
             .unwrap();
     assert_eq!(Some(json), webtile.get_message());
 
@@ -123,7 +123,7 @@ fn failed_credential_login() {
 
     let result = webtile.login_with_credentials("XXXXXXX", "XXXXXXX");
 
-    assert!(matches!(result, Err(Error::LoginFailed)));
+    assert!(matches!(*result.err().unwrap(), Error::LoginFailed));
 
     webtile.disconnect().expect("Failed to disconnect");
 }
@@ -137,7 +137,7 @@ fn failed_credential_login_and_retry() {
     while webtile.get_message().is_some() {}
 
     let result = webtile.login_with_credentials("XXXXXXX", "XXXXXXX");
-    assert!(matches!(result, Err(Error::LoginFailed)));
+    assert!(matches!(*result.err().unwrap(), Error::LoginFailed));
 
     while webtile.get_message().is_some() {}
 
@@ -215,7 +215,7 @@ fn failed_cookie_login() {
 
     // Login with cookie
     let result = webtile.login_with_cookie("Username%123456789123456789123456789");
-    assert!(matches!(result, Err(Error::LoginFailed)));
+    assert!(matches!(*result.err().unwrap(), Error::LoginFailed));
 
     webtile.disconnect().expect("Failed to disconnect");
 }
@@ -286,7 +286,7 @@ fn using_old_cookie_login() {
     // Login with cookie
     let result = webtile.login_with_cookie(first_cookie.as_str());
 
-    assert!(matches!(result, Err(Error::LoginFailed)));
+    assert!(matches!(*result.err().unwrap(), Error::LoginFailed));
 
     webtile.disconnect().expect("Failed to disconnect");
 }
