@@ -84,7 +84,7 @@ impl WebtilePy {
 
         match result {
             Ok(t) => Ok(t),
-            Err(e) => match e {
+            Err(e) => match *e {
                 Error::Blocking(BlockingError::Pickup) => {
                     Err(PyErr::new::<BlockingErr, _>("Pickup"))
                 }
