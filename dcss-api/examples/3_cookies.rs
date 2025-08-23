@@ -21,7 +21,7 @@ fn main() {
     // Get cookie from the game
     let cookie = webtile.request_cookie().unwrap();
 
-    println!("{}", cookie);
+    println!("{cookie}");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

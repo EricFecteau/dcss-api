@@ -1,7 +1,7 @@
-use crate::common::{branch_keys, Coord};
+use crate::common::{Coord, branch_keys};
 use crate::{Error, YamlParsingError};
 use rustc_hash::FxHashMap;
-use serde_yaml::{from_reader, Value};
+use serde_yaml::{Value, from_reader};
 
 /// Reads the scenario file, processes the input, identifies the features,
 /// items and monsters and converts each floor into lua commands to be
@@ -75,7 +75,7 @@ pub(crate) fn process_scenario(
         // back on D:1 and 2 on Slime Pit will spawn you back on Lair:2)
         // Must be from real parent (e.g. can put slime pit entrance in dungeon, but leaving
         // will place you in a real dungeon)
-        lua_scenario.push(format!("debug.goto_place(\"{}\", 1)\n", level_name).to_owned());
+        lua_scenario.push(format!("debug.goto_place(\"{level_name}\", 1)\n").to_owned());
 
         lua_scenario.push("you.moveto(1,1)\n".to_owned());
 
@@ -176,8 +176,7 @@ fn process_map(
                     &features[glyph]
                 };
 
-                let lua_feat_line =
-                    format!("dgn.terrain_changed({}, {}, \"{}\")\n", x, y, glyph_feature);
+                let lua_feat_line = format!("dgn.terrain_changed({x}, {y}, \"{glyph_feature}\")\n");
                 lua_map.push(lua_feat_line);
 
                 if items.is_some() && items.unwrap().contains_key(glyph) {
