@@ -109,10 +109,10 @@ pub(crate) fn extract_param(
     let mut end_index: usize = 1_000_000;
     for end in extract_until {
         let temp = searchable[start_index..].find(*end);
-        if let Some(value) = temp {
-            if value < end_index {
-                end_index = value;
-            }
+        if let Some(value) = temp
+            && value < end_index
+        {
+            end_index = value;
         };
     }
     if end_index == 1_000_000 {
@@ -327,20 +327,23 @@ pub(crate) fn pathfinding(
             closed.push((curr_x, curr_y));
 
             // Has the end been found (all types)
-            if let Some(end_type) = end_search_mf {
-                if tiles[curr_x][curr_y].mf == end_type {
-                    end_found = true;
-                }
+            if let Some(end_type) = end_search_mf
+                && tiles[curr_x][curr_y].mf == end_type
+            {
+                end_found = true;
             }
-            if let Some(end_type) = end_search_type {
-                if end_type == "unexplored" && !tiles[curr_x][curr_y].explored {
-                    end_found = true;
-                }
+
+            if let Some(end_type) = end_search_type
+                && end_type == "unexplored"
+                && !tiles[curr_x][curr_y].explored
+            {
+                end_found = true;
             }
-            if let Some(end_type) = end_location {
-                if (curr_x, curr_y) == end_type {
-                    end_found = true;
-                }
+
+            if let Some(end_type) = end_location
+                && (curr_x, curr_y) == end_type
+            {
+                end_found = true;
             }
 
             let walkable = if ignore_blocked {
