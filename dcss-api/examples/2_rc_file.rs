@@ -31,7 +31,7 @@ fn main() {
         .get_rc_file("dcss-0.32")
         .expect("Failed to get RC file.");
 
-    print!("RC FILE: \n\n {}\n\n", rc_file);
+    print!("RC FILE: \n\n {rc_file}\n\n");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

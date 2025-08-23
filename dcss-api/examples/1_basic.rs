@@ -16,7 +16,7 @@ fn main() {
         .expect("Failed to login");
 
     // Print the game id's that can be started
-    println!("{:?}", gameid);
+    println!("{gameid:?}");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -28,7 +28,7 @@ fn main() {
 
     // Print the messages you get upon starting the game (should be processed)
     while let Some(message) = webtile.get_message() {
-        println!("{:?}", message)
+        println!("{message:?}")
     }
 
     // Move up and back
@@ -37,7 +37,7 @@ fn main() {
 
     // Print the messages you while moving (should be processed)
     while let Some(message) = webtile.get_message() {
-        println!("{:?}", message)
+        println!("{message:?}")
     }
 
     // Quit game (same as dying)
@@ -45,7 +45,7 @@ fn main() {
 
     // Print the messages after you quit game
     while let Some(message) = webtile.get_message() {
-        println!("{:?}", message)
+        println!("{message:?}")
     }
 
     // Disconnect from webtile
