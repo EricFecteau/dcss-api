@@ -1,10 +1,10 @@
 use std::cmp;
 
-use crate::common::{pathfinding, AbsCoord};
+use crate::common::{AbsCoord, pathfinding};
 use crate::tiles::Tile;
 use crate::{
-    convert_coord_to_absolute, convert_coord_to_relative, convert_coords_to_relative, CrawlData,
-    RelCoord,
+    CrawlData, RelCoord, convert_coord_to_absolute, convert_coord_to_relative,
+    convert_coords_to_relative,
 };
 use regex::Regex;
 use rustc_hash::FxHashMap;
@@ -36,6 +36,9 @@ pub(crate) struct Monster {
 
     /// Has `dcss-data` received detailed info about the monster
     pub(crate) examined: bool,
+
+    /// Is incapacitated (e.g. asleep) -- impacts %s
+    pub(crate) incapacitated: bool,
 
     /// Maximum HP
     pub(crate) max_hp: Option<i32>,
@@ -70,6 +73,7 @@ pub(crate) struct Monster {
     ///   "Demonic" => 3
     ///   "Nonliv." => 4
     ///   "Plant" => 5
+    ///   "Holy" => 6
     pub(crate) class: Option<i32>,
 
     /// Monster size
@@ -255,6 +259,10 @@ impl Monsters {
         // Needed for uniform decoding
         desc_body.push_str("\n\n");
 
+        // Incapacitated
+        // TODO: Collect again if incapacitated (asleep)
+        let incapacitated = desc_body.contains("incapacitated");
+
         // Max HP
         let re: Regex = Regex::new(r"(?:Max HP: ~|Max HP: )\s*([^<\n]*)").unwrap();
         let cap = re.captures(&desc_body).unwrap();
@@ -330,6 +338,7 @@ impl Monsters {
             "Demonic" => 3,
             "Nonliv." => 4,
             "Plant" => 5,
+            "Holy" => 6,
             _ => unimplemented!("Missing class"),
         };
 
@@ -429,6 +438,7 @@ impl Monsters {
             }
 
             mon.examined = true;
+            mon.incapacitated = incapacitated;
             mon.threat = threat;
             mon.max_hp = Some(max_hp);
             mon.will = Some(will);
@@ -569,10 +579,10 @@ impl Monsters {
     /// * `poison` = poison resistance
     /// * `negative` = negative resistance
     /// * `electric` = electric resistance
-    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5)
+    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5 | "Holy" => 6)
     /// * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
     /// * `int` = monster intelligence ("Mindless" => 1 | "Animal" => 2 | "Human" => 3)
-    /// * `speed` = monster speed (%)
+    /// * `speed` = monster speed (% compared to player)
     /// * `regen` = monster regeneration
     /// * `player_hit_monster_chance` = chance to hit monster (%)
     /// * `monster_hit_player_chance` = chance the monster hits the player (%)
@@ -658,6 +668,40 @@ impl Monsters {
         None
     }
 
+    /// Returns the [AbsCoord] of an incapacitated monster.
+    ///
+    /// # Arguments
+    ///
+    /// * `player_pos` - The [AbsCoord] of the player's position.
+    /// * `fov` - The maximum field of view for the pathing.
+    pub(crate) fn pos_incapacitated_monster(
+        &self,
+        player_pos: AbsCoord,
+        fov: u32,
+    ) -> Option<AbsCoord> {
+        let mons = self
+            .monsters
+            .iter()
+            .map(|mon| mon.1)
+            .filter(|mon| mon.pos.is_some())
+            .filter(|mon| mon.threat >= 0)
+            .filter(|mon| mon.incapacitated)
+            .filter(|mon| mon.name != "invisible")
+            .filter(|mon| {
+                cmp::max(
+                    (player_pos.0 as i32 - mon.pos.unwrap().0 as i32).abs(),
+                    (player_pos.1 as i32 - mon.pos.unwrap().1 as i32).abs(),
+                ) <= fov as i32
+            })
+            .collect::<Vec<&Monster>>();
+
+        if !mons.is_empty() {
+            return mons[0].pos;
+        }
+
+        None
+    }
+
     /// Returns the [AbsCoord] of the nearest monster (according to pathing).
     ///
     /// # Arguments
@@ -723,6 +767,7 @@ impl Monster {
             threat,
             pos,
             examined: false,
+            incapacitated: false,
             max_hp: None,
             will: None,
             ac: None,
@@ -821,10 +866,10 @@ impl CrawlData {
     /// * `poison` = poison resistance
     /// * `negative` = negative resistance
     /// * `electric` = electric resistance
-    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5)
+    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5 | "Holy" => 6)
     /// * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
     /// * `int` = monster intelligence ("Mindless" => 1 | "Animal" => 2 | "Human" => 3)
-    /// * `speed` = monster speed (%)
+    /// * `speed` = monster speed (% compared to player)
     /// * `regen` = monster regeneration
     /// * `player_hit_monster_chance` = chance to hit monster (%)
     /// * `monster_hit_player_chance` = chance the monster hits the player (%)
@@ -850,10 +895,10 @@ impl CrawlData {
     /// * `poison` = poison resistance
     /// * `negative` = negative resistance
     /// * `electric` = electric resistance
-    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5)
+    /// * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5 | "Holy" => 6)
     /// * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
     /// * `int` = monster intelligence ("Mindless" => 1 | "Animal" => 2 | "Human" => 3)
-    /// * `speed` = monster speed (%)
+    /// * `speed` = monster speed (% compared to player)
     /// * `regen` = monster regeneration
     /// * `player_hit_monster_chance` = chance to hit monster (%)
     /// * `monster_hit_player_chance` = chance the monster hits the player (%)
@@ -864,18 +909,38 @@ impl CrawlData {
         self.monsters.monster_in_battle(pos, 1)
     }
 
+    /// Set the position of the next monster to inspect in more detail.
+    ///
+    /// # Arguments
+    ///
+    /// * `coord` - The [RelCoord] of the monster's position.
     pub fn ready_examine_monster(&mut self, coord: RelCoord) {
         self.monsters.examine_loc = Some(convert_coord_to_absolute(self.player.pos, coord));
     }
 
-    pub fn examine_monster(&mut self) -> Option<RelCoord> {
+    /// Get position of unexamined monster
+    pub fn get_pos_of_unexamined_monster(&mut self) -> Option<RelCoord> {
         let pos = self.player.pos;
         let coord = self.monsters.pos_unexamined_monster(pos, self.fov);
 
         coord.map(|coord| convert_coord_to_relative(pos, coord))
     }
+
+    /// Get position of previously incapacitated monster
+    pub fn get_pos_of_incapacitated_monster(&mut self) -> Option<RelCoord> {
+        let pos = self.player.pos;
+        let coord = self.monsters.pos_incapacitated_monster(pos, self.fov);
+
+        coord.map(|coord| convert_coord_to_relative(pos, coord))
+    }
 }
 
+/// Convert resistance values (e.g. `xx`) to numeric.
+///
+/// # Arguments
+///
+/// * `re` - A regex expression to capture the value
+/// * `text` - Text to process
 fn decode_resistance(re: Regex, text: &str) -> i32 {
     if let Some(cap) = &re.captures(text) {
         if cap[1].starts_with('∞') {

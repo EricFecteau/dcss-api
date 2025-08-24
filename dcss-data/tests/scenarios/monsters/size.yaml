@@ -1,0 +1,25 @@
+options:
+  default_feature: "floor"
+
+levels:
+  - level:
+      name: D:1
+      features:
+        - '# = metal_wall'
+        - '. = floor'
+      monsters:
+        - 'a = hornet generate_awake'
+        - 'b = endoplasm generate_awake'
+        - 'c = kobold generate_awake'
+        - 'd = angel generate_awake'
+        - 'e = hellwing generate_awake'
+        - 'f = ettin generate_awake'
+      map: |-
+          ##########
+          #........#
+          #.@......#
+          #........#
+          #........#
+          #.abcdef.#
+          #........#
+          ##########

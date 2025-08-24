@@ -1,50 +1,9 @@
 mod common;
 
-use dcss_api::Webtile;
-use dcss_scenario_builder::start_game_with_scenario;
-
-use dcss_data::CrawlData;
-
 #[test]
 fn box_7x7() {
-    let username = "Tiles1";
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
-    common::reset_test(username, game_id.as_str());
-
-    // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _ = webtile
-        .login_with_credentials(username, "Password")
-        .unwrap();
-
-    // Start game with simple scenario.
-    start_game_with_scenario(
-        &mut webtile,
-        game_id.as_str(),
-        "b",
-        "f",
-        "b",
-        "./tests/scenarios/tiles/box_7x7.yaml",
-    )
-    .unwrap();
-
-    // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
-
-    // Wait for Ready
-    webtile
-        .read_until("input_mode", Some("mode"), Some(1))
-        .unwrap();
-
-    // Process the data
-    while let Some(message) = webtile.get_message() {
-        data.process_json(&message).unwrap()
-    }
+    let mut webtile = common::setup_webtile("Tiles1", "./tests/scenarios/tiles/box_7x7.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
     // Tiles [x, y]
     //        [-y]
@@ -82,44 +41,9 @@ fn box_7x7() {
 
 #[test]
 fn box_7x7_monster() {
-    let username = "Tiles2";
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
-    common::reset_test(username, game_id.as_str());
-
-    // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _ = webtile
-        .login_with_credentials(username, "Password")
-        .unwrap();
-
-    // Start game with simple scenario.
-    start_game_with_scenario(
-        &mut webtile,
-        game_id.as_str(),
-        "b",
-        "f",
-        "b",
-        "./tests/scenarios/tiles/box_7x7_monster.yaml",
-    )
-    .unwrap();
-
-    // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
-
-    // Wait for Ready
-    webtile
-        .read_until("input_mode", Some("mode"), Some(1))
-        .unwrap();
-
-    // Process the data
-    while let Some(message) = webtile.get_message() {
-        data.process_json(&message).unwrap()
-    }
+    let mut webtile =
+        common::setup_webtile("Tiles2", "./tests/scenarios/tiles/box_7x7_monster.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
     // Tiles [x, y]
     //        [-y]
@@ -173,44 +97,8 @@ fn box_7x7_monster() {
 
 #[test]
 fn feature() {
-    let username = "Tiles3";
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
-    common::reset_test(username, game_id.as_str());
-
-    // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _ = webtile
-        .login_with_credentials(username, "Password")
-        .unwrap();
-
-    // Start game with simple scenario.
-    start_game_with_scenario(
-        &mut webtile,
-        game_id.as_str(),
-        "b",
-        "f",
-        "b",
-        "./tests/scenarios/tiles/feature.yaml",
-    )
-    .unwrap();
-
-    // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
-
-    // Wait for Ready
-    webtile
-        .read_until("input_mode", Some("mode"), Some(1))
-        .unwrap();
-
-    // Process the data
-    while let Some(message) = webtile.get_message() {
-        data.process_json(&message).unwrap()
-    }
+    let mut webtile = common::setup_webtile("Tiles3", "./tests/scenarios/tiles/feature.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
     // Tiles [x, y]
     //        [-y]

@@ -1,6 +1,6 @@
 # dcss-scenario-builder
 
-`dcss-scenario-builder` creates scenarios in [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) using [dcss-api](https://docs.rs/dcss-api/latest/dcss_api/index.html) in `wizmode` from a yaml file. It can create any floor layout, from any feature, and add any item or monster. 
+`dcss-scenario-builder` creates scenarios in [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) using [dcss-api](https://docs.rs/dcss-api/latest/dcss_api/index.html) in `wizmode` from a yaml file. It can create any floor layout, from any feature, and add any item or monster. The `yaml` generally works with the [Vault Design Reference Guide](https://crawl.develz.org/wiki/doku.php?id=dcss:help:maps).
 
 ## Example
 

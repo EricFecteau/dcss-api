@@ -1,50 +1,9 @@
 mod common;
 
-use dcss_api::Webtile;
-use dcss_scenario_builder::start_game_with_scenario;
-
-use dcss_data::CrawlData;
-
 #[test]
 fn no_monster() {
-    let username = "Monsters1";
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
-    common::reset_test(username, game_id.as_str());
-
-    // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _ = webtile
-        .login_with_credentials(username, "Password")
-        .unwrap();
-
-    // Start game with simple scenario.
-    start_game_with_scenario(
-        &mut webtile,
-        game_id.as_str(),
-        "b",
-        "f",
-        "b",
-        "./tests/scenarios/tiles/box_7x7.yaml",
-    )
-    .unwrap();
-
-    // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
-
-    // Wait for Ready
-    webtile
-        .read_until("input_mode", Some("mode"), Some(1))
-        .unwrap();
-
-    // Process the data
-    while let Some(message) = webtile.get_message() {
-        data.process_json(&message).unwrap()
-    }
+    let mut webtile = common::setup_webtile("Monsters1", "./tests/scenarios/tiles/box_7x7.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
     // Number of monsters that can be reached
     assert!(data.monster_count_path() == 0);
@@ -65,6 +24,10 @@ fn no_monster() {
     // Get threat vector
     assert!(data.get_monster_threat_vec().is_empty());
 
+    // No monster to care about their info
+    assert!(data.get_battle_monster_info().is_empty());
+    assert!(data.get_touching_monster_info().is_empty());
+
     webtile.quit_game().unwrap();
 
     webtile.disconnect().unwrap();
@@ -72,44 +35,8 @@ fn no_monster() {
 
 #[test]
 fn monster_from_tiles() {
-    let username = "Monsters2";
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
-    common::reset_test(username, game_id.as_str());
-
-    // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _ = webtile
-        .login_with_credentials(username, "Password")
-        .unwrap();
-
-    // Start game with simple scenario.
-    start_game_with_scenario(
-        &mut webtile,
-        game_id.as_str(),
-        "b",
-        "f",
-        "b",
-        "./tests/scenarios/monsters/kobold.yaml",
-    )
-    .unwrap();
-
-    // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
-
-    // Wait for Ready
-    webtile
-        .read_until("input_mode", Some("mode"), Some(1))
-        .unwrap();
-
-    // Process the data
-    while let Some(message) = webtile.get_message() {
-        data.process_json(&message).unwrap()
-    }
+    let mut webtile = common::setup_webtile("Monsters2", "./tests/scenarios/monsters/kobold.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
     // Number of monsters that can be reached
     assert!(data.monster_count_path() == 1);
@@ -141,44 +68,9 @@ fn monster_from_tiles() {
 
 #[test]
 fn glass_box() {
-    let username = "Monsters3";
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
-    common::reset_test(username, game_id.as_str());
-
-    // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _ = webtile
-        .login_with_credentials(username, "Password")
-        .unwrap();
-
-    // Start game with simple scenario.
-    start_game_with_scenario(
-        &mut webtile,
-        game_id.as_str(),
-        "b",
-        "f",
-        "b",
-        "./tests/scenarios/monsters/glass_box.yaml",
-    )
-    .unwrap();
-
-    // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
-
-    // Wait for Ready
-    webtile
-        .read_until("input_mode", Some("mode"), Some(1))
-        .unwrap();
-
-    // Process the data
-    while let Some(message) = webtile.get_message() {
-        data.process_json(&message).unwrap()
-    }
+    let mut webtile =
+        common::setup_webtile("Monsters3", "./tests/scenarios/monsters/glass_box.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
     // Number of monsters that can be reached
     assert!(data.monster_count_path() == 1);
@@ -207,44 +99,9 @@ fn glass_box() {
 
 #[test]
 fn touching() {
-    let username = "Monsters4";
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
-    common::reset_test(username, game_id.as_str());
-
-    // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
-
-    // Empty message queue;
-    while webtile.get_message().is_some() {}
-
-    // Log in (to a user called "Username", with a password "Password")
-    let _ = webtile
-        .login_with_credentials(username, "Password")
-        .unwrap();
-
-    // Start game with simple scenario.
-    start_game_with_scenario(
-        &mut webtile,
-        game_id.as_str(),
-        "b",
-        "f",
-        "b",
-        "./tests/scenarios/monsters/touching.yaml",
-    )
-    .unwrap();
-
-    // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
-
-    // Wait for Ready
-    webtile
-        .read_until("input_mode", Some("mode"), Some(1))
-        .unwrap();
-
-    // Process the data
-    while let Some(message) = webtile.get_message() {
-        data.process_json(&message).unwrap()
-    }
+    let mut webtile =
+        common::setup_webtile("Monsters4", "./tests/scenarios/monsters/touching.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
     // Number of monsters that can be reached
     assert!(data.monster_count_path() == 1);
@@ -271,8 +128,170 @@ fn touching() {
     webtile.disconnect().unwrap();
 }
 
-// // Get mon in battle info
-// assert!(data.get_battle_monster_info().is_empty());
+#[test]
+fn kobold_info() {
+    let mut webtile = common::setup_webtile("Monsters5", "./tests/scenarios/monsters/kobold.yaml");
+    let mut data = common::setup_data(&mut webtile);
 
-// // Get mon touching info
-// assert!(data.get_touching_monster_info().is_empty());
+    // Sleepy monster
+    assert!(data.get_pos_of_incapacitated_monster().is_none());
+
+    // Look at monster to get more info
+    common::examine_monster(
+        data.coord_nearest_monster().unwrap(),
+        &mut webtile,
+        &mut data,
+    );
+
+    // Sleepy monster
+    assert!(data.get_pos_of_incapacitated_monster() == Some((5, 3)));
+
+    // Note, this moster is asleep
+    let mon_data = &data.get_battle_monster_info()[0];
+
+    // * `threat` = threat level ("Minor" => 1 | "Low" => 2 | "High" => 4 | "Lethal" => 5)
+    assert!(mon_data["threat"] == 2);
+
+    // * `max_hp` = maximum hp
+    assert!(mon_data["max_hp"] == 3);
+
+    // * `will` = will
+    assert!(mon_data["will"] == 0);
+
+    // * `ac` = ac
+    assert!(mon_data["ac"] == 1);
+
+    // * `ev` = ev
+    assert!(mon_data["ev"] == 3);
+
+    // * `fire` = fire resistance
+    assert!(mon_data["fire"] == 0);
+
+    // * `cold` = cold resistance
+    assert!(mon_data["cold"] == 0);
+
+    // * `poison` = poison resistance
+    assert!(mon_data["poison"] == 0);
+
+    // * `negative` = negative resistance
+    assert!(mon_data["negative"] == 0);
+
+    // * `electric` = electric resistance
+    assert!(mon_data["electric"] == 0);
+
+    // * `class` = monster class ("Natural" => 1 | "Undead" => 2 | "Demonic" => 3 | "Nonliv." => 4 | "Plant" => 5)
+    assert!(mon_data["class"] == 1);
+
+    // * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
+    assert!(mon_data["size"] == 3);
+
+    // * `int` = monster intelligence ("Mindless" => 1 | "Animal" => 2 | "Human" => 3)
+    assert!(mon_data["int"] == 3);
+
+    // * `speed` = monster speed (% compared to player)
+    assert!(mon_data["speed"] == 100);
+
+    // * `regen` = monster regeneration
+    assert!(mon_data["regen"] == 0);
+
+    // * `player_hit_monster_chance` = chance to hit monster (%)
+    assert!(mon_data["player_hit_monster_chance"] == 98);
+
+    // * `monster_hit_player_chance` = chance the monster hits the player (%)
+    assert!(mon_data["monster_hit_player_chance"] == 57);
+
+    // * `max_damage` = max damage the monster can do to the player
+    assert!(mon_data["max_damage"] == 5);
+
+    // Add test if new ones are added
+    assert!(mon_data.len() == 18);
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}
+
+#[test]
+fn kobold_strong_info() {
+    let mut webtile =
+        common::setup_webtile("Monsters6", "./tests/scenarios/monsters/kobold_strong.yaml");
+    let mut data = common::setup_data(&mut webtile);
+
+    // Look at monster to get more info
+    common::examine_monster(
+        data.coord_nearest_monster().unwrap(),
+        &mut webtile,
+        &mut data,
+    );
+
+    let mon_data = &data.get_battle_monster_info()[0];
+
+    println!("{mon_data:?}");
+
+    // * `max_hp` = maximum hp
+    assert!(mon_data["max_hp"] == 20);
+
+    // * `ac` = ac
+    assert!(mon_data["ac"] == 2);
+
+    // * `player_hit_monster_chance` = chance to hit monster (%)
+    assert!(mon_data["player_hit_monster_chance"] == 58);
+
+    // * `monster_hit_player_chance` = chance the monster hits the player (%)
+    assert!(mon_data["monster_hit_player_chance"] == 38);
+
+    // * `max_damage` = max damage the monster can do to the player
+    assert!(mon_data["max_damage"] == 15);
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}
+
+#[test]
+fn kobold_two_hits_info() {
+    let mut webtile = common::setup_webtile(
+        "Monsters7",
+        "./tests/scenarios/monsters/kobold_two_hits.yaml",
+    );
+    let mut data = common::setup_data(&mut webtile);
+
+    // Look at monster to get more info
+    common::examine_monster(
+        data.coord_nearest_monster().unwrap(),
+        &mut webtile,
+        &mut data,
+    );
+
+    let mon_data = &data.get_battle_monster_info()[0];
+
+    // * `max_damage` = max damage the monster can do to the player
+    assert!(mon_data["max_damage"] == 8);
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}
+
+#[test]
+fn size_info() {
+    let mut webtile = common::setup_webtile("Monsters8", "./tests/scenarios/monsters/size.yaml");
+    let mut data = common::setup_data(&mut webtile);
+
+    // Look at monster to get more info
+    while let Some(coord) = data.get_pos_of_unexamined_monster() {
+        common::examine_monster(coord, &mut webtile, &mut data);
+    }
+
+    // * `size` = monster size ("Tiny" => 1 | "V. Small" => 2 | "Small" => 3 | "Medium" => 4 | "Large" => 5 | "Giant" => 6)
+    let mon_data = &data.get_battle_monster_info();
+
+    let mut sizes = mon_data.iter().map(|m| m["size"]).collect::<Vec<i32>>();
+    sizes.sort();
+
+    assert!(sizes == vec![1, 2, 3, 4, 5, 6]);
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}

@@ -472,6 +472,7 @@ impl CrawlData {
         );
     }
 
+    //
     pub fn look_at_monster_menu(&mut self) {
         self.menus.add_menu(
             vec![""],
