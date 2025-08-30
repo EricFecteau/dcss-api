@@ -226,8 +226,6 @@ fn kobold_strong_info() {
 
     let mon_data = &data.get_battle_monster_info()[0];
 
-    println!("{mon_data:?}");
-
     // * `max_hp` = maximum hp
     assert!(mon_data["max_hp"] == 20);
 
@@ -316,15 +314,11 @@ fn kobold_polearm_info() {
 
     let mon_data = &data.get_battle_monster_info();
 
-    println!("{mon_data:?}");
-
     assert!(mon_data.len() == 3);
 
     let mon_data = &data.get_attacking_monster_info();
 
     assert!(mon_data.len() == 2);
-
-    println!("{mon_data:?}");
 
     webtile.quit_game().unwrap();
 

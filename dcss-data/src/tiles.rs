@@ -1,9 +1,9 @@
-use crate::{common::AbsCoord, convert_coord_to_absolute, CrawlData};
+use crate::{CrawlData, common::AbsCoord, convert_coord_to_absolute};
 use serde_json::Value;
 use std::error::Error;
 
-use crate::common::add_i32_to_usize;
 use crate::MAX_FLOOR_SIZE;
+use crate::common::add_i32_to_usize;
 
 /// Map Features (MF) received by the game (e.g. floor, wall).
 ///
