@@ -426,7 +426,7 @@ impl CrawlData {
             false,
             false,
             "menu",
-            "player",
+            "input_mode",
         );
     }
 

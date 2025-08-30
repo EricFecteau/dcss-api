@@ -637,18 +637,19 @@ impl Monsters {
         monsters
             .iter()
             .filter(|mon| mon.name != "invisible")
-            .filter(|mon| { !can_hit ||
-                cmp::max(
-                    (player_pos.0 as i32 - mon.pos.unwrap().0 as i32).abs(),
-                    (player_pos.1 as i32 - mon.pos.unwrap().1 as i32).abs(),
-                ) <= mon.range.unwrap()
-            })
-            .map(|mon| {
-                let mut hash = FxHashMap::default();
-
+            .filter(|mon| { 
                 if !mon.examined {
                     panic!("You must examine the monster before collecting their info. Use `ready_examine_monster(coord)` and `look_at_monster_menu()`.");
                 }
+
+                !can_hit ||
+                    cmp::max(
+                        (player_pos.0 as i32 - mon.pos.unwrap().0 as i32).abs(),
+                        (player_pos.1 as i32 - mon.pos.unwrap().1 as i32).abs(),
+                    ) <= mon.range.unwrap()
+            })
+            .map(|mon| {
+                let mut hash = FxHashMap::default();
 
                 hash.insert("threat", mon.threat);
                 hash.insert("max_hp", mon.max_hp.unwrap());

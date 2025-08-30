@@ -60,9 +60,11 @@ dcss-clear:
 
 dcss-enable-logging:
     sed -i -e 's/# type: (str, Any) -> bool/print("SENT FROM DCSS: ", msg, data)/g' ./crawl/server/webtiles/ws_handler.py
+    sed -i -e 's/# stdout data is only used for compatibility to wrapper/print("SENT FROM DCSS: ", msg)/g' ./crawl/server/webtiles/process_handler.py
 
 dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg, data)/# type: (str, Any) -> bool/g' ./crawl/server/webtiles/ws_handler.py
+    sed -i -e 's/print("SENT FROM DCSS: ", msg)/# stdout data is only used for compatibility to wrapper/g' ./crawl/server/webtiles/process_handler.py
 
 test-api:
     cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
