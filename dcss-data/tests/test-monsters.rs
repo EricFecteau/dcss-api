@@ -26,7 +26,7 @@ fn no_monster() {
 
     // No monster to care about their info
     assert!(data.get_battle_monster_info().is_empty());
-    assert!(data.get_touching_monster_info().is_empty());
+    assert!(data.get_attacking_monster_info().is_empty());
 
     webtile.quit_game().unwrap();
 
@@ -274,8 +274,66 @@ fn kobold_two_hits_info() {
 }
 
 #[test]
+fn kobold_ranged_info() {
+    let mut webtile =
+        common::setup_webtile("Monsters8", "./tests/scenarios/monsters/kobold_ranged.yaml");
+    let mut data = common::setup_data(&mut webtile);
+
+    // Look at monster to get more info
+    common::examine_monster(
+        data.coord_nearest_monster().unwrap(),
+        &mut webtile,
+        &mut data,
+    );
+
+    let mon_data = &data.get_battle_monster_info()[0];
+
+    // * `max_damage` = max damage the monster can do to the player
+    assert!(mon_data["max_damage"] == 7);
+
+    let mon_data = &data.get_attacking_monster_info()[0];
+
+    // * `max_damage` = max damage the monster can do to the player
+    assert!(mon_data["max_damage"] == 7);
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}
+
+#[test]
+fn kobold_polearm_info() {
+    let mut webtile = common::setup_webtile(
+        "Monsters9",
+        "./tests/scenarios/monsters/kobold_polearm.yaml",
+    );
+    let mut data = common::setup_data(&mut webtile);
+
+    // Look at monster to get more info
+    while let Some(coord) = data.get_pos_of_unexamined_monster() {
+        common::examine_monster(coord, &mut webtile, &mut data);
+    }
+
+    let mon_data = &data.get_battle_monster_info();
+
+    println!("{mon_data:?}");
+
+    assert!(mon_data.len() == 3);
+
+    let mon_data = &data.get_attacking_monster_info();
+
+    assert!(mon_data.len() == 2);
+
+    println!("{mon_data:?}");
+
+    webtile.quit_game().unwrap();
+
+    webtile.disconnect().unwrap();
+}
+
+#[test]
 fn size_info() {
-    let mut webtile = common::setup_webtile("Monsters8", "./tests/scenarios/monsters/size.yaml");
+    let mut webtile = common::setup_webtile("Monsters10", "./tests/scenarios/monsters/size.yaml");
     let mut data = common::setup_data(&mut webtile);
 
     // Look at monster to get more info

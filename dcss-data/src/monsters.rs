@@ -40,6 +40,12 @@ pub(crate) struct Monster {
     /// Is incapacitated (e.g. asleep) -- impacts %s
     pub(crate) incapacitated: bool,
 
+    /// Max monster range
+    ///   "Touching" => 1
+    ///   "Polearm" => 2
+    ///   "Ranged" => 3
+    pub(crate) range: Option<i32>,
+
     /// Maximum HP
     pub(crate) max_hp: Option<i32>,
 
@@ -406,6 +412,9 @@ impl Monsters {
             let re: Regex = Regex::new(r"\n\n").unwrap();
             let end_pos = re.find(&desc_body[start_pos..]).unwrap().start();
 
+            // TODO: Some weaspons (like trishula) have this formula for damage: `13 + 19 (holy)`.
+            // Currently this would only count as 13!!
+
             // Capture the 2x (for example) and the max damage
             let re_num_x = Regex::new(r"(\d+)x").unwrap();
             let re_max_damage = Regex::new(r"\s(\d+)(\s|$)").unwrap();
@@ -423,6 +432,34 @@ impl Monsters {
                 })
                 .max()
                 .unwrap()
+        } else {
+            0
+        };
+
+        // Range max
+        let re: Regex = Regex::new(r"(?:Attacks|Attack) \s*([^\n]*)").unwrap();
+        let range = if let Some(found) = re.find(&desc_body) {
+            let start_pos = found.end() + 1;
+            let re: Regex = Regex::new(r"\n\n").unwrap();
+            let end_pos = re.find(&desc_body[start_pos..]).unwrap().start();
+
+            if desc_body[start_pos..][..end_pos].contains("Shoot")
+                || desc_body[start_pos..][..end_pos].contains("Throw")
+            {
+                100
+            } else if desc_body[start_pos..][..end_pos].contains("spear")
+                || desc_body[start_pos..][..end_pos].contains("trident")
+                || desc_body[start_pos..][..end_pos].contains("trishula")
+                || desc_body[start_pos..][..end_pos].contains("halberd")
+                || desc_body[start_pos..][..end_pos].contains("scythe")
+                || desc_body[start_pos..][..end_pos].contains("partisan")
+                || desc_body[start_pos..][..end_pos].contains("glaive")
+                || desc_body[start_pos..][..end_pos].contains("bardiche")
+            {
+                2
+            } else {
+                1
+            }
         } else {
             0
         };
@@ -457,6 +494,7 @@ impl Monsters {
             mon.player_hit_monster_chance = Some(player_hit_monster_chance);
             mon.monster_hit_player_chance = Some(monster_hit_player_chance);
             mon.max_damage = Some(max_damage);
+            mon.range = Some(range);
         }
     }
 
@@ -566,6 +604,7 @@ impl Monsters {
     ///
     /// * `player_pos` - The [AbsCoord] of the player's position.
     /// * `fov` - The maximum field of view for the pathing.
+    /// * `can_hit` - Include only those who could hit from their current position.
     ///
     /// # Info
     ///
@@ -591,12 +630,19 @@ impl Monsters {
         &self,
         player_pos: AbsCoord,
         fov: u32,
+        can_hit: bool,
     ) -> Vec<FxHashMap<&str, i32>> {
         let monsters = self.monsters_in_fov(player_pos, fov);
 
         monsters
             .iter()
             .filter(|mon| mon.name != "invisible")
+            .filter(|mon| { !can_hit ||
+                cmp::max(
+                    (player_pos.0 as i32 - mon.pos.unwrap().0 as i32).abs(),
+                    (player_pos.1 as i32 - mon.pos.unwrap().1 as i32).abs(),
+                ) <= mon.range.unwrap()
+            })
             .map(|mon| {
                 let mut hash = FxHashMap::default();
 
@@ -785,6 +831,7 @@ impl Monster {
             player_hit_monster_chance: None,
             monster_hit_player_chance: None,
             max_damage: None,
+            range: None,
         }
     }
 
@@ -878,7 +925,7 @@ impl CrawlData {
         let pos = self.player.pos;
         let fov = self.fov;
 
-        self.monsters.monster_in_battle(pos, fov)
+        self.monsters.monster_in_battle(pos, fov, false)
     }
 
     /// Returns a vector of all the characteristics of each monster touching the character.
@@ -903,10 +950,11 @@ impl CrawlData {
     /// * `player_hit_monster_chance` = chance to hit monster (%)
     /// * `monster_hit_player_chance` = chance the monster hits the player (%)
     /// * `max_damage` = max damage the monster can do to the player
-    pub fn get_touching_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
+    pub fn get_attacking_monster_info(&self) -> Vec<FxHashMap<&str, i32>> {
         let pos = self.player.pos;
+        let fov = self.fov;
 
-        self.monsters.monster_in_battle(pos, 1)
+        self.monsters.monster_in_battle(pos, fov, true)
     }
 
     /// Set the position of the next monster to inspect in more detail.
