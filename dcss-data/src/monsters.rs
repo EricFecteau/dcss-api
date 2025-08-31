@@ -25,6 +25,7 @@ pub(crate) struct Monster {
     pub(crate) name: String,
 
     /// Threat level
+    ///   "Friendly" / "Harmless" => -1
     ///   "Minor" => 1
     ///   "Low" => 2
     ///   "High" => 4
@@ -266,7 +267,6 @@ impl Monsters {
         desc_body.push_str("\n\n");
 
         // Incapacitated
-        // TODO: Collect again if incapacitated (asleep)
         let incapacitated = desc_body.contains("incapacitated");
 
         // Max HP
@@ -327,13 +327,18 @@ impl Monsters {
         // Threat
         let re: Regex = Regex::new(r"Threat:\s*([^<\n]*)").unwrap();
         let cap: &str = &re.captures(&desc_body).unwrap()[1];
-        let threat = match cap.trim() {
+        let mut threat = match cap.trim() {
             "Minor" => 1,
             "Low" => 2,
             "High" => 4,
             "Lethal" => 5,
             _ => unimplemented!("Missing level"),
         };
+
+        // Ignore friendlies
+        if desc_body.contains("If angered it will immediately vanish, yielding no experience or items") {
+            threat = -1;
+        }
 
         // Class
         let re: Regex = Regex::new(r"Class:\s*([^<\n]*)").unwrap();
@@ -581,7 +586,6 @@ impl Monsters {
     /// * `player_pos` - The [AbsCoord] of the player's position.
     /// * `fov` - The maximum field of view for the pathing.
     pub(crate) fn monsters_in_fov(&self, player_pos: AbsCoord, fov: u32) -> Vec<&Monster> {
-        // TODO Deal with Plants (threat = -1)
 
         self.monsters
             .iter()
