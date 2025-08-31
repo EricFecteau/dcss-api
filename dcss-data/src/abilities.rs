@@ -1,8 +1,11 @@
 use rustc_hash::FxHashMap;
 use serde_json::Value;
 
+use crate::CrawlData;
+
 #[derive(Debug)]
 pub(crate) struct Abilities {
+    pub(crate) stale: bool,
     pub(crate) abilities: FxHashMap<String, Ability>,
 }
 
@@ -16,6 +19,7 @@ pub(crate) struct Ability {
 impl Abilities {
     pub(crate) fn new() -> Self {
         Self {
+            stale: false,
             abilities: FxHashMap::default(),
         }
     }
@@ -39,6 +43,16 @@ impl Abilities {
             }
         }
     }
+
+    // For when abilities are used, piety will go down, and some may no longer
+    // be available to use. Need to re-check.
+    pub(crate) fn make_abilities_stale(&mut self) {
+        self.stale = true;
+    }
+
+    pub(crate) fn make_abilities_current(&mut self) {
+        self.stale = false;
+    }
 }
 
 impl Ability {
@@ -48,5 +62,23 @@ impl Ability {
             _cost: cost.to_owned(),
             _failure_chance: failure_chance,
         }
+    }
+}
+
+impl CrawlData {
+    pub fn process_ability_menu(&mut self, menu_items: Value) {
+        self.abilities.process_ability_menu(menu_items);
+    }
+
+    pub fn has_ability(&self, ability: &str) -> bool {
+        self.abilities.abilities.contains_key(ability)
+    }
+
+    pub fn key_of_ability(&self, ability: &str) -> String {
+        self.abilities.abilities[ability].key.to_owned()
+    }
+
+    pub fn abilities_stale(&self) -> bool {
+        self.abilities.stale
     }
 }
