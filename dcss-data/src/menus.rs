@@ -259,6 +259,8 @@ impl CrawlData {
             "menu",
             "close_menu",
         );
+
+        self.abilities.make_abilities_current();
     }
 
     /// Open the description menu of a specific item
@@ -428,6 +430,8 @@ impl CrawlData {
             "menu",
             "input_mode",
         );
+
+        self.abilities.make_abilities_stale();
     }
 
     pub fn queue_collect_known_item_data(&mut self) {

@@ -252,11 +252,11 @@ impl CrawlData {
             self.pickup.update(ground_item_coord);
         }
 
-        for invis_coord in extra_data.2 .0 {
+        for invis_coord in extra_data.2.0 {
             self.monsters.invisible_monster(invis_coord)
         }
 
-        for invis_rm_coord in extra_data.2 .1 {
+        for invis_rm_coord in extra_data.2.1 {
             self.monsters.invisible_removed(invis_rm_coord)
         }
 
@@ -397,20 +397,8 @@ impl CrawlData {
         self.inventory.description(description);
     }
 
-    pub fn process_ability_menu(&mut self, menu_items: Value) {
-        self.abilities.process_ability_menu(menu_items);
-    }
-
-    pub fn has_ability(&self, ability: &str) -> bool {
-        self.abilities.abilities.contains_key(ability)
-    }
-
     pub fn has_status(&self, status: &str) -> bool {
         self.player.status.contains(&String::from(status))
-    }
-
-    pub fn key_of_ability(&self, ability: &str) -> String {
-        self.abilities.abilities[ability].key.to_owned()
     }
 
     pub fn unknown_item(&self, item_type: &str) -> Option<usize> {
