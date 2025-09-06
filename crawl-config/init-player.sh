@@ -55,3 +55,17 @@ mkdir -p $TTYRECDIR
 if [ ! -f ${RCDIR}/${PLAYERNAME}.rc ]; then
     cp ${DEFAULT_RC} ${RCDIR}/${PLAYERNAME}.rc
 fi
+
+RCDIR=./crawl/server/rcs-0.33/
+INPROGRESSDIR=./crawl/server/rcs-0.33/running
+TTYRECDIR=./crawl/server/rcs-0.33/ttyrecs/$1
+DEFAULT_RC=./crawl/server/init-0.33.txt
+PLAYERNAME=$1
+
+mkdir -p $RCDIR
+mkdir -p $INPROGRESSDIR
+mkdir -p $TTYRECDIR
+
+if [ ! -f ${RCDIR}/${PLAYERNAME}.rc ]; then
+    cp ${DEFAULT_RC} ${RCDIR}/${PLAYERNAME}.rc
+fi

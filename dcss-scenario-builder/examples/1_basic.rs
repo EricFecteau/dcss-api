@@ -1,9 +1,9 @@
 use dcss_api::Webtile;
-use dcss_scenario_builder::{start_game_with_scenario, Error};
+use dcss_scenario_builder::{Error, start_game_with_scenario};
 
 fn main() -> Result<(), Error> {
     // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.30")?;
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0)?;
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

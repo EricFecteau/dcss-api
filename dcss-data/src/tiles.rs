@@ -166,12 +166,6 @@ impl Tiles {
 
             // Add monster data, and update the "walkability of tile"
             if tile_object.contains_key("mon") {
-                println!(
-                    "MONSTER: {:?} - {:?}",
-                    (x_pos as isize - 250, y_pos as isize - 250),
-                    tile_object["mon"].clone()
-                );
-
                 monsters.push(((x_pos, y_pos), tile_object["mon"].clone()));
 
                 if tile_object["mon"].is_null() {
@@ -190,8 +184,6 @@ impl Tiles {
                     invisible_monsters.push((x_pos, y_pos));
                     self.tiles[x_pos][y_pos].unblock(); // Make it walkable again
                 } else if tile_object["g"] == "@" {
-                    println!("PLAYER: {:?}", (x_pos as isize - 250, y_pos as isize - 250));
-
                     // If character on monster tile, delete invisible (means no longer there)
                     remove_invisible_monsters.push((x_pos, y_pos));
                 }

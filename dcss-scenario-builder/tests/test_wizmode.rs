@@ -5,14 +5,14 @@ use dcss_scenario_builder::start_game_with_scenario;
 
 #[test]
 fn verify_wizmode() -> Result<(), Box<Error>> {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

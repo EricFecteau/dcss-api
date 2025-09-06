@@ -1,6 +1,6 @@
-use crate::api_errors::BlockingError;
 use crate::Error;
 use crate::Webtile;
+use crate::api_errors::BlockingError;
 use serde_json::json;
 
 impl Webtile {
@@ -79,7 +79,22 @@ impl Webtile {
         let mut newgame_count = 0;
         loop {
             match self.read_until("map", None, None) {
-                Ok(_) => return Ok(()),
+                Ok(_) => {
+                    // Get version of game (for API differences)
+                    if self.version.is_none() {
+                        for message in self.read_only_messages() {
+                            let message_obj = message.as_object().unwrap();
+                            if message_obj["msg"] == "version" {
+                                let text = message_obj["text"].as_str().unwrap();
+                                let long_version = text.split(" ").collect::<Vec<&str>>()[4];
+                                let version =
+                                    long_version.split(".").collect::<Vec<&str>>()[0..2].join(".");
+                                self.version = Some(version);
+                            }
+                        }
+                    }
+                    return Ok(());
+                }
                 Err(e) => match *e {
                     Error::Blocking(BlockingError::SeedSelection) => {
                         self.write_key("-")?;
@@ -105,6 +120,18 @@ impl Webtile {
                 },
             };
         }
+    }
+
+    /// Get version of the DCSS game (e.g. "0.33"). Will return `None` if
+    /// the game has not been started.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// webtile.game_version()?;
+    /// ```
+    pub fn game_version(&self) -> Option<String> {
+        self.version.clone()
     }
 
     /// Save a game by sending the `CTRL + S` command.
@@ -137,7 +164,11 @@ impl Webtile {
             Ok(_) => (),
             Err(e) => match *e {
                 Error::Blocking(BlockingError::TextInput) => {
-                    self.write_key("yes")?;
+                    if self.version == Some("0.33".to_string()) {
+                        self.write_key("quit")?;
+                    } else {
+                        self.write_key("yes")?;
+                    }
                     self.write_key("key_enter")?;
                     self.message_found = false; // Otherwise close_input will be skipped
                 }

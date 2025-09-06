@@ -4,8 +4,7 @@ use dcss_api::Webtile;
 
 pub(crate) fn reset_test(username: &str, game_id: &str) {
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

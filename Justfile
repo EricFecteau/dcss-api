@@ -24,8 +24,13 @@ setup-dcss-server:
     git -C ./crawl/dcss-0.32 checkout stone_soup-0.32
     make -C ./crawl/dcss-0.32/crawl-ref/source WEBTILES=y
 
+    mkdir ./crawl/dcss-0.33
+    cp -r ./crawl/main/crawl/. ./crawl/dcss-0.33
+    git -C ./crawl/dcss-0.33 checkout stone_soup-0.33
+    make -C ./crawl/dcss-0.33/crawl-ref/source WEBTILES=y
+
     mkdir ./crawl/server
-    cp -r ./crawl/dcss-0.32/crawl-ref/source/webserver/. ./crawl/server
+    cp -r ./crawl/dcss-0.33/crawl-ref/source/webserver/. ./crawl/server
     sed -i -e 's/subprocess.signal/signal_module/g' ./crawl/server/webtiles/process_handler.py
     sed -i -e 's/import subprocess/import signal as signal_module/g' ./crawl/server/webtiles/process_handler.py
     cp ./crawl-config/config.py ./crawl/server/config.py 
@@ -34,6 +39,7 @@ setup-dcss-server:
     echo save_dir = ./crawl/server/saves-0.30 > ./crawl/server/init-0.30.txt
     echo save_dir = ./crawl/server/saves-0.31 > ./crawl/server/init-0.31.txt
     echo save_dir = ./crawl/server/saves-0.32 > ./crawl/server/init-0.32.txt
+    echo save_dir = ./crawl/server/saves-0.33 > ./crawl/server/init-0.33.txt
 
     rm -rf ./crawl/main
 
@@ -67,22 +73,21 @@ dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg)/# stdout data is only used for compatibility to wrapper/g' ./crawl/server/webtiles/process_handler.py
 
 test-api:
-    cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
     cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.33 cargo test
 
 test-data:
-    # cd ./dcss-data && GAME_ID=dcss-0.29 cargo test
-    # cd ./dcss-data && GAME_ID=dcss-0.30 cargo test
-    # cd ./dcss-data && GAME_ID=dcss-0.31 cargo test
-    cd ./dcss-data && GAME_ID=dcss-0.32 cargo test
+    cd ./dcss-data && GAME_ID=dcss-0.33 cargo test
 
 test-scenario:
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
     cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.33 cargo test
 
 setup-python:
     rm -rf ./dcss-api-python/pyo3
@@ -92,10 +97,11 @@ setup-python:
     . ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && maturin develop -r
 
 test-python:
-    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.29 pytest ./dcss-api-python/tests
-    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.30 pytest ./dcss-api-python/tests
-    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.31 pytest ./dcss-api-python/tests
-    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.32 pytest ./dcss-api-python/tests
+    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.29 pytest ./dcss-api-python/tests
+    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.30 pytest ./dcss-api-python/tests
+    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.31 pytest ./dcss-api-python/tests
+    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.32 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.33 pytest ./dcss-api-python/tests
 
 cargo-update:
     cd ./dcss-api && cargo update

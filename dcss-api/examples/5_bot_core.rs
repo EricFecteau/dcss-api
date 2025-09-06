@@ -8,7 +8,7 @@ use std::process;
 fn main() {
     // Connect to DCSS Webtile
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 100, "0.32").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 100).expect("Failed to connect");
 
     // Log in (to a user called "Username", with a password "Password")
     let gameid = webtile
