@@ -2,10 +2,10 @@ use dcss_api::Webtile;
 
 #[test]
 fn write_read_rc() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -45,10 +45,10 @@ fn write_read_rc() {
 
 #[test]
 fn blank_rc_file() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect.");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

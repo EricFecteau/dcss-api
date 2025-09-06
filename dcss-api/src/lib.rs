@@ -25,18 +25,26 @@ pub struct Webtile {
     /// Websocket (using [tungstenite::WebSocket]) to send and receive data from
     /// [DCSS Webtile](http://crawl.develz.org/wordpress/howto).
     socket: WebSocket<MaybeTlsStream<TcpStream>>,
+
     /// A [flate2::Decompress] decompression object (Deflate) to decompress data received
     /// by [DCSS Webtile](http://crawl.develz.org/wordpress/howto).
     decompressor: Decompress,
+
     /// [SystemTime] of the last sent message. Used to limit the rate for
     /// running the bot on someone else's server.
     last_send: SystemTime,
+
     /// A [bool] of if the searched for data (in the websocket) has been found.
     message_found: bool,
+
     /// Speed limit in milliseconds between each command sent to DCSS Webtiles.
     speed_ms: u32,
+
     /// [VecDeque] of messages received from DCSS.
     received_messages: VecDeque<Value>,
+
+    /// The version ("0.33") of the DCSS game, if one was started.
+    version: Option<String>,
 }
 
 impl Webtile {
@@ -48,15 +56,13 @@ impl Webtile {
     /// * `url` - A [&str] that holds the `ws://` or `wss://` URL
     /// * `speed_ms` - A [u32] that depicts the speed limit in milliseconds between
     ///   each command sent to DCSS Webtiles.
-    /// * `_version` - Currently a placeholder for the version number of DCSS, in case
-    ///   the API changes in the future.
     ///     
     /// # Example
     ///
     /// ```no_run
-    /// let mut webtile = Webtile::connect("ws://localhost:8080/socket", 100, "0.29")?;
+    /// let mut webtile = Webtile::connect("ws://localhost:8080/socket", 100)?;
     /// ```
-    pub fn connect(url: &str, speed_ms: u32, _version: &str) -> Result<Self, Box<Error>> {
+    pub fn connect(url: &str, speed_ms: u32) -> Result<Self, Box<Error>> {
         // Open connection
         let (socket, _response) = tungstenite::connect(url).map_err(Error::Websocket)?;
 
@@ -72,6 +78,7 @@ impl Webtile {
             speed_ms,
             message_found: false,
             received_messages: VecDeque::new(),
+            version: None,
         };
 
         // Wait until the "lobby_complete" message is received -- meaning a

@@ -5,14 +5,13 @@ use serde_json::from_str;
 
 #[test]
 fn start_game_seeded() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -38,17 +37,18 @@ fn start_game_seeded() {
         }
     }
 
-    assert!(msgs["messages"]
-        .to_string()
-        .contains("Game seed: 1 (custom seed)"));
+    assert!(
+        msgs["messages"]
+            .to_string()
+            .contains("Game seed: 1 (custom seed)")
+    );
 
     webtile.quit_game().expect("Failed to quit game");
 
     webtile.disconnect().expect("Failed to disconnect");
 
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -74,9 +74,11 @@ fn start_game_seeded() {
         }
     }
 
-    assert!(msgs["messages"]
-        .to_string()
-        .contains("Game seed: 158985 (custom seed)"));
+    assert!(
+        msgs["messages"]
+            .to_string()
+            .contains("Game seed: 158985 (custom seed)")
+    );
 
     webtile.quit_game().expect("Failed to quit game");
 
@@ -85,14 +87,13 @@ fn start_game_seeded() {
 
 #[test]
 fn start_game() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -134,14 +135,13 @@ fn start_game() {
 
 #[test]
 fn save_game_continue() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -195,14 +195,13 @@ fn save_game_continue() {
 
 #[test]
 fn start_game_two_accounts() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -245,8 +244,7 @@ fn start_game_two_accounts() {
     common::reset_test("Username2", game_id.as_str());
 
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -288,7 +286,7 @@ fn start_game_two_accounts() {
 
 #[test]
 fn start_game_two_accounts_combined() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
@@ -296,9 +294,9 @@ fn start_game_two_accounts_combined() {
 
     // Connect to DCSS Webtile
     let mut webtile1 =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
     let mut webtile2 =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+        Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile1.get_message().is_some() {}
@@ -368,14 +366,13 @@ fn start_game_two_accounts_combined() {
 
 #[test]
 fn real_blocking_error() {
-    let game_id = std::env::var("GAME_ID").unwrap();
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
 
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}

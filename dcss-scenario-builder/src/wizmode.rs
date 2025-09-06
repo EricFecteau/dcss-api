@@ -1,4 +1,4 @@
-use crate::common::{branch_keys, Coord};
+use crate::common::{Coord, branch_keys};
 use crate::scenario_errors::Error;
 
 use dcss_api::{BlockingError, Error as APIError, Webtile};
@@ -17,7 +17,11 @@ pub(crate) fn enable_wiz(webtile: &mut Webtile) -> Result<(), Error> {
     if let Err(e) = webtile.read_until("", None, None) {
         match *e {
             APIError::Blocking(BlockingError::TextInput) => {
-                webtile.write_key("yes")?;
+                if webtile.game_version() == Some("0.33".to_string()) {
+                    webtile.write_key("wiz")?;
+                } else {
+                    webtile.write_key("yes")?;
+                }
                 webtile.write_key("key_enter")?;
             }
             _ => Err(e)?,

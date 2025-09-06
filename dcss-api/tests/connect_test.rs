@@ -1,10 +1,10 @@
 use dcss_api::{Error, Webtile};
-use serde_json::{from_str, Value};
+use serde_json::{Value, from_str};
 
 #[test]
 fn successful_connect() {
     let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect.");
+        Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect.");
 
     let json: Value = from_str("{\"msg\":\"ping\"}").unwrap();
     assert_eq!(Some(json), webtile.get_message());
@@ -19,10 +19,10 @@ fn successful_connect() {
 
 #[test]
 fn failed_connect() {
-    let webtile = Webtile::connect("ws://localhost:XXXX/socket", 0, "0.32");
+    let webtile = Webtile::connect("ws://localhost:XXXX/socket", 0);
     assert!(matches!(*webtile.err().unwrap(), Error::Websocket(_)));
 
-    let webtile = Webtile::connect("ws://localhost:0000/socket", 0, "0.32");
+    let webtile = Webtile::connect("ws://localhost:0000/socket", 0);
 
     assert!(matches!(*webtile.err().unwrap(), Error::Websocket(_)));
 }

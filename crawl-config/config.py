@@ -88,6 +88,22 @@ games = collections.OrderedDict([
         allowed_with_hold = True,
         options = ["-seed"],
         )),
+    ("dcss-0.33", dict(
+        version = "0.33",
+        name = "Play 0.33",
+        crawl_binary = "./crawl/dcss-0.33/crawl-ref/source/crawl",
+        rcfile_path = "./crawl/server/rcs-0.33/",
+        macro_path = "./crawl/server/rcs-0.33/",
+        morgue_path = "./crawl/server/rcs-0.33/%n",
+        inprogress_path = "./crawl/server/rcs-0.33/running",
+        ttyrec_path = "./crawl/server/rcs-0.33/ttyrecs/%n",
+        socket_path = "./crawl/server/rcs-0.33/",
+        client_path = "./crawl/dcss-0.33/crawl-ref/source/webserver/game_data/",
+        morgue_url = None,
+        show_save_info = True,
+        allowed_with_hold = True,
+        options = ["-seed"],
+        )),
 ])
 
 dgl_status_file = "./crawl/server/status"

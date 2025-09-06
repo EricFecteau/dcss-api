@@ -16,5 +16,5 @@ rustc-hash = "2.0"
 regex = "1.10"
 
 [dev-dependencies]
-dcss-api = "0.3"
-dcss-scenario-builder = "0.3"
+dcss-api = { path = "/home/eric/Rust/dcss-api/dcss-api" }
+dcss-scenario-builder = { path = "/home/eric/Rust/dcss-api/dcss-scenario-builder" }

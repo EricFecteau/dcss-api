@@ -7,8 +7,7 @@ use serde_json::json;
 
 pub(crate) fn reset_test(username: &str, game_id: &str) {
     // Connect to DCSS Webtile
-    let mut webtile =
-        Webtile::connect("ws://localhost:8080/socket", 0, "0.32").expect("Failed to connect");
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).expect("Failed to connect");
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
@@ -37,11 +36,11 @@ pub(crate) fn reset_test(username: &str, game_id: &str) {
 }
 
 pub(crate) fn setup_webtile(username: &str, scenario_file: &str) -> Webtile {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
     reset_test(username, game_id.as_str());
 
     // Connect to DCSS Webtile
-    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0, "0.32").unwrap();
+    let mut webtile = Webtile::connect("ws://localhost:8080/socket", 0).unwrap();
 
     // Empty message queue;
     while webtile.get_message().is_some() {}
