@@ -1,14 +1,14 @@
 use rustc_hash::FxHashMap;
 use serde_json::Value;
 
+use crate::CrawlData;
 use crate::common::{char_to_index, extract_param};
 use crate::items::Item;
-use crate::CrawlData;
 
 use crate::items::armours::Armour;
 use crate::items::jewellery::Jewellery;
 use crate::items::missiles::Missile;
-use crate::items::potions::{type_of_potion, Potion};
+use crate::items::potions::{Potion, type_of_potion};
 use crate::items::scrolls::Scroll;
 use crate::items::staves::Staff;
 use crate::items::wands::Wand;
@@ -148,7 +148,7 @@ impl Inventory {
         }
     }
 
-    pub(crate) fn description(&mut self, description: Value) {
+    pub(crate) fn description(&mut self, description: &Value) {
         let key = &description["title"].to_string()[1..2];
         match &mut self.items[char_to_index(key)] {
             Item::None => (),

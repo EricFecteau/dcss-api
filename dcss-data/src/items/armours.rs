@@ -34,7 +34,7 @@ impl Armour {
         }
     }
 
-    pub(crate) fn update_armour(&mut self, armour_desc: Value) {
+    pub(crate) fn update_armour(&mut self, armour_desc: &Value) {
         self.data_collected = true;
 
         let body = armour_desc["body"].to_string();

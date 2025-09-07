@@ -62,7 +62,7 @@ impl Jewellery {
         }
     }
 
-    pub(crate) fn update_jewellery(&mut self, jewellery_desc: Value) {
+    pub(crate) fn update_jewellery(&mut self, jewellery_desc: &Value) {
         self.data_collected = true;
 
         let title = jewellery_desc["title"].to_string();

@@ -14,12 +14,14 @@ fn main() {
     webtile
         .register_account("Username", "Password", None)
         .expect("Failed to register");
+    println!("User 'Username' created");
 
     // For "log in" test
     for i in 1..4 {
         webtile
             .register_account(format!("Username{i}").as_str(), "Password", None)
             .expect("Failed to register");
+        println!("User 'Username{i}' created");
     }
 
     // For "tiles" test
@@ -27,6 +29,7 @@ fn main() {
         webtile
             .register_account(format!("Tiles{i}").as_str(), "Password", None)
             .expect("Failed to register");
+        println!("User 'Tiles{i}' created");
     }
 
     // For "monsters" test
@@ -34,6 +37,15 @@ fn main() {
         webtile
             .register_account(format!("Monsters{i}").as_str(), "Password", None)
             .expect("Failed to register");
+        println!("User 'Monsters{i}' created");
+    }
+
+    // For "player" test
+    for i in 1..25 {
+        webtile
+            .register_account(format!("Player{i}").as_str(), "Password", None)
+            .expect("Failed to register");
+        println!("User 'Player{i}' created");
     }
 
     // Disconnect from webtile

@@ -39,7 +39,7 @@ impl Potion {
         }
     }
 
-    pub(crate) fn update_potion(&mut self, description: Value) {
+    pub(crate) fn update_potion(&mut self, description: &Value) {
         self.data_collected = true;
 
         if description["body"]
