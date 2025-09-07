@@ -39,7 +39,7 @@ impl Weapon {
         }
     }
 
-    pub(crate) fn update_weapon(&mut self, weapon_desc: Value) {
+    pub(crate) fn update_weapon(&mut self, weapon_desc: &Value) {
         self.data_collected = true;
 
         let body = weapon_desc["body"].to_string();

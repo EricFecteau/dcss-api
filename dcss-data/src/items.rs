@@ -33,21 +33,6 @@ pub(crate) enum Item {
     Staff(Staff),
 }
 
-#[derive(Clone, Debug)]
-pub(crate) enum WearSlots {
-    Weapon,
-    Cloak,
-    Helmet,
-    Gloves,
-    Boots,
-    Shield,
-    Body,
-    _RingLeft,
-    _RingRight,
-    Amulet,
-    _Unknown4,
-}
-
 impl Item {
     pub(crate) fn is_none(&self) -> bool {
         matches!(self, Self::None)

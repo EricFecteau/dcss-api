@@ -1,6 +1,10 @@
-use crate::common::add_i32_to_usize;
-use crate::common::AbsCoord;
 use crate::CrawlData;
+use crate::common::AbsCoord;
+use crate::common::add_i32_to_usize;
+use crate::common::char_to_index;
+use crate::inventory::Inventory;
+use crate::items::Item;
+use crate::items::armours::ArmourType;
 use serde_json::Value;
 
 use crate::MAX_FLOOR_SIZE;
@@ -27,13 +31,28 @@ pub(crate) struct Defense {
 }
 
 #[derive(Debug)]
+pub(crate) struct Equipped {
+    pub(crate) weapon: i32,
+    pub(crate) quiver: i32,
+    pub(crate) amulet: i32,
+    pub(crate) body: i32,
+    pub(crate) boots: i32,
+    pub(crate) cloak: i32,
+    pub(crate) helmet: i32,
+    pub(crate) shield: i32,
+    pub(crate) gloves: i32,
+    pub(crate) _ring_left: i32, // TODO: Add 8 rings for octopods
+    pub(crate) _ring_right: i32,
+}
+
+#[derive(Debug)]
 /// Stores the character's information
 pub(crate) struct Player {
     pub(crate) pos: AbsCoord,
     pub(crate) health: Health,
     pub(crate) stats: Stats,
     pub(crate) defense: Defense,
-    pub(crate) equipped: Vec<i32>,
+    pub(crate) equipped: Equipped,
     pub(crate) status: Vec<String>,
 }
 
@@ -67,6 +86,24 @@ impl Defense {
     }
 }
 
+impl Equipped {
+    pub(crate) fn new() -> Self {
+        Self {
+            weapon: -1,
+            quiver: -1,
+            amulet: -1,
+            body: -1,
+            boots: -1,
+            cloak: -1,
+            helmet: -1,
+            shield: -1,
+            gloves: -1,
+            _ring_left: -1,
+            _ring_right: -1,
+        }
+    }
+}
+
 impl Player {
     pub(crate) fn init() -> Self {
         Self {
@@ -74,7 +111,7 @@ impl Player {
             health: Health::new(),
             stats: Stats::new(),
             defense: Defense::new(),
-            equipped: vec![-1; 21],
+            equipped: Equipped::new(),
             status: vec![],
         }
     }
@@ -84,13 +121,6 @@ impl Player {
 
         self.pos.0 = add_i32_to_usize(x.as_i64().unwrap() as i32, offset);
         self.pos.1 = add_i32_to_usize(y.as_i64().unwrap() as i32, offset);
-    }
-
-    pub(crate) fn update_equipped(&mut self, equipped: Value) {
-        for (equip_index, item_index) in equipped.as_object().unwrap() {
-            self.equipped[equip_index.parse::<usize>().unwrap()] =
-                item_index.as_i64().unwrap() as i32;
-        }
     }
 
     pub(crate) fn update_health(&mut self, message: &Value) {
@@ -158,6 +188,41 @@ impl Player {
                     .push(message_obj["text"].as_str().unwrap().to_owned())
             }
         }
+    }
+
+    pub(crate) fn update_equipped(&mut self, item_index: usize, inventory: &Inventory) {
+        match &inventory.items[item_index] {
+            Item::None => unreachable!("None-type can not be equipped."),
+            Item::Weapon(_) => self.equipped.weapon = item_index as i32,
+            Item::Missile(_) => self.equipped.quiver = item_index as i32,
+            Item::Armour(armour) => match &armour.armour_type {
+                ArmourType::None => unreachable!("None-type can not be equipped."),
+                ArmourType::Body => self.equipped.body = item_index as i32,
+                ArmourType::Boots => self.equipped.boots = item_index as i32,
+                ArmourType::Cloak => self.equipped.cloak = item_index as i32,
+                ArmourType::Helmet => self.equipped.helmet = item_index as i32,
+                ArmourType::Shield => self.equipped.shield = item_index as i32,
+                ArmourType::Gloves => self.equipped.gloves = item_index as i32,
+            },
+            Item::Wand(_) => unimplemented!(),
+            Item::_Unknown4 => unimplemented!(),
+            Item::Scroll(_) => unreachable!("Can't equip a scroll"),
+            Item::Jewellery(_) => unimplemented!(),
+            Item::Potion(_) => unreachable!("Can't equip a potion"),
+            Item::_Unknown8 => unimplemented!(),
+            Item::Staff(_) => unimplemented!(),
+        }
+    }
+
+    pub(crate) fn equipped_from_description(&mut self, inventory: &Inventory, description: &Value) {
+        if !description["body"].to_string().contains("equipped") {
+            return;
+        }
+
+        let key = &description["title"].to_string()[1..2];
+        let item_index = char_to_index(key);
+
+        self.update_equipped(item_index, inventory);
     }
 }
 

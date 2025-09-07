@@ -67,6 +67,7 @@ pub(crate) fn setup_data(webtile: &mut Webtile) -> CrawlData {
 
     // Process the data
     while let Some(message) = webtile.get_message() {
+        println!("RECEIVED: {}", &message);
         data.process_json(&message).unwrap()
     }
 

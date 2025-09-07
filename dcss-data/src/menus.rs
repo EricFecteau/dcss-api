@@ -1,6 +1,6 @@
 use rustc_hash::FxHashMap;
 
-use crate::CrawlData;
+use crate::{CrawlData, common::char_to_index};
 
 /// Meta menu struct, stores the main menu that creates a menu hierarchy
 #[derive(Debug)]
@@ -357,6 +357,9 @@ impl CrawlData {
             "ui-push",
             "player",
         );
+
+        self.player
+            .update_equipped(char_to_index(item_key), &self.inventory);
     }
 
     pub fn queue_put_on(&mut self, item_key: &str) {

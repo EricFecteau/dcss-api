@@ -17,10 +17,10 @@ pub use crate::common::RelCoord;
 use crate::abilities::Abilities;
 use crate::common::{convert_coords_to_relative, pathfinding, structured_table};
 use crate::inventory::Inventory;
+use crate::items::Item;
 use crate::items::armours::ArmourType;
 use crate::items::jewellery::AmuletType;
 use crate::items::scrolls::ScrollType;
-use crate::items::{Item, WearSlots};
 use crate::log::Log;
 use crate::menus::Menus;
 use crate::monsters::Monsters;
@@ -200,7 +200,7 @@ impl CrawlData {
             "newgame-choice" => (),
             "describe-item" => {
                 self.identify_menu_as_opened();
-                self.inventory_description(message.clone());
+                self.item_description(message.clone());
             }
             "describe-monster" => {
                 if self.monsters.examine_loc.is_none() {
@@ -271,10 +271,6 @@ impl CrawlData {
                 .update_pos(message["pos"]["x"].clone(), message["pos"]["y"].clone());
         };
 
-        if message_obj.contains_key("equip") {
-            self.player.update_equipped(message["equip"].clone())
-        }
-
         if message_obj.contains_key("status") {
             self.player.update_status(message["status"].clone());
         }
@@ -296,14 +292,14 @@ impl CrawlData {
 
     pub fn index_of_equipped(&self, wear_type: &str) -> i32 {
         match wear_type {
-            "Weapon" => self.player.equipped[WearSlots::Weapon as usize],
-            "Amulet" => self.player.equipped[WearSlots::Amulet as usize],
-            "Body" => self.player.equipped[WearSlots::Body as usize],
-            "Boots" => self.player.equipped[WearSlots::Boots as usize],
-            "Cloak" => self.player.equipped[WearSlots::Cloak as usize],
-            "Helmet" => self.player.equipped[WearSlots::Helmet as usize],
-            "Shield" => self.player.equipped[WearSlots::Shield as usize],
-            "Gloves" => self.player.equipped[WearSlots::Gloves as usize],
+            "Weapon" => self.player.equipped.weapon,
+            "Amulet" => self.player.equipped.amulet,
+            "Body" => self.player.equipped.body,
+            "Boots" => self.player.equipped.boots,
+            "Cloak" => self.player.equipped.cloak,
+            "Helmet" => self.player.equipped.helmet,
+            "Shield" => self.player.equipped.shield,
+            "Gloves" => self.player.equipped.gloves,
             _ => unimplemented!("TODO"),
         }
     }
@@ -393,8 +389,11 @@ impl CrawlData {
         self.inventory.process_known_item_menu(known_item_menu);
     }
 
-    pub fn inventory_description(&mut self, description: Value) {
-        self.inventory.description(description);
+    pub fn item_description(&mut self, description: Value) {
+        self.inventory.description(&description);
+
+        self.player
+            .equipped_from_description(&self.inventory, &description);
     }
 
     pub fn has_status(&self, status: &str) -> bool {

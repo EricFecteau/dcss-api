@@ -42,7 +42,7 @@ impl Scroll {
         }
     }
 
-    pub(crate) fn update_scroll(&mut self, description: Value) {
+    pub(crate) fn update_scroll(&mut self, description: &Value) {
         self.data_collected = true;
 
         if description["body"]
