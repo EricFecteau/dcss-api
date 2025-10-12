@@ -12,7 +12,7 @@ readme = "README.md"
 doctest = false
 
 [dependencies]
-dcss-api = { path = "/home/eric/Rust/dcss-api/dcss-api" }
+dcss-api = "0.4"
 rustc-hash = "2"
 serde_yaml = "0.9"
 itertools = "0.14"
