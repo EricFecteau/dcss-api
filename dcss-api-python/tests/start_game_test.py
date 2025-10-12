@@ -7,7 +7,7 @@ from dcss_api import BlockingErr
 
 def reset_test(username, game_id):
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -36,7 +36,7 @@ def test_start_game_seeded():
     reset_test("Username", game_id)
 
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -70,7 +70,7 @@ def test_start_game_seeded():
 
     webtile.disconnect()
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -111,7 +111,7 @@ def test_start_game():
     reset_test("Username", game_id)
 
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -147,7 +147,7 @@ def test_start_game():
     reset_test("Username", game_id)
 
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -191,7 +191,7 @@ def test_start_game_two_accounts():
 
     reset_test("Username", game_id)
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -230,7 +230,7 @@ def test_start_game_two_accounts():
 
     reset_test("Username2", game_id)
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -274,8 +274,8 @@ def test_start_game_two_accounts_combined():
     reset_test("Username", game_id)
     reset_test("Username2", game_id)
 
-    webtile1 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
-    webtile2 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile1 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
+    webtile2 = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile1.get_message()) != None:
         pass
@@ -347,7 +347,7 @@ def test_real_blocking_error():
 
     reset_test("Username", game_id)
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass

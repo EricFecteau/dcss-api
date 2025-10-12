@@ -1,7 +1,7 @@
 [package]
 authors = ["Eric Fecteau <eric.m.fecteau@gmail.com>"]
 name = "dcss-api"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2024"
 license = "MPL-2.0"
 description = "A DCSS Webtile API for Python."
@@ -14,7 +14,7 @@ crate-type = ["cdylib"]
 doctest = false
 
 [dependencies]
-dcss-api = "0.3"
-dcss-scenario-builder = "0.3"
-pyo3 = { version = "0.25", features = ["extension-module"] }
+dcss-api = "0.4"
+dcss-scenario-builder = { path = "/home/eric/Rust/dcss-api/dcss-scenario-builder" }
+pyo3 = { version = "0.26", features = ["extension-module"] }
 serde_json = "1.0"

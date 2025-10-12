@@ -43,8 +43,21 @@ setup-dcss-server:
 
     rm -rf ./crawl/main
 
-dcss-scenario:
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo run -r --example 1_basic
+update-dcss-server:
+    git -C ./crawl/dcss-0.29 pull
+    make -C ./crawl/dcss-0.29/crawl-ref/source WEBTILES=y
+
+    git -C ./crawl/dcss-0.30 pull
+    make -C ./crawl/dcss-0.30/crawl-ref/source WEBTILES=y
+
+    git -C ./crawl/dcss-0.31 pull
+    make -C ./crawl/dcss-0.31/crawl-ref/source WEBTILES=y
+
+    git -C ./crawl/dcss-0.32 pull
+    make -C ./crawl/dcss-0.32/crawl-ref/source WEBTILES=y
+
+    git -C ./crawl/dcss-0.33 pull
+    make -C ./crawl/dcss-0.33/crawl-ref/source WEBTILES=y
 
 dcss-run:
     python3 crawl/server/server.py
@@ -73,9 +86,9 @@ dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg)/# stdout data is only used for compatibility to wrapper/g' ./crawl/server/webtiles/process_handler.py
 
 test-api:
-    # cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
-    # cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
-    # cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
     cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
     cd ./dcss-api && GAME_ID=dcss-0.33 cargo test
 
@@ -83,9 +96,9 @@ test-data:
     cd ./dcss-data && GAME_ID=dcss-0.33 cargo test
 
 test-scenario:
-    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
-    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
-    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
     cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo test
     cd ./dcss-scenario-builder && GAME_ID=dcss-0.33 cargo test
 
@@ -97,10 +110,10 @@ setup-python:
     . ./dcss-api-python/pyo3/bin/activate && cd ./dcss-api-python/ && maturin develop -r
 
 test-python:
-    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.29 pytest ./dcss-api-python/tests
-    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.30 pytest ./dcss-api-python/tests
-    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.31 pytest ./dcss-api-python/tests
-    # . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.32 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.29 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.30 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.31 pytest ./dcss-api-python/tests
+    . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.32 pytest ./dcss-api-python/tests
     . ./dcss-api-python/pyo3/bin/activate && GAME_ID=dcss-0.33 pytest ./dcss-api-python/tests
 
 cargo-update:

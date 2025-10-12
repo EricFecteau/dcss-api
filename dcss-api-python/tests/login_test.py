@@ -6,7 +6,7 @@ import json
 
 def test_successful_credential_login():
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -24,7 +24,7 @@ def test_successful_credential_login():
 
 
 def test_multiple_login_same_user():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -57,7 +57,7 @@ def test_multiple_login_same_user():
 
 
 def test_multiple_login_diff_user():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -92,7 +92,7 @@ def test_multiple_login_diff_user():
 
 
 def test_failed_credential_login():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -110,7 +110,7 @@ def test_failed_credential_login():
 
 
 def test_failed_credential_login_and_retry():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -138,7 +138,7 @@ def test_failed_credential_login_and_retry():
 
 
 def test_get_cookie_and_login():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -158,7 +158,7 @@ def test_get_cookie_and_login():
 
     webtile.disconnect()
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -176,7 +176,7 @@ def test_get_cookie_and_login():
 
 
 def test_failed_cookie_login():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -192,7 +192,7 @@ def test_failed_cookie_login():
 
 
 def test_using_old_cookie_login():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -212,7 +212,7 @@ def test_using_old_cookie_login():
 
     webtile.disconnect()
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -232,7 +232,7 @@ def test_using_old_cookie_login():
 
     webtile.disconnect()
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -250,7 +250,7 @@ def test_using_old_cookie_login():
 
 
 def test_credential_login_gameid():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -262,13 +262,14 @@ def test_credential_login_gameid():
         "dcss-0.30",
         "dcss-0.31",
         "dcss-0.32",
+        "dcss-0.33",
     ]
 
     webtile.disconnect()
 
 
 def test_cookie_login_gameid():
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -280,6 +281,7 @@ def test_cookie_login_gameid():
         "dcss-0.30",
         "dcss-0.31",
         "dcss-0.32",
+        "dcss-0.33",
     ]
 
     cookie = webtile.request_cookie()
@@ -288,7 +290,7 @@ def test_cookie_login_gameid():
 
     webtile.disconnect()
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -300,6 +302,7 @@ def test_cookie_login_gameid():
         "dcss-0.30",
         "dcss-0.31",
         "dcss-0.32",
+        "dcss-0.33",
     ]
 
     webtile.disconnect()

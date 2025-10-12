@@ -20,7 +20,7 @@ use pyo3::prelude::*;
 ///                     the future.
 ///     
 /// Example:
-///     webtile = Webtile::connect("ws://localhost:8080/socket", 100, "0.29")
+///     webtile = Webtile::connect("ws://localhost:8080/socket", 100)
 ///
 pub struct WebtilePy {
     webtile: Webtile,
@@ -33,8 +33,8 @@ pyo3::create_exception!(mymodule, ScenarioErr, PyException);
 #[pymethods]
 impl WebtilePy {
     #[new]
-    fn connect(url: &str, speed_ms: u32, version: &str) -> PyResult<Self> {
-        let webtile = Webtile::connect(url, speed_ms, version);
+    fn connect(url: &str, speed_ms: u32) -> PyResult<Self> {
+        let webtile = Webtile::connect(url, speed_ms);
 
         match webtile {
             Ok(t) => Ok(Self { webtile: t }),
@@ -318,7 +318,7 @@ impl WebtilePy {
     /// Example:
     ///     # Start a scenario game, for a Minotaur (b), Berserker (f), with a mace (b) using the
     ///     # branches.yaml scenario.
-    ///     webtile.start_game_with_scenario("dcss-0.32", true, "b", "f", "b", "./scenarios/branches.yaml")
+    ///     webtile.start_game_with_scenario("dcss-0.33", true, "b", "f", "b", "./scenarios/branches.yaml")
     fn start_game_with_scenario(
         &mut self,
         game_id: &str,

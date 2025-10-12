@@ -298,9 +298,9 @@ fn credential_login_gameid() {
         .expect("Login failed.");
 
     let test_gameid: Vec<String> = vec![
-        // "dcss-0.29".to_owned(),
-        // "dcss-0.30".to_owned(),
-        // "dcss-0.31".to_owned(),
+        "dcss-0.29".to_owned(),
+        "dcss-0.30".to_owned(),
+        "dcss-0.31".to_owned(),
         "dcss-0.32".to_owned(),
         "dcss-0.33".to_owned(),
     ];
@@ -322,9 +322,9 @@ fn cookie_login_gameid() {
         .expect("Login failed.");
 
     let test_gameid: Vec<String> = vec![
-        // "dcss-0.29".to_owned(),
-        // "dcss-0.30".to_owned(),
-        // "dcss-0.31".to_owned(),
+        "dcss-0.29".to_owned(),
+        "dcss-0.30".to_owned(),
+        "dcss-0.31".to_owned(),
         "dcss-0.32".to_owned(),
         "dcss-0.33".to_owned(),
     ];
@@ -350,9 +350,9 @@ fn cookie_login_gameid() {
         .expect("Failed to login");
 
     let test_gameid: Vec<String> = vec![
-        // "dcss-0.29".to_owned(),
-        // "dcss-0.30".to_owned(),
-        // "dcss-0.31".to_owned(),
+        "dcss-0.29".to_owned(),
+        "dcss-0.30".to_owned(),
+        "dcss-0.31".to_owned(),
         "dcss-0.32".to_owned(),
         "dcss-0.33".to_owned(),
     ];

@@ -5,7 +5,7 @@ use serde_json::from_str;
 
 #[test]
 fn start_game_seeded() {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.32".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());

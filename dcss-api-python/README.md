@@ -12,7 +12,7 @@ This example connects to DCSS on `localhost:8080`, logs in as `Username`, starts
 
 ```Python
 # Connect to DCSS Webtile
-webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.32")
+webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100)
 
 # Empty message queue
 while (message := webtile.get_message()) != None:
@@ -28,7 +28,7 @@ print(gameid)
 while (message := webtile.get_message()) != None:
     pass
 
-# Start a random game on 'dcss-0.32', for Minotaur berserker with a mace.
+# Start a random game for Minotaur berserker with a mace.
 webtile.start_game(gameid[0], "b", "f", "b")
 
 # Print the messages you get upon starting the game (should be processed)
@@ -108,7 +108,7 @@ levels:
 
 ```Python
 # Connect to DCSS Webtile
-webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100, "0.32")
+webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 100)
 
 # Empty message queue
 while (message := webtile.get_message()) != None:
@@ -122,7 +122,7 @@ while (message := webtile.get_message()) != None:
     pass
 
 # Create scenario
-webtile.start_game_with_scenario("dcss-0.32", "b", "f", "b", "./examples/scenarios/readme.yaml")
+webtile.start_game_with_scenario("dcss-0.33", "b", "f", "b", "./examples/scenarios/readme.yaml")
 
 # Empty message queue
 while (message := webtile.get_message()) != None:

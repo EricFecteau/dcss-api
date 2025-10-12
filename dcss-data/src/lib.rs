@@ -65,7 +65,7 @@ pub struct CrawlData {
 }
 
 impl CrawlData {
-    pub fn init(fov: u32, _version: &str) -> Self {
+    pub fn init(fov: u32) -> Self {
         Self {
             fov,
             spectators: 0,

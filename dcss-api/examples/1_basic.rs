@@ -21,7 +21,7 @@ fn main() {
     // Empty message queue;
     while webtile.get_message().is_some() {}
 
-    // Start a random game (seed `0`) on 'dcss-0.32', for Minotaur berserker with a mace.
+    // Start a random game (seed `0`) for Minotaur berserker with a mace.
     webtile
         .start_game_seeded(&gameid[0], "0", false, "b", "f", "b")
         .expect("Failed to start game");

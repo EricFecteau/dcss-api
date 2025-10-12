@@ -63,7 +63,7 @@ pub(crate) fn setup_webtile(username: &str, scenario_file: &str) -> Webtile {
 
 pub(crate) fn setup_data(webtile: &mut Webtile) -> CrawlData {
     // Setup data object
-    let mut data = CrawlData::init(9, "0.32");
+    let mut data = CrawlData::init(9);
 
     // Process the data
     while let Some(message) = webtile.get_message() {
