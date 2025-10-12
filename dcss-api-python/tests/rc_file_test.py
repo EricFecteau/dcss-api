@@ -8,7 +8,7 @@ def test_write_read_rc():
     game_id = os.environ['GAME_ID']
 
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -40,7 +40,7 @@ def test_blank_rc_file():
     game_id = os.environ['GAME_ID']
 
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass

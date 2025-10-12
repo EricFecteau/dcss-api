@@ -7,7 +7,7 @@ from dcss_api import ScenarioErr
 def reset_test(username, game_id):
     
     # Connect to DCSS Webtile
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -34,7 +34,7 @@ def test_wizmode():
     
     reset_test("Username", game_id)
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -69,7 +69,7 @@ def test_no_character():
 
     reset_test("Username", game_id)
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -95,7 +95,7 @@ def test_too_wide():
 
     reset_test("Username", game_id)
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass
@@ -121,7 +121,7 @@ def test_too_long():
 
     reset_test("Username", game_id)
 
-    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0, "0.32")
+    webtile = dcss_api.WebtilePy("ws://localhost:8080/socket", 0)
 
     while (message := webtile.get_message()) != None:
         pass

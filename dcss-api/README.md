@@ -1,6 +1,6 @@
 # dcss-api
 
-`dcss-api` is an easy to use Rust wrapper for [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) websocket API. It supports logging in, starting a game and sending commands during game play. It works for DCSS `0.29`, `0.30`, `0.31` and `0.32`.
+`dcss-api` is an easy to use Rust wrapper for [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) websocket API. It supports logging in, starting a game and sending commands during game play. It works for DCSS `0.29`, `0.30`, `0.31`, `0.32` and `0.33`.
 
 ## Documentation
 
@@ -12,7 +12,7 @@ This example connects to DCSS on `localhost:8080`, logs in as `Username`, starts
 
 ```Rust
 // Connect to DCSS Webtile
-let mut webtile = Webtile::connect("ws://localhost:8080/socket", 100, "0.32")?;
+let mut webtile = Webtile::connect("ws://localhost:8080/socket", 100)?;
 
 // Empty message queue;
 while webtile.get_message().is_some() {}
@@ -26,7 +26,7 @@ println!("{:?}", gameid);
 // Empty message queue;
 while webtile.get_message().is_some() {}
 
-// Start a random game (seed `0`) on 'dcss-0.32', for Minotaur berserker with a mace.
+// Start a random game (seed `0`) for Minotaur berserker with a mace.
 webtile.start_game_seeded(&gameid[0], "0", false, "b", "f", "b")?;
 
 // Print the messages you get upon starting the game (should be processed)
