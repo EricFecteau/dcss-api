@@ -107,6 +107,8 @@ checksum = "2a2330da5de22e8a3cb63252ce2abb30116bf5265e89c0e01bc17015ce30a476"
 [[package]]
 name = "dcss-api"
 version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aba1fba55c01f3a9def4ef09d68ed1557c20bf7d19163b54676b8ef7d5b9800"
 dependencies = [
  "flate2",
  "serde_json",
@@ -128,6 +130,8 @@ dependencies = [
 [[package]]
 name = "dcss-scenario-builder"
 version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10e374b025e1e4d2eabebbbed24d3521f2b852f1215ab74f813c4fc4610a663f"
 dependencies = [
  "dcss-api",
  "itertools",
