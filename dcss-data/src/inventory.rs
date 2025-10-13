@@ -76,6 +76,7 @@ impl Inventory {
             (String::from("mutation"), false),
             (String::from("ambrosia"), false),
             (String::from("magic"), false),
+            (String::from("moonshine"), false),
         ];
 
         for potion in potion_vec {
