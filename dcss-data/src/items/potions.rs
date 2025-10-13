@@ -21,6 +21,7 @@ pub(crate) enum PotionType {
     Mutation,
     Ambrosia,
     Magic,
+    Moonshine,
 }
 
 #[derive(Clone, Debug)]
@@ -104,6 +105,7 @@ pub(crate) fn type_of_potion(potion_type: String) -> PotionType {
         "mutation" => PotionType::Mutation,
         "ambrosia" => PotionType::Ambrosia,
         "magic" => PotionType::Magic,
+        "moonshine" => PotionType::Moonshine,
         _ => {
             unreachable!();
         }
