@@ -15,5 +15,5 @@ doctest = false
 dcss-api = "0.4"
 rustc-hash = "2"
 serde_yaml = "0.9"
-itertools = "0.14"
+itertools = "0.15"
 thiserror = "2.0"
