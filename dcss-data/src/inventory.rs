@@ -25,7 +25,7 @@ pub(crate) struct Inventory {
 impl Inventory {
     pub(crate) fn new() -> Self {
         let mut inv = Self {
-            items: vec![Item::None; 52],
+            items: vec![Item::None; 127],
             known_scroll: FxHashMap::default(),
             known_potion: FxHashMap::default(),
             identifying: false, // To not confuse it with the first read of scroll of identify;

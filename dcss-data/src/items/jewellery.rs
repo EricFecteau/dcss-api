@@ -25,6 +25,7 @@ pub(crate) enum AmuletType {
     RegenMP,
     Reflect,
     Regen,
+    Wildshape,
 }
 
 #[derive(Clone, Debug)]
@@ -89,6 +90,7 @@ impl Jewellery {
             AmuletType::Reflect => 2,
             AmuletType::Acrobat => 1,
             AmuletType::RegenMP => 0,
+            AmuletType::Wildshape => -100,
             AmuletType::Faith => -100,
             _ => unimplemented!("Failed to identify the amulet type"),
         }
@@ -134,6 +136,8 @@ pub(crate) fn amulet_type(amulet_desc: String) -> AmuletType {
         return AmuletType::RegenMP;
     } else if amulet_desc.contains("{Faith}") {
         return AmuletType::Faith;
+    } else if amulet_desc.contains("{Wildshape}") {
+        return AmuletType::Wildshape;
     }
 
     unimplemented!("Failed to identify the amulet type");
