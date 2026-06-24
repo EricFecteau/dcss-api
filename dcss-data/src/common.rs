@@ -229,9 +229,9 @@ struct Node {
 impl Node {
     /// Calculate the cost by estimating the maximum absolute distance (diagonally) to the target.
     fn calc_cost(&mut self) {
-        if self.end_goal.is_some() {
-            let x_max = self.location.0 as i32 - self.end_goal.unwrap().0 as i32;
-            let y_max = self.location.1 as i32 - self.end_goal.unwrap().1 as i32;
+        if let Some(end_goal) = self.end_goal {
+            let x_max = self.location.0 as i32 - end_goal.0 as i32;
+            let y_max = self.location.1 as i32 - end_goal.1 as i32;
 
             let x_max = x_max.wrapping_abs() as u64;
             let y_max = y_max.wrapping_abs() as u64;

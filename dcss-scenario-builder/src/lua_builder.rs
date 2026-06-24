@@ -179,22 +179,20 @@ fn process_map(
                 let lua_feat_line = format!("dgn.terrain_changed({x}, {y}, \"{glyph_feature}\")\n");
                 lua_map.push(lua_feat_line);
 
-                if items.is_some() && items.unwrap().contains_key(glyph) {
-                    let lua_item_line = format!(
-                        "dgn.create_item({}, {}, \"{}\")\n",
-                        x,
-                        y,
-                        &items.unwrap()[glyph]
-                    );
+                if let Some(items) = items
+                    && items.contains_key(glyph)
+                {
+                    let lua_item_line =
+                        format!("dgn.create_item({}, {}, \"{}\")\n", x, y, &items[glyph]);
                     lua_map.push(lua_item_line);
                 }
 
-                if monsters.is_some() && monsters.unwrap().contains_key(glyph) {
+                if let Some(monsters) = monsters
+                    && monsters.contains_key(glyph)
+                {
                     let lua_mons_line = format!(
                         "dgn.create_monster({}, {}, \"{}\")\n",
-                        x,
-                        y,
-                        &monsters.unwrap()[glyph]
+                        x, y, &monsters[glyph]
                     );
                     lua_map.push(lua_mons_line);
                 }
