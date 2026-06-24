@@ -4,30 +4,30 @@ setup-dcss-server:
     mkdir ./crawl/main
     git -C ./crawl/main/ clone "https://github.com/crawl/crawl.git"
 
-    # mkdir ./crawl/dcss-0.29
-    # cp -r ./crawl/main/crawl/. ./crawl/dcss-0.29
-    # git -C ./crawl/dcss-0.29 checkout stone_soup-0.29
-    # make -C ./crawl/dcss-0.29/crawl-ref/source WEBTILES=y
+    mkdir ./crawl/dcss-0.29
+    cp -r ./crawl/main/crawl/. ./crawl/dcss-0.29
+    git -C ./crawl/dcss-0.29 checkout stone_soup-0.29
+    make -C ./crawl/dcss-0.29/crawl-ref/source WEBTILES=y
 
-    # mkdir ./crawl/dcss-0.30
-    # cp -r ./crawl/main/crawl/. ./crawl/dcss-0.30
-    # git -C ./crawl/dcss-0.30 checkout stone_soup-0.30
-    # make -C ./crawl/dcss-0.30/crawl-ref/source WEBTILES=y
+    mkdir ./crawl/dcss-0.30
+    cp -r ./crawl/main/crawl/. ./crawl/dcss-0.30
+    git -C ./crawl/dcss-0.30 checkout stone_soup-0.30
+    make -C ./crawl/dcss-0.30/crawl-ref/source WEBTILES=y
 
-    # mkdir ./crawl/dcss-0.31
-    # cp -r ./crawl/main/crawl/. ./crawl/dcss-0.31
-    # git -C ./crawl/dcss-0.31 checkout stone_soup-0.31
-    # make -C ./crawl/dcss-0.31/crawl-ref/source WEBTILES=y
+    mkdir ./crawl/dcss-0.31
+    cp -r ./crawl/main/crawl/. ./crawl/dcss-0.31
+    git -C ./crawl/dcss-0.31 checkout stone_soup-0.31
+    make -C ./crawl/dcss-0.31/crawl-ref/source WEBTILES=y
 
-    # mkdir ./crawl/dcss-0.32
-    # cp -r ./crawl/main/crawl/. ./crawl/dcss-0.32
-    # git -C ./crawl/dcss-0.32 checkout stone_soup-0.32
-    # make -C ./crawl/dcss-0.32/crawl-ref/source WEBTILES=y
+    mkdir ./crawl/dcss-0.32
+    cp -r ./crawl/main/crawl/. ./crawl/dcss-0.32
+    git -C ./crawl/dcss-0.32 checkout stone_soup-0.32
+    make -C ./crawl/dcss-0.32/crawl-ref/source WEBTILES=y
 
-    # mkdir ./crawl/dcss-0.33
-    # cp -r ./crawl/main/crawl/. ./crawl/dcss-0.33
-    # git -C ./crawl/dcss-0.33 checkout stone_soup-0.33
-    # make -C ./crawl/dcss-0.33/crawl-ref/source WEBTILES=y
+    mkdir ./crawl/dcss-0.33
+    cp -r ./crawl/main/crawl/. ./crawl/dcss-0.33
+    git -C ./crawl/dcss-0.33 checkout stone_soup-0.33
+    make -C ./crawl/dcss-0.33/crawl-ref/source WEBTILES=y
 
     mkdir ./crawl/dcss-0.34
     cp -r ./crawl/main/crawl/. ./crawl/dcss-0.34
@@ -36,15 +36,16 @@ setup-dcss-server:
 
     mkdir ./crawl/server
     cp -r ./crawl/dcss-0.34/crawl-ref/source/webserver/. ./crawl/server
-    # sed -i -e 's/subprocess.signal/signal_module/g' ./crawl/server/webtiles/process_handler.py
-    # sed -i -e 's/import subprocess/import signal as signal_module/g' ./crawl/server/webtiles/process_handler.py
+
+    # Currently need to apply patch manullay after this: https://github.com/crawl/crawl/pull/5028/changes
+
     cp ./crawl-config/config.py ./crawl/server/config.py 
     cp ./crawl-config/init-player.sh ./crawl/server/init-player.sh
-    # echo save_dir = ./crawl/server/saves-0.29 > ./crawl/server/init-0.29.txt
-    # echo save_dir = ./crawl/server/saves-0.30 > ./crawl/server/init-0.30.txt
-    # echo save_dir = ./crawl/server/saves-0.31 > ./crawl/server/init-0.31.txt
-    # echo save_dir = ./crawl/server/saves-0.32 > ./crawl/server/init-0.32.txt
-    # echo save_dir = ./crawl/server/saves-0.33 > ./crawl/server/init-0.33.txt
+    echo save_dir = ./crawl/server/saves-0.29 > ./crawl/server/init-0.29.txt
+    echo save_dir = ./crawl/server/saves-0.30 > ./crawl/server/init-0.30.txt
+    echo save_dir = ./crawl/server/saves-0.31 > ./crawl/server/init-0.31.txt
+    echo save_dir = ./crawl/server/saves-0.32 > ./crawl/server/init-0.32.txt
+    echo save_dir = ./crawl/server/saves-0.33 > ./crawl/server/init-0.33.txt
     echo save_dir = ./crawl/server/saves-0.34 > ./crawl/server/init-0.34.txt
 
     rm -rf ./crawl/main
@@ -64,6 +65,9 @@ update-dcss-server:
 
     git -C ./crawl/dcss-0.33 pull
     make -C ./crawl/dcss-0.33/crawl-ref/source WEBTILES=y
+
+    git -C ./crawl/dcss-0.34 pull
+    make -C ./crawl/dcss-0.34/crawl-ref/source WEBTILES=y
 
 dcss-run:
     python3 crawl/server/server.py
@@ -96,12 +100,12 @@ dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg)/# stdout data is only used for compatibility to wrapper/g' ./crawl/server/webtiles/process_handler.py
 
 test-api:
-    cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.33 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.34 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
+    # cd ./dcss-api && GAME_ID=dcss-0.33 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.34 cargo test --no-fail-fast
 
 test-data:
     cd ./dcss-data && GAME_ID=dcss-0.34 cargo test

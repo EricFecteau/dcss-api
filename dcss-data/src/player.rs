@@ -207,7 +207,7 @@ impl Player {
             Item::Wand(_) => unimplemented!(),
             Item::_Unknown4 => unimplemented!(),
             Item::Scroll(_) => unreachable!("Can't equip a scroll"),
-            Item::Jewellery(_) => unimplemented!(),
+            Item::Jewellery(_) => self.equipped.amulet = item_index as i32,
             Item::Potion(_) => unreachable!("Can't equip a potion"),
             Item::_Unknown8 => unimplemented!(),
             Item::Staff(_) => unimplemented!(),
