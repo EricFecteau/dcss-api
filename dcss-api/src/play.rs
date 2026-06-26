@@ -164,7 +164,9 @@ impl Webtile {
             Ok(_) => (),
             Err(e) => match *e {
                 Error::Blocking(BlockingError::TextInput) => {
-                    if self.version == Some("0.33".to_string()) {
+                    if self.version == Some("0.33".to_string())
+                        || self.version == Some("0.34".to_string())
+                    {
                         self.write_key("quit")?;
                     } else {
                         self.write_key("yes")?;

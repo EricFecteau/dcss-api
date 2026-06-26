@@ -29,7 +29,7 @@ use crate::lua_builder::process_scenario;
 /// ```no_run
 /// // Start a scenario game, for a Minotaur (b), Berserker (f), with a mace (b) using the
 /// // branches.yaml scenario.
-/// start_game_with_scenario(&mut webtile, "dcss-0.33", "b", "f", "b", "./scenarios/branches.yaml")?;
+/// start_game_with_scenario(&mut webtile, "dcss-0.34", "b", "f", "b", "./scenarios/branches.yaml")?;
 /// ```
 pub fn start_game_with_scenario(
     webtile: &mut Webtile,

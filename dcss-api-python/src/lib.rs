@@ -318,7 +318,7 @@ impl WebtilePy {
     /// Example:
     ///     # Start a scenario game, for a Minotaur (b), Berserker (f), with a mace (b) using the
     ///     # branches.yaml scenario.
-    ///     webtile.start_game_with_scenario("dcss-0.33", true, "b", "f", "b", "./scenarios/branches.yaml")
+    ///     webtile.start_game_with_scenario("dcss-0.34", true, "b", "f", "b", "./scenarios/branches.yaml")
     fn start_game_with_scenario(
         &mut self,
         game_id: &str,

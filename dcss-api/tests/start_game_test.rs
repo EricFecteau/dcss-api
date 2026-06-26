@@ -5,7 +5,7 @@ use serde_json::from_str;
 
 #[test]
 fn start_game_seeded() {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.34".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
@@ -87,7 +87,7 @@ fn start_game_seeded() {
 
 #[test]
 fn start_game() {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.34".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
@@ -135,7 +135,7 @@ fn start_game() {
 
 #[test]
 fn save_game_continue() {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.34".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
@@ -195,7 +195,7 @@ fn save_game_continue() {
 
 #[test]
 fn start_game_two_accounts() {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.34".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
@@ -286,7 +286,7 @@ fn start_game_two_accounts() {
 
 #[test]
 fn start_game_two_accounts_combined() {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.34".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());
@@ -366,7 +366,7 @@ fn start_game_two_accounts_combined() {
 
 #[test]
 fn real_blocking_error() {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.34".to_owned());
 
     // Safe test -- login start game, quit, and then test
     common::reset_test("Username", game_id.as_str());

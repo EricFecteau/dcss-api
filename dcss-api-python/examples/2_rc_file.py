@@ -16,14 +16,14 @@ def main():
         pass
 
     # Write RC File
-    webtile.set_rc_file("dcss-0.33", "show_more = false\nrest_delay = -1")
+    webtile.set_rc_file("dcss-0.34", "show_more = false\nrest_delay = -1")
 
     # Empty message queue
     while (message := webtile.get_message()) != None:
         pass
 
     # Read RC File
-    rc_file = webtile.get_rc_file("dcss-0.33")
+    rc_file = webtile.get_rc_file("dcss-0.34")
 
     print("RC FILE: \n\n", rc_file, "\n\n")
 

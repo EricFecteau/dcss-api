@@ -263,6 +263,7 @@ def test_credential_login_gameid():
         "dcss-0.31",
         "dcss-0.32",
         "dcss-0.33",
+        "dcss-0.34",
     ]
 
     webtile.disconnect()
@@ -282,6 +283,7 @@ def test_cookie_login_gameid():
         "dcss-0.31",
         "dcss-0.32",
         "dcss-0.33",
+        "dcss-0.34",
     ]
 
     cookie = webtile.request_cookie()
