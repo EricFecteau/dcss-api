@@ -97,9 +97,9 @@ checksum = "a4ae5f15dda3c708c0ade84bfee31ccab44a3da4f88015ed22f63732abe300c8"
 
 [[package]]
 name = "dcss-api"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
- "dcss-api 0.4.1",
+ "dcss-api 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "dcss-scenario-builder",
  "pyo3",
  "serde_json",
@@ -123,7 +123,7 @@ version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e1006993da8cf73aaa47abaa17200976769cfe969b2e2f40bd2d84dad6cc448"
 dependencies = [
- "dcss-api 0.4.1",
+ "dcss-api 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "itertools",
  "rustc-hash",
  "serde_yaml",
