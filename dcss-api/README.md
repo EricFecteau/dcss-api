@@ -1,6 +1,6 @@
 # dcss-api
 
-`dcss-api` is an easy to use Rust wrapper for [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) websocket API. It supports logging in, starting a game and sending commands during game play. It works for DCSS `0.29`, `0.30`, `0.31`, `0.32` and `0.33`.
+`dcss-api` is an easy to use Rust wrapper for [Dungeon Crawl Stone Soup's (DCSS) Webtile](https://crawl.develz.org/) websocket API. It supports logging in, starting a game and sending commands during game play. It works for DCSS `0.29`, `0.30`, `0.31`, `0.32`, `0.33` and `0.34`.
 
 ## Documentation
 
