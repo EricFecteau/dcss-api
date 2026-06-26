@@ -36,6 +36,9 @@ pub(crate) fn enable_wiz(webtile: &mut Webtile) -> Result<(), Error> {
     // Do not send any wizard commands
     webtile.write_key("key_esc")?;
 
+    // Wait for "Ok then"
+    webtile.read_until("msgs", None, None)?;
+
     // Empty message queue
     while webtile.get_message().is_some() {}
 
