@@ -17,7 +17,9 @@ pub(crate) fn enable_wiz(webtile: &mut Webtile) -> Result<(), Error> {
     if let Err(e) = webtile.read_until("", None, None) {
         match *e {
             APIError::Blocking(BlockingError::TextInput) => {
-                if webtile.game_version() == Some("0.33".to_string()) {
+                if webtile.game_version() == Some("0.33".to_string())
+                    || webtile.game_version() == Some("0.34".to_string())
+                {
                     webtile.write_key("wiz")?;
                 } else {
                     webtile.write_key("yes")?;

@@ -14,7 +14,7 @@ fn main() -> Result<(), Error> {
     // Start game
     start_game_with_scenario(
         &mut webtile,
-        "dcss-0.33",
+        "dcss-0.34",
         "b",
         "i",
         "c",

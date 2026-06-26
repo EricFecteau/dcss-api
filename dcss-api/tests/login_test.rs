@@ -303,6 +303,7 @@ fn credential_login_gameid() {
         "dcss-0.31".to_owned(),
         "dcss-0.32".to_owned(),
         "dcss-0.33".to_owned(),
+        "dcss-0.34".to_owned(),
     ];
     assert_eq!(gameid, test_gameid);
 
@@ -327,6 +328,7 @@ fn cookie_login_gameid() {
         "dcss-0.31".to_owned(),
         "dcss-0.32".to_owned(),
         "dcss-0.33".to_owned(),
+        "dcss-0.34".to_owned(),
     ];
     assert_eq!(gameid, test_gameid);
 
@@ -355,6 +357,7 @@ fn cookie_login_gameid() {
         "dcss-0.31".to_owned(),
         "dcss-0.32".to_owned(),
         "dcss-0.33".to_owned(),
+        "dcss-0.34".to_owned(),
     ];
     assert_eq!(gameid, test_gameid);
 

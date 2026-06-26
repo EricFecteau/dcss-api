@@ -122,7 +122,7 @@ while (message := webtile.get_message()) != None:
     pass
 
 # Create scenario
-webtile.start_game_with_scenario("dcss-0.33", "b", "f", "b", "./examples/scenarios/readme.yaml")
+webtile.start_game_with_scenario("dcss-0.34", "b", "f", "b", "./examples/scenarios/readme.yaml")
 
 # Empty message queue
 while (message := webtile.get_message()) != None:

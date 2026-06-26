@@ -36,7 +36,7 @@ pub(crate) fn reset_test(username: &str, game_id: &str) {
 }
 
 pub(crate) fn setup_webtile(username: &str, scenario_file: &str) -> Webtile {
-    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.33".to_owned());
+    let game_id = std::env::var("GAME_ID").unwrap_or("dcss-0.34".to_owned());
     reset_test(username, game_id.as_str());
 
     // Connect to DCSS Webtile

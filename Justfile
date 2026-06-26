@@ -100,23 +100,23 @@ dcss-disable-logging:
     sed -i -e 's/print("SENT FROM DCSS: ", msg)/# stdout data is only used for compatibility to wrapper/g' ./crawl/server/webtiles/process_handler.py
 
 test-api:
-    # cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
-    # cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
-    # cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
-    # cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
-    # cd ./dcss-api && GAME_ID=dcss-0.33 cargo test
-    cd ./dcss-api && GAME_ID=dcss-0.34 cargo test --no-fail-fast
+    cd ./dcss-api && GAME_ID=dcss-0.29 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.30 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.31 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.32 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.33 cargo test
+    cd ./dcss-api && GAME_ID=dcss-0.34 cargo test
+
+test-scenario:
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo test
+    # cd ./dcss-scenario-builder && GAME_ID=dcss-0.33 cargo test
+    cd ./dcss-scenario-builder && GAME_ID=dcss-0.34 cargo test
 
 test-data:
     cd ./dcss-data && GAME_ID=dcss-0.34 cargo test
-
-test-scenario:
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.29 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.30 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.31 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.32 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.33 cargo test
-    cd ./dcss-scenario-builder && GAME_ID=dcss-0.34 cargo test
 
 setup-python:
     rm -rf ./dcss-api-python/pyo3
