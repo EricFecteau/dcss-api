@@ -186,16 +186,15 @@ pub(crate) fn setup_map(
                 let lua_line = format!("you.moveto({}, {})\n", player_pos_d1.0, player_pos_d1.1);
                 webtile.write_key(lua_line.as_ref())?;
                 webtile.write_key("key_enter")?;
+                webtile.write_key("key_esc")?;
             }
             _ => Err(e)?,
         }
     }
 
-    if let Err(e) = webtile.read_until("", None, None) {
+    if let Err(e) = webtile.read_until("msgs", None, None) {
         match *e {
-            APIError::Blocking(BlockingError::TextInput) => {
-                webtile.write_key("key_esc")?;
-            }
+            APIError::Blocking(BlockingError::TextInput) => {}
             _ => Err(e)?,
         }
     }
