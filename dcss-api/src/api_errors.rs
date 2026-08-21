@@ -54,6 +54,8 @@ pub enum BlockingError {
     EnchantItem(Value),
     #[error("Blocking due to a 'brand weapon' menu popup.")]
     BrandWeapon(Value),
+    #[error("Blocking due to a 'you muust remove one of the following items' inventory menu.")]
+    RemoveItem,
     #[error("Blocking due to a 'skills to train' txt menu.")]
     Skill,
     #[error("Blocking due to a 'blink' action.")]
@@ -110,6 +112,13 @@ pub(crate) fn blocking_messages(message: &Value) -> Result<(), Box<Error>> {
                     x if x.contains("Brand which weapon?") => Err(Box::new(Error::Blocking(
                         BlockingError::BrandWeapon(message.clone()),
                     ))),
+                    _ => Ok(()),
+                }
+            } else if message["tag"] == "inventory" {
+                match message["title"]["text"].as_str().unwrap() {
+                    x if x.contains("To do this, you must remove one of the following items:") => {
+                        Err(Box::new(Error::Blocking(BlockingError::RemoveItem)))
+                    }
                     _ => Ok(()),
                 }
             } else {

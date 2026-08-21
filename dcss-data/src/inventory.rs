@@ -3,7 +3,7 @@ use serde_json::Value;
 
 use crate::CrawlData;
 use crate::common::{char_to_index, extract_param};
-use crate::items::Item;
+use crate::items::{Item, jewellery};
 
 use crate::items::armours::Armour;
 use crate::items::jewellery::Jewellery;
@@ -216,6 +216,49 @@ impl Inventory {
             }
         }
     }
+
+    pub(crate) fn item_type(&self, item_index: usize) -> String {
+        match self.items[item_index] {
+            Item::None => "None".to_owned(),
+            Item::Weapon(_) => "Weapon".to_owned(),
+            Item::Missile(_) => "Missile".to_owned(),
+            Item::Armour(_) => "Armour".to_owned(),
+            Item::Wand(_) => "Wand".to_owned(),
+            Item::_Unknown4 => unimplemented!(),
+            Item::Scroll(_) => "Scroll".to_owned(),
+            Item::Jewellery(_) => "Jewellery".to_owned(),
+            Item::Potion(_) => "Potion".to_owned(),
+            Item::_Unknown8 => unimplemented!(),
+            Item::Staff(_) => "Staff".to_owned(),
+        }
+    }
+
+    pub(crate) fn get_ring_index_from_name(&self, ring_name: String) -> i32 {
+        let ring_type = jewellery::ring_type_from_name(ring_name);
+
+        for index in 0..52 {
+            // If not identified, ignore
+            if self.items[index].is_none() {
+                continue;
+            }
+
+            // Skip all the wrong item types
+            if self.item_type(index) != "Jewellery" {
+                continue;
+            }
+
+            match &self.items[index] {
+                Item::Jewellery(jewellery) => {
+                    if jewellery.ring_type == ring_type {
+                        return index as i32;
+                    }
+                }
+                _ => unreachable!(),
+            }
+        }
+
+        unreachable!()
+    }
 }
 
 impl CrawlData {
@@ -259,5 +302,9 @@ impl CrawlData {
         }
 
         None
+    }
+
+    pub fn item_type(&self, item_index: usize) -> String {
+        self.inventory.item_type(item_index)
     }
 }

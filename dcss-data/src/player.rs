@@ -5,6 +5,8 @@ use crate::common::char_to_index;
 use crate::inventory::Inventory;
 use crate::items::Item;
 use crate::items::armours::ArmourType;
+use crate::items::jewellery;
+use crate::items::jewellery::JewelleryType;
 use serde_json::Value;
 
 use crate::MAX_FLOOR_SIZE;
@@ -18,9 +20,9 @@ pub(crate) struct Health {
 
 #[derive(Debug)]
 pub(crate) struct Stats {
-    pub(crate) str: u32,
-    pub(crate) int: u32,
-    pub(crate) dex: u32,
+    pub(crate) str: i32,
+    pub(crate) int: i32,
+    pub(crate) dex: i32,
 }
 
 #[derive(Debug)]
@@ -41,8 +43,7 @@ pub(crate) struct Equipped {
     pub(crate) helmet: i32,
     pub(crate) shield: i32,
     pub(crate) gloves: i32,
-    pub(crate) _ring_left: i32, // TODO: Add 8 rings for octopods
-    pub(crate) _ring_right: i32,
+    pub(crate) rings: (i32, i32), // TODO: Add 8 rings for octopods
 }
 
 #[derive(Debug)]
@@ -98,8 +99,7 @@ impl Equipped {
             helmet: -1,
             shield: -1,
             gloves: -1,
-            _ring_left: -1,
-            _ring_right: -1,
+            rings: (-1, -1),
         }
     }
 }
@@ -143,15 +143,15 @@ impl Player {
         let message_obj = message.as_object().unwrap();
 
         if message_obj.contains_key("str") {
-            self.stats.str = message["str"].as_u64().unwrap() as u32;
+            self.stats.str = message["str"].as_u64().unwrap() as i32;
         }
 
         if message_obj.contains_key("int") {
-            self.stats.int = message["int"].as_u64().unwrap() as u32;
+            self.stats.int = message["int"].as_u64().unwrap() as i32;
         }
 
         if message_obj.contains_key("dex") {
-            self.stats.dex = message["dex"].as_u64().unwrap() as u32;
+            self.stats.dex = message["dex"].as_u64().unwrap() as i32;
         }
     }
 
@@ -207,7 +207,11 @@ impl Player {
             Item::Wand(_) => unimplemented!(),
             Item::_Unknown4 => unimplemented!(),
             Item::Scroll(_) => unreachable!("Can't equip a scroll"),
-            Item::Jewellery(_) => self.equipped.amulet = item_index as i32,
+            Item::Jewellery(jewellery) => match &jewellery.jewellery_type {
+                JewelleryType::Unknown => unreachable!("Unknown-type can not be worn."),
+                JewelleryType::Amulet => self.equipped.amulet = item_index as i32,
+                JewelleryType::Ring => self.equip_ring(item_index as i32),
+            },
             Item::Potion(_) => unreachable!("Can't equip a potion"),
             Item::_Unknown8 => unimplemented!(),
             Item::Staff(_) => unimplemented!(),
@@ -224,10 +228,116 @@ impl Player {
 
         self.update_equipped(item_index, inventory);
     }
+
+    pub(crate) fn worn_ring(&self, index: i32) -> bool {
+        if self.equipped.rings.0 == index || self.equipped.rings.1 == index {
+            return true;
+        }
+
+        false
+    }
+
+    pub(crate) fn equip_ring(&mut self, index: i32) {
+        if self.worn_ring(index) {
+            return;
+        }
+
+        if self.equipped.rings.0 == -1 {
+            self.equipped.rings.0 = index;
+            return;
+        }
+
+        if self.equipped.rings.1 == -1 {
+            self.equipped.rings.1 = index;
+        }
+    }
+
+    pub(crate) fn remove_ring(&mut self, index: i32) {
+        if self.equipped.rings.0 == index {
+            self.equipped.rings.0 = -1;
+            return;
+        }
+
+        if self.equipped.rings.1 == index {
+            self.equipped.rings.1 = -1;
+        }
+    }
 }
 
 impl CrawlData {
+    /// Get the player's current HP
+    pub fn player_hp(&self) -> i32 {
+        self.player.health.hp
+    }
+
+    /// Get the player's max HP
+    pub fn player_hp_max(&self) -> i32 {
+        self.player.health.hp_max
+    }
+
+    /// Get the player's poison HP (e.g. how much HP is left after poison has run it's course)
+    pub fn player_poison_hp(&self) -> i32 {
+        self.player.health.poison_survival
+    }
+
+    /// Get a bool if the player is lethally poisoned (poison survival == 0)
     pub fn lethally_poisoned(&self) -> bool {
         self.player.health.poison_survival <= 0
+    }
+
+    /// Get the player's AC
+    pub fn player_ac(&self) -> i32 {
+        self.player.defense.ac
+    }
+
+    /// Get the player's EV
+    pub fn player_ev(&self) -> i32 {
+        self.player.defense.ev
+    }
+
+    /// Get the player's SH
+    pub fn player_sh(&self) -> i32 {
+        self.player.defense.sh
+    }
+
+    /// Get the player's Str
+    pub fn player_str(&self) -> i32 {
+        self.player.stats.str
+    }
+
+    /// Get the player's Int
+    pub fn player_int(&self) -> i32 {
+        self.player.stats.int
+    }
+
+    /// Get the player's Dex
+    pub fn player_dex(&self) -> i32 {
+        self.player.stats.dex
+    }
+
+    /// Is ring (by index) already being worn
+    pub fn worn_ring(&self, index: i32) -> bool {
+        self.player.worn_ring(index)
+    }
+
+    pub fn remove_ring_by_name(&mut self, ring_name: String) {
+        // TODO: Will this cause an issue if you have two of the same ring (wrong index removed)?
+
+        let index = self.inventory.get_ring_index_from_name(ring_name);
+        self.player.remove_ring(index)
+    }
+
+    /// Provide the index of newly adorned jewellery
+    pub fn worn_jewellery(&mut self, index: i32) {
+        match &self.inventory.items[index as usize] {
+            Item::Jewellery(jewellery) => match &jewellery.jewellery_type {
+                JewelleryType::Unknown => unreachable!("Unknown-type should be impossible."),
+                JewelleryType::Amulet => self.player.equipped.amulet = index,
+                JewelleryType::Ring => self.player.equip_ring(index),
+            },
+            _ => unreachable!("Should never have '(worn)' on anything other than jewellery"),
+        }
+
+        // self.player.equip_ring
     }
 }

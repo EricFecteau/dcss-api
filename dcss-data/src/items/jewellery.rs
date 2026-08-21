@@ -6,6 +6,7 @@ pub(crate) struct Jewellery {
     pub(crate) jewellery_type: JewelleryType,
     pub(crate) amulet_type: AmuletType,
     pub(crate) ring_type: RingType,
+    pub(crate) useless: bool,
     pub(crate) rating: i32,
 }
 
@@ -28,7 +29,7 @@ pub(crate) enum AmuletType {
     Wildshape,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) enum RingType {
     Unknown,
     MPP9,
@@ -59,6 +60,7 @@ impl Jewellery {
             jewellery_type: JewelleryType::Unknown,
             amulet_type: AmuletType::Unknown,
             ring_type: RingType::Unknown,
+            useless: false,
             rating: -100,
         }
     }
@@ -68,6 +70,11 @@ impl Jewellery {
 
         let title = jewellery_desc["title"].to_string();
         let body = jewellery_desc["body"].to_string();
+
+        // Useless item
+        if body.contains("useless_item") {
+            self.useless = true
+        }
 
         if title.contains("amulet") {
             self.jewellery_type = JewelleryType::Amulet;
@@ -89,7 +96,7 @@ impl Jewellery {
             AmuletType::Spirit => 3,
             AmuletType::Reflect => 2,
             AmuletType::Acrobat => 1,
-            AmuletType::RegenMP => 0,
+            AmuletType::RegenMP => -100,
             AmuletType::Wildshape => -100,
             AmuletType::Faith => -100,
             _ => unimplemented!("Failed to identify the amulet type"),
@@ -99,25 +106,25 @@ impl Jewellery {
     pub(crate) fn ring_rating(&self) -> i32 {
         // TODO: Get a better way to rate rings;
         match self.ring_type {
-            RingType::MPP9 => 1,
-            RingType::PoisonResistance => 2,
-            RingType::SlayP4 => 3,
-            RingType::SeeInv => 4,
-            RingType::IntP6 => 5,
-            RingType::StrP6 => 6,
-            RingType::ACP4 => 7,
-            RingType::FireResistance => 8,
-            RingType::Wiz => 9,
-            RingType::DexP6 => 10,
-            RingType::NegativeResistance => 11,
+            RingType::PoisonResistance => 19,
+            RingType::SeeInv => 18,
+            RingType::StrP6 => 17,
+            RingType::DexP6 => 16,
+            RingType::SlayP4 => 15,
+            RingType::ColdResistance => 14,
+            RingType::FireResistance => 13,
             RingType::EvasionP5 => 12,
-            RingType::EvasionP4 => 13,
-            RingType::Ice => 14,
-            RingType::Fire => 15,
-            RingType::ColdResistance => 16,
-            RingType::Flight => 17,
-            RingType::CorrosionResistance => 18,
-            RingType::WillPower => 19,
+            RingType::EvasionP4 => 11,
+            RingType::ACP4 => 10,
+            RingType::Wiz => 9,
+            RingType::NegativeResistance => 8,
+            RingType::Flight => 7,
+            RingType::Ice => 6,
+            RingType::Fire => 5,
+            RingType::IntP6 => 4,
+            RingType::CorrosionResistance => 3,
+            RingType::MPP9 => 2,
+            RingType::WillPower => 1,
             _ => unimplemented!("Failed to identify the ring type"),
         }
     }
@@ -144,8 +151,6 @@ pub(crate) fn amulet_type(amulet_desc: String) -> AmuletType {
 }
 
 pub(crate) fn ring_type(ring_desc: String) -> RingType {
-    // Implement looking at "useless_item" tag
-
     if ring_desc.contains("{Slay+4}") {
         return RingType::SlayP4;
     } else if ring_desc.contains("{sInv}") {
@@ -185,6 +190,54 @@ pub(crate) fn ring_type(ring_desc: String) -> RingType {
     } else if ring_desc.contains("{MP+9}") {
         return RingType::MPP9;
     }
+
+    unimplemented!("Failed to identify the ring type")
+}
+
+pub(crate) fn ring_type_from_name(ring_desc: String) -> RingType {
+    if ring_desc == "+4 ring of protection" {
+        return RingType::ACP4;
+    }
+    //     if ring_desc.contains("{Slay+4}") {
+    //     return RingType::SlayP4;
+    // }
+    // else if ring_desc.contains("{sInv}") {
+    //     return RingType::SeeInv;
+    // } else if ring_desc.contains("{Int+6}") {
+    //     return RingType::IntP6;
+    // } else if ring_desc.contains("{Str+6}") {
+    //     return RingType::StrP6;
+    // } else if ring_desc.contains("{rF+}") {
+    //     return RingType::FireResistance;
+    // } else if ring_desc.contains("{Wiz}") {
+    //     return RingType::Wiz;
+    // } else if ring_desc.contains("{Dex+6}") {
+    //     return RingType::DexP6;
+    // } else if ring_desc.contains("{rN+}") {
+    //     return RingType::NegativeResistance;
+    // } else if ring_desc.contains("{EV+4}") {
+    //     return RingType::EvasionP4;
+    // } else if ring_desc.contains("{EV+5}") {
+    //     return RingType::EvasionP5;
+    // } else if ring_desc.contains("{Ice rC+ rF-}") {
+    //     return RingType::Ice;
+    // } else if ring_desc.contains("{Fire rF+ rC-}") {
+    //     return RingType::Fire;
+    // } else if ring_desc.contains("{rC+}") {
+    //     return RingType::ColdResistance;
+    // } else if ring_desc.contains("{Fly}") {
+    //     return RingType::Flight;
+    // } else if ring_desc.contains("{rCorr}") {
+    //     return RingType::CorrosionResistance;
+    // } else if ring_desc.contains("{Will+}") {
+    //     return RingType::WillPower;
+    // } else if ring_desc.contains("{rPois}") {
+    //     return RingType::PoisonResistance;
+    // } else if ring_desc.contains("{AC+4}") {
+    //     return RingType::ACP4;
+    // } else if ring_desc.contains("{MP+9}") {
+    //     return RingType::MPP9;
+    // }
 
     unimplemented!("Failed to identify the ring type")
 }

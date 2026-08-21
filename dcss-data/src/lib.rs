@@ -19,7 +19,7 @@ use crate::common::{convert_coords_to_relative, pathfinding, structured_table};
 use crate::inventory::Inventory;
 use crate::items::Item;
 use crate::items::armours::ArmourType;
-use crate::items::jewellery::AmuletType;
+use crate::items::jewellery::{AmuletType, RingType};
 use crate::items::scrolls::ScrollType;
 use crate::log::Log;
 use crate::menus::Menus;
@@ -300,23 +300,9 @@ impl CrawlData {
             "Helmet" => self.player.equipped.helmet,
             "Shield" => self.player.equipped.shield,
             "Gloves" => self.player.equipped.gloves,
+            "Ring 0" => self.player.equipped.rings.0,
+            "Ring 1" => self.player.equipped.rings.1,
             _ => unimplemented!("TODO"),
-        }
-    }
-
-    pub fn item_type(&self, item_index: usize) -> String {
-        match self.inventory.items[item_index] {
-            Item::None => "None".to_owned(),
-            Item::Weapon(_) => "Weapon".to_owned(),
-            Item::Missile(_) => "Missile".to_owned(),
-            Item::Armour(_) => "Armour".to_owned(),
-            Item::Wand(_) => "Wand".to_owned(),
-            Item::_Unknown4 => unimplemented!(),
-            Item::Scroll(_) => "Scroll".to_owned(),
-            Item::Jewellery(_) => "Jewellery".to_owned(),
-            Item::Potion(_) => "Potion".to_owned(),
-            Item::_Unknown8 => unimplemented!(),
-            Item::Staff(_) => "Staff".to_owned(),
         }
     }
 
@@ -377,8 +363,18 @@ impl CrawlData {
 
     pub fn amulet_type(&self, item_index: usize) -> String {
         match &self.inventory.items[item_index] {
-            Item::Jewellery(scroll) => match &scroll.amulet_type {
+            Item::Jewellery(amulet) => match &amulet.amulet_type {
                 AmuletType::Unknown => "Unknown".to_owned(),
+                _ => "".to_owned(),
+            },
+            _ => "".to_owned(),
+        }
+    }
+
+    pub fn ring_type(&self, item_index: usize) -> String {
+        match &self.inventory.items[item_index] {
+            Item::Jewellery(ring) => match &ring.ring_type {
+                RingType::Unknown => "Unknown".to_owned(),
                 _ => "".to_owned(),
             },
             _ => "".to_owned(),
@@ -415,26 +411,6 @@ impl CrawlData {
         }
 
         item
-    }
-
-    pub fn player_hp(&self) -> i32 {
-        self.player.health.hp
-    }
-
-    pub fn player_hp_max(&self) -> i32 {
-        self.player.health.hp_max
-    }
-
-    pub fn player_poison_hp(&self) -> i32 {
-        self.player.health.poison_survival
-    }
-
-    pub fn player_defense(&self) -> (i32, i32, i32) {
-        (
-            self.player.defense.ac,
-            self.player.defense.ev,
-            self.player.defense.sh,
-        )
     }
 
     pub fn fov_of_data(&mut self) -> u32 {

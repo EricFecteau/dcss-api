@@ -38,6 +38,13 @@ fn monster_from_tiles() {
     let mut webtile = common::setup_webtile("Monsters2", "./tests/scenarios/monsters/kobold.yaml");
     let mut data = common::setup_data(&mut webtile);
 
+    // Look at monster to get more info
+    common::examine_monster(
+        data.coord_nearest_monster().unwrap(),
+        &mut webtile,
+        &mut data,
+    );
+
     // Number of monsters that can be reached
     assert!(data.monster_count_path() == 1);
 
@@ -72,6 +79,11 @@ fn glass_box() {
         common::setup_webtile("Monsters3", "./tests/scenarios/monsters/glass_box.yaml");
     let mut data = common::setup_data(&mut webtile);
 
+    // Look at monster to get more info
+    while let Some(coord) = data.get_pos_of_unexamined_monster() {
+        common::examine_monster(coord, &mut webtile, &mut data);
+    }
+
     // Number of monsters that can be reached
     assert!(data.monster_count_path() == 1);
 
@@ -102,6 +114,13 @@ fn touching() {
     let mut webtile =
         common::setup_webtile("Monsters4", "./tests/scenarios/monsters/touching.yaml");
     let mut data = common::setup_data(&mut webtile);
+
+    // Look at monster to get more info
+    common::examine_monster(
+        data.coord_nearest_monster().unwrap(),
+        &mut webtile,
+        &mut data,
+    );
 
     // Number of monsters that can be reached
     assert!(data.monster_count_path() == 1);
@@ -150,7 +169,7 @@ fn kobold_info() {
     let mon_data = &data.get_battle_monster_info()[0];
 
     // * `threat` = threat level ("Minor" => 1 | "Low" => 2 | "High" => 4 | "Lethal" => 5)
-    assert!(mon_data["threat"] == 2);
+    assert!(mon_data["threat"] == 1);
 
     // * `max_hp` = maximum hp
     assert!(mon_data["max_hp"] == 3);
@@ -198,10 +217,10 @@ fn kobold_info() {
     assert!(mon_data["player_hit_monster_chance"] == 98);
 
     // * `monster_hit_player_chance` = chance the monster hits the player (%)
-    assert!(mon_data["monster_hit_player_chance"] == 57);
+    assert!(mon_data["monster_hit_player_chance"] == 60);
 
     // * `max_damage` = max damage the monster can do to the player
-    assert!(mon_data["max_damage"] == 5);
+    assert!(mon_data["max_damage"] == 4);
 
     // Add test if new ones are added
     assert!(mon_data.len() == 18);

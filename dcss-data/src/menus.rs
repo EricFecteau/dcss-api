@@ -379,6 +379,23 @@ impl CrawlData {
         );
     }
 
+    pub fn queue_remove(&mut self, item_key: &str) {
+        self.menus
+            .add_menu(vec![""], "i", "", false, false, false, false, "menu", "");
+
+        self.menus.add_menu(
+            vec!["i"],
+            item_key,
+            "r",
+            false,
+            false,
+            false,
+            false,
+            "ui-push",
+            "player",
+        );
+    }
+
     pub fn queue_read_scroll(&mut self, item_key: &str) {
         self.menus.add_menu(
             vec![""],
