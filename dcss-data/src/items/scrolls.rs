@@ -1,5 +1,4 @@
-use crate::common::extract_param;
-use serde_json::Value;
+use crate::common::{ascii_to_letter, extract_param};
 
 #[derive(Clone, Debug)]
 pub(crate) enum ScrollType {
@@ -29,59 +28,44 @@ pub(crate) enum ScrollType {
 #[derive(Clone, Debug)]
 pub(crate) struct Scroll {
     pub(crate) data_collected: bool,
+    pub(crate) letter: char,
     pub(crate) identified: bool,
     pub(crate) scroll_type: ScrollType,
+    pub(crate) quantity: u64,
 }
 
 impl Scroll {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(letter: char) -> Self {
         Self {
             data_collected: false,
+            letter,
             identified: false,
             scroll_type: ScrollType::Unknown,
+            quantity: 0,
         }
     }
 
-    pub(crate) fn update_scroll(&mut self, description: &Value) {
-        self.data_collected = true;
-
-        if description["body"]
-            .as_str()
-            .unwrap()
-            .contains(" identified ")
-        {
-            self.identified = true;
-        } else {
-            return;
-        }
-
-        if let Some(scroll_type) = extract_param(
-            description["title"].as_str().unwrap(),
-            "scroll of ",
-            &vec!['.', '{'],
-        ) {
-            self.scroll_type = type_of_scroll(scroll_type.trim_end().to_owned());
-        } else {
-            self.scroll_type = type_of_scroll(
-                extract_param(
-                    description["title"].as_str().unwrap(),
-                    "scrolls of ",
-                    &vec!['.', '{'],
-                )
-                .unwrap()
-                .trim_end()
-                .to_owned(),
-            );
-        }
-    }
-
-    pub(crate) fn update_scroll_values(&mut self, name: &str, _quantity: u64) {
+    pub(crate) fn update_scroll_values(
+        &mut self,
+        name: &str,
+        letter: Option<i64>,
+        quantity: Option<i64>,
+    ) {
         let mut scroll_type = extract_param(name, "scroll of ", &vec!['\n', '{']);
         if scroll_type.is_none() {
             scroll_type = extract_param(name, "scrolls of ", &vec!['.', '{']);
         }
 
+        if let Some(quantity) = quantity {
+            self.quantity = quantity as u64;
+        }
+
+        if let Some(letter) = letter {
+            self.letter = ascii_to_letter(letter as usize);
+        }
+
         if let Some(pt) = scroll_type {
+            self.data_collected = true;
             self.identified = true;
             self.scroll_type = type_of_scroll(pt.trim_end().to_owned());
         }

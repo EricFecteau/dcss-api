@@ -3,6 +3,7 @@ use serde_json::Value;
 #[derive(Clone, Debug)]
 pub(crate) struct Jewellery {
     pub(crate) data_collected: bool,
+    pub(crate) letter: char,
     pub(crate) jewellery_type: JewelleryType,
     pub(crate) amulet_type: AmuletType,
     pub(crate) ring_type: RingType,
@@ -27,6 +28,7 @@ pub(crate) enum AmuletType {
     Reflect,
     Regen,
     Wildshape,
+    Chemistry,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -54,9 +56,10 @@ pub(crate) enum RingType {
 }
 
 impl Jewellery {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(letter: char) -> Self {
         Self {
             data_collected: false,
+            letter,
             jewellery_type: JewelleryType::Unknown,
             amulet_type: AmuletType::Unknown,
             ring_type: RingType::Unknown,
@@ -98,6 +101,7 @@ impl Jewellery {
             AmuletType::Acrobat => 1,
             AmuletType::RegenMP => -100,
             AmuletType::Wildshape => -100,
+            AmuletType::Chemistry => -100,
             AmuletType::Faith => -100,
             _ => unimplemented!("Failed to identify the amulet type"),
         }
@@ -145,6 +149,8 @@ pub(crate) fn amulet_type(amulet_desc: String) -> AmuletType {
         return AmuletType::Faith;
     } else if amulet_desc.contains("{Wildshape}") {
         return AmuletType::Wildshape;
+    } else if amulet_desc.contains("{Chemistry}") {
+        return AmuletType::Chemistry;
     }
 
     unimplemented!("Failed to identify the amulet type");

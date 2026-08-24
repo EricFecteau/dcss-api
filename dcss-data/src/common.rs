@@ -28,50 +28,16 @@ pub(crate) fn add_i32_to_usize(i32_val: i32, usize_val: usize) -> usize {
     }
 }
 
-/// Identify the character corresponding to the index (e.g. 0 -> a, 1 -> b...)
-/// from 0 (a), to 51 (Z), twice over the alphabet (lower case (e.g. 25 (z)) and
-/// upper case (e.g. 26 (A))).
-///
-/// # Arguments
-///
-/// * key - a [usize] value between 0 (a) and 51 (Z).
-///
-/// # Example
-///
-/// ```ignore
-/// let capital_A = index_to_char(26);
-/// ```
-pub(crate) fn _index_to_char<'a>(key: usize) -> &'a str {
+/// ASCII numeric to CHAR converter
+pub(crate) fn ascii_to_letter<'a>(ascii_letter: usize) -> char {
     let char_list = vec![
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
-        "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
-        "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+        'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd',
+        'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+        'w', 'x', 'y', 'z',
     ];
 
-    char_list[key]
-}
-
-/// Identify the index corresponding to the character (e.g. a -> 0, b -> 1...)
-/// from a (0), to Z (51), twice over the alphabet (lower case (e.g. z (25)) and
-/// upper case (e.g. A (26))).
-///
-/// # Arguments
-///
-/// * key - a [String] value between a (0) and Z (51).
-///
-/// # Example
-///
-/// ```ignore
-/// let index_26 = char_to_index("A");
-/// ```
-pub(crate) fn char_to_index(letter: &str) -> usize {
-    let char_list: Vec<&str> = vec![
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
-        "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
-        "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-    ];
-
-    char_list.iter().position(|&r| r == letter).unwrap()
+    char_list[ascii_letter - 65]
 }
 
 /// Extract parameter from a message, following a substring. Returns the
@@ -407,6 +373,20 @@ mod tests {
         assert_eq!(test_val, 100);
         let test_val = add_i32_to_usize(-50, 50);
         assert_eq!(test_val, 0);
+    }
+
+    #[test]
+    fn test_ascii_to_letter() {
+        let test_val = ascii_to_letter(97);
+        assert_eq!(test_val, 'a');
+        let test_val = ascii_to_letter(98);
+        assert_eq!(test_val, 'b');
+        let test_val = ascii_to_letter(122);
+        assert_eq!(test_val, 'z');
+        let test_val = ascii_to_letter(65);
+        assert_eq!(test_val, 'A');
+        let test_val = ascii_to_letter(90);
+        assert_eq!(test_val, 'Z');
     }
 
     #[test]

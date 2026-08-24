@@ -18,6 +18,7 @@ pub(crate) enum WeaponType {
 #[derive(Clone, Debug)]
 pub(crate) struct Weapon {
     pub(crate) data_collected: bool,
+    pub(crate) letter: char,
     pub(crate) weapon_type: WeaponType,
     pub(crate) base_accuracy: Option<i32>,
     pub(crate) base_damage: Option<i32>,
@@ -27,9 +28,10 @@ pub(crate) struct Weapon {
 }
 
 impl Weapon {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(letter: char) -> Self {
         Self {
             data_collected: false,
+            letter,
             weapon_type: WeaponType::None,
             base_accuracy: None,
             base_damage: None,

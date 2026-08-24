@@ -207,6 +207,12 @@ impl Tiles {
             (invisible_monsters, remove_invisible_monsters),
         ))
     }
+
+    pub(crate) fn walkable_vec(&mut self, walkable_tiles: Vec<AbsCoord>) {
+        for (x_pos, y_pos) in walkable_tiles {
+            self.tiles[x_pos][y_pos].unblock()
+        }
+    }
 }
 
 impl Tile {

@@ -2,7 +2,7 @@ use rustc_hash::FxHashMap;
 use serde_json::Value;
 
 use crate::CrawlData;
-use crate::common::{char_to_index, extract_param};
+use crate::common::{ascii_to_letter, extract_param};
 use crate::items::{Item, jewellery};
 
 use crate::items::armours::Armour;
@@ -92,27 +92,36 @@ impl Inventory {
 
             let item_type = item["base_type"].as_i64();
             if let Some(it) = item_type {
-                self.init_item(index, it as i32);
-            } else if item.as_object().unwrap().contains_key("name") {
+                let letter = item["letter"].as_i64();
+                self.init_item(index, letter, it as i32);
+            }
+
+            if item.as_object().unwrap().contains_key("name") {
                 let name = item.as_object().unwrap()["name"].as_str().unwrap_or("");
-                let quantity = 1; // TODO:
-                self.update_item(index, name, quantity);
+                let quantity_value = item.as_object().unwrap().get("quantity");
+                let quantity = if quantity_value.is_none() {
+                    None
+                } else {
+                    quantity_value.unwrap().as_i64()
+                };
+                let letter = item["letter"].as_i64();
+                self.update_item(index, name, letter, quantity);
             }
         }
     }
 
-    pub(crate) fn init_item(&mut self, index: usize, item_type: i32) {
+    pub(crate) fn init_item(&mut self, index: usize, letter: Option<i64>, item_type: i32) {
         self.items[index] = match item_type {
-            0 => Item::Weapon(Weapon::new()),
-            1 => Item::Missile(Missile::new()),
-            2 => Item::Armour(Armour::new()),
-            3 => Item::Wand(Wand::new()),
+            0 => Item::Weapon(Weapon::new(ascii_to_letter(letter.unwrap() as usize))),
+            1 => Item::Missile(Missile::new(ascii_to_letter(letter.unwrap() as usize))),
+            2 => Item::Armour(Armour::new(ascii_to_letter(letter.unwrap() as usize))),
+            3 => Item::Wand(Wand::new(ascii_to_letter(letter.unwrap() as usize))),
             4 => unimplemented!(),
-            5 => Item::Scroll(Scroll::new()),
-            6 => Item::Jewellery(Jewellery::new()),
-            7 => Item::Potion(Potion::new()),
+            5 => Item::Scroll(Scroll::new(ascii_to_letter(letter.unwrap() as usize))),
+            6 => Item::Jewellery(Jewellery::new(ascii_to_letter(letter.unwrap() as usize))),
+            7 => Item::Potion(Potion::new(ascii_to_letter(letter.unwrap() as usize))),
             8 => unimplemented!(),
-            9 => Item::Staff(Staff::new()),
+            9 => Item::Staff(Staff::new(ascii_to_letter(letter.unwrap() as usize))),
             _ => Item::None,
         }
     }
@@ -133,7 +142,13 @@ impl Inventory {
         }
     }
 
-    pub(crate) fn update_item(&mut self, index: usize, name: &str, quantity: u64) {
+    pub(crate) fn update_item(
+        &mut self,
+        index: usize,
+        name: &str,
+        letter: Option<i64>,
+        quantity: Option<i64>,
+    ) {
         match &mut self.items[index] {
             Item::None => (),
             Item::Weapon(_) => (),
@@ -141,26 +156,51 @@ impl Inventory {
             Item::Armour(_) => (),
             Item::Wand(_) => (),
             Item::_Unknown4 => unimplemented!(),
-            Item::Scroll(item) => item.update_scroll_values(name, quantity),
+            Item::Scroll(item) => item.update_scroll_values(name, letter, quantity),
             Item::Jewellery(_) => (),
-            Item::Potion(item) => item.update_potion_values(name, quantity),
+            Item::Potion(item) => item.update_potion_values(name, letter, quantity),
             Item::_Unknown8 => unimplemented!(),
             Item::Staff(_) => (),
         }
     }
 
+    pub(crate) fn gear_letter_to_index(&self, letter: char) -> usize {
+        for (index, item) in self.items.iter().enumerate() {
+            if item.is_none() {
+                continue;
+            }
+
+            if item.letter() == letter {
+                return index;
+            }
+        }
+
+        unreachable!("Should only be able to get index for known letters.")
+    }
+
     pub(crate) fn description(&mut self, description: &Value) {
-        let key = &description["title"].to_string()[1..2];
-        match &mut self.items[char_to_index(key)] {
+        // Ignore descriptions of scrolls and potions, they provide no useful info
+        let title = description["title"].to_string();
+        if title.contains(" scroll ")
+            || title.contains(" scrolls ")
+            || title.contains(" potion ")
+            || title.contains(" potions ")
+        {
+            return;
+        }
+
+        let letter = title[1..2].chars().next().unwrap();
+        let index = self.gear_letter_to_index(letter);
+        match &mut self.items[index] {
             Item::None => (),
             Item::Weapon(item) => item.update_weapon(description),
             Item::Missile(item) => item.data_collected = true,
             Item::Armour(item) => item.update_armour(description),
             Item::Wand(item) => item.data_collected = true,
             Item::_Unknown4 => unimplemented!(),
-            Item::Scroll(item) => item.update_scroll(description),
+            Item::Scroll(_) => unimplemented!("Should have been ignored."),
             Item::Jewellery(item) => item.update_jewellery(description),
-            Item::Potion(item) => item.update_potion(description),
+            Item::Potion(_) => unimplemented!("Should have been ignored."),
             Item::_Unknown8 => unimplemented!(),
             Item::Staff(item) => item.data_collected = true,
         }
@@ -233,10 +273,26 @@ impl Inventory {
         }
     }
 
+    pub(crate) fn item_quantity(&self, item_index: usize) -> u64 {
+        match &self.items[item_index] {
+            Item::None => 0,
+            Item::Weapon(_) => 1,
+            Item::Missile(_) => 1,
+            Item::Armour(_) => 1,
+            Item::Wand(_) => 1,
+            Item::_Unknown4 => unimplemented!(),
+            Item::Scroll(scroll) => scroll.quantity,
+            Item::Jewellery(_) => 1,
+            Item::Potion(potion) => potion.quantity,
+            Item::_Unknown8 => unimplemented!(),
+            Item::Staff(_) => 1,
+        }
+    }
+
     pub(crate) fn get_ring_index_from_name(&self, ring_name: String) -> i32 {
         let ring_type = jewellery::ring_type_from_name(ring_name);
 
-        for index in 0..52 {
+        for index in 0..127 {
             // If not identified, ignore
             if self.items[index].is_none() {
                 continue;
@@ -280,31 +336,82 @@ impl CrawlData {
         *self.inventory.known_potion.get_mut(potion_type).unwrap() = true;
     }
 
-    pub fn potion_index(&self, potion_type: &str) -> Option<usize> {
+    // TODO: Doing potion letter and scroll letter using a different method (using PotionType vs using String)
+
+    pub fn potion_letter(&self, potion_type: &str) -> Option<char> {
         let potion_type_enum = type_of_potion(potion_type.to_owned());
 
-        for index in 0..52 {
+        for index in 0..127 {
             if self.item_is_none(index) || !self.item_data_collected(index) {
                 continue;
             }
 
-            let item_type = self.item_type(index);
-
-            if item_type != "Potion" {
+            if self.item_type(index) != "Potion" {
                 continue;
             }
 
             if self.inventory.items[index].potion_type() == potion_type_enum {
-                return Some(index);
-            } else {
-                continue;
+                return Some(self.inventory.items[index].letter());
             }
         }
 
         None
     }
 
+    pub fn scroll_letter(&self, potion_type: &str) -> Option<char> {
+        if !self.known_scroll(potion_type) {
+            return None;
+        }
+
+        for index in 0..127 {
+            if self.item_is_none(index) || !self.item_data_collected(index) {
+                continue;
+            }
+
+            if self.item_type(index) != "Scroll" {
+                continue;
+            }
+
+            if self.scroll_type(index) == potion_type {
+                return Some(self.inventory.items[index].letter());
+            }
+        }
+
+        None
+    }
+
+    pub fn item_letter_from_index(&self, index: usize) -> char {
+        self.inventory.items[index].letter()
+    }
+
+    pub fn unknown_item(&self, item_type: &str) -> Option<char> {
+        let mut item = None;
+        let mut quantity = 0;
+
+        for index in 0..127 {
+            if self.item_is_none(index) {
+                continue;
+            }
+
+            let curr_item_type = self.item_type(index);
+            let curr_item_quant = self.item_quantity(index);
+            if curr_item_type == item_type
+                && !self.item_is_identified(index)
+                && curr_item_quant > quantity
+            {
+                item = Some(self.item_letter_from_index(index));
+                quantity = curr_item_quant
+            }
+        }
+
+        item
+    }
+
     pub fn item_type(&self, item_index: usize) -> String {
         self.inventory.item_type(item_index)
+    }
+
+    pub fn item_quantity(&self, item_index: usize) -> u64 {
+        self.inventory.item_quantity(item_index)
     }
 }

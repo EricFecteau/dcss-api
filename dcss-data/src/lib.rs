@@ -260,6 +260,14 @@ impl CrawlData {
             self.monsters.invisible_removed(invis_rm_coord)
         }
 
+        // Make butterfly "mons" tiles walkable (might be necessary for other monsters too)
+        // Don't want to make them attackable cause waste of time for your character (should attack
+        // the originator) but not possible to identify butterfly as walkable without the self.monseters
+        // info (not available in self.tiles.update)
+
+        let friendly_walkable = self.monsters.friendly_walkable();
+        self.tiles.walkable_vec(friendly_walkable);
+
         Ok(())
     }
 
@@ -352,9 +360,11 @@ impl CrawlData {
     }
 
     pub fn scroll_type(&self, item_index: usize) -> String {
+        // TODO: Not exhaustive
+
         match &self.inventory.items[item_index] {
             Item::Scroll(scroll) => match &scroll.scroll_type {
-                ScrollType::Identify => "Identify".to_owned(),
+                ScrollType::Identify => "identify".to_owned(),
                 _ => "".to_owned(),
             },
             _ => "".to_owned(),
@@ -394,23 +404,6 @@ impl CrawlData {
 
     pub fn has_status(&self, status: &str) -> bool {
         self.player.status.contains(&String::from(status))
-    }
-
-    pub fn unknown_item(&self, item_type: &str) -> Option<usize> {
-        let mut item = None;
-
-        for index in 0..52 {
-            if self.item_is_none(index) || !self.item_data_collected(index) {
-                continue;
-            }
-
-            let curr_item_type = self.item_type(index);
-            if curr_item_type == item_type && !self.item_is_identified(index) {
-                item = Some(index);
-            }
-        }
-
-        item
     }
 
     pub fn fov_of_data(&mut self) -> u32 {

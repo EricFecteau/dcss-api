@@ -15,6 +15,7 @@ pub(crate) enum ArmourType {
 #[derive(Debug, Clone)]
 pub(crate) struct Armour {
     pub(crate) data_collected: bool,
+    pub(crate) letter: char,
     pub(crate) armour_type: ArmourType,
     pub(crate) base_rating: Option<i32>,
     pub(crate) encumbrance: Option<i32>,
@@ -23,9 +24,10 @@ pub(crate) struct Armour {
 }
 
 impl Armour {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(letter: char) -> Self {
         Self {
             data_collected: false,
+            letter,
             armour_type: ArmourType::None,
             base_rating: None,
             encumbrance: None,

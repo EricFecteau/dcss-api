@@ -1,11 +1,9 @@
 use crate::CrawlData;
 use crate::common::AbsCoord;
 use crate::common::add_i32_to_usize;
-use crate::common::char_to_index;
 use crate::inventory::Inventory;
 use crate::items::Item;
 use crate::items::armours::ArmourType;
-use crate::items::jewellery;
 use crate::items::jewellery::JewelleryType;
 use serde_json::Value;
 
@@ -223,8 +221,11 @@ impl Player {
             return;
         }
 
-        let key = &description["title"].to_string()[1..2];
-        let item_index = char_to_index(key);
+        let letter = description["title"].to_string()[1..2]
+            .chars()
+            .next()
+            .unwrap();
+        let item_index = inventory.gear_letter_to_index(letter);
 
         self.update_equipped(item_index, inventory);
     }
@@ -328,14 +329,16 @@ impl CrawlData {
     }
 
     /// Provide the index of newly adorned jewellery
-    pub fn worn_jewellery(&mut self, index: i32) {
-        match &self.inventory.items[index as usize] {
+    pub fn worn_jewellery(&mut self, letter: char) {
+        let index = self.inventory.gear_letter_to_index(letter);
+
+        match &self.inventory.items[index] {
             Item::Jewellery(jewellery) => match &jewellery.jewellery_type {
                 JewelleryType::Unknown => unreachable!("Unknown-type should be impossible."),
-                JewelleryType::Amulet => self.player.equipped.amulet = index,
-                JewelleryType::Ring => self.player.equip_ring(index),
+                JewelleryType::Amulet => self.player.equipped.amulet = index as i32,
+                JewelleryType::Ring => self.player.equip_ring(index as i32),
             },
-            _ => unreachable!("Should never have '(worn)' on anything other than jewellery"),
+            _ => unreachable!("Should never have '(worn)' on anything other than jewellery in log"),
         }
 
         // self.player.equip_ring

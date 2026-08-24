@@ -802,6 +802,14 @@ impl Monsters {
             self.monsters.remove(&9999);
         }
     }
+
+    /// A function that returns a vec of [AbsCoord] of the walkable tiles that have mons on them.
+    pub(crate) fn friendly_walkable(&self) -> Vec<AbsCoord> {
+        self.monsters.iter()
+            .map(|mon| mon.1)
+            .filter(|mon| mon.name == "butterfly")
+            .filter_map(|mon| mon.pos).collect()
+    }
 }
 
 impl Monster {

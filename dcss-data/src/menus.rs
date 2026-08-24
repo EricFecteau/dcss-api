@@ -1,6 +1,6 @@
 use rustc_hash::FxHashMap;
 
-use crate::{CrawlData, common::char_to_index};
+use crate::CrawlData;
 
 /// Meta menu struct, stores the main menu that creates a menu hierarchy
 #[derive(Debug)]
@@ -246,50 +246,6 @@ impl CrawlData {
         self.menus.identify_menu_as_opened();
     }
 
-    /// Create a menu to collect "ability" data
-    pub fn queue_collect_ability_data(&mut self) {
-        self.menus.add_menu(
-            vec![""],
-            "a",
-            "key_esc",
-            false,
-            false,
-            false,
-            true,
-            "menu",
-            "close_menu",
-        );
-
-        self.abilities.make_abilities_current();
-    }
-
-    /// Open the description menu of a specific item
-    pub fn queue_collect_item_data(&mut self, item_key: &str) {
-        self.menus.add_menu(
-            vec![""],
-            "i",
-            "key_esc",
-            false,
-            false,
-            false,
-            false,
-            "menu",
-            "close_menu",
-        );
-
-        self.menus.add_menu(
-            vec!["i"],
-            item_key,
-            "key_esc",
-            false,
-            false,
-            false,
-            false,
-            "ui-push",
-            "ui-pop",
-        );
-    }
-
     #[allow(clippy::too_many_arguments)]
     pub fn add_menu(
         &mut self,
@@ -316,7 +272,7 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_drop_item(&mut self, item_key: &str) {
+    pub fn queue_drop_item(&mut self, item_key: char) {
         self.menus.add_menu(
             vec![""],
             "d",
@@ -331,7 +287,7 @@ impl CrawlData {
 
         self.menus.add_menu(
             vec!["d"],
-            item_key,
+            &item_key.to_string(),
             "",
             false,
             false,
@@ -342,13 +298,57 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_wield_wear(&mut self, item_key: &str) {
+    /// Create a menu to collect "ability" data
+    pub fn queue_collect_ability_data(&mut self) {
+        self.menus.add_menu(
+            vec![""],
+            "a",
+            "key_esc",
+            false,
+            false,
+            false,
+            true,
+            "menu",
+            "close_menu",
+        );
+
+        self.abilities.make_abilities_current();
+    }
+
+    /// Open the description menu of a specific gear item
+    pub fn queue_collect_gear_data(&mut self, item_key: char) {
+        self.menus.add_menu(
+            vec![""],
+            "i",
+            "key_esc",
+            false,
+            false,
+            false,
+            false,
+            "menu",
+            "close_menu",
+        );
+
+        self.menus.add_menu(
+            vec!["i"],
+            &item_key.to_string(),
+            "key_esc",
+            false,
+            false,
+            false,
+            false,
+            "ui-push",
+            "ui-pop",
+        );
+    }
+
+    pub fn queue_wield_wear(&mut self, item_key: char) {
         self.menus
             .add_menu(vec![""], "i", "", false, false, false, false, "menu", "");
 
         self.menus.add_menu(
             vec!["i"],
-            item_key,
+            &item_key.to_string(),
             "w",
             false,
             false,
@@ -358,17 +358,19 @@ impl CrawlData {
             "player",
         );
 
-        self.player
-            .update_equipped(char_to_index(item_key), &self.inventory);
+        self.player.update_equipped(
+            self.inventory.gear_letter_to_index(item_key),
+            &self.inventory,
+        );
     }
 
-    pub fn queue_put_on(&mut self, item_key: &str) {
+    pub fn queue_put_on(&mut self, item_key: char) {
         self.menus
             .add_menu(vec![""], "i", "", false, false, false, false, "menu", "");
 
         self.menus.add_menu(
             vec!["i"],
-            item_key,
+            &item_key.to_string(),
             "p",
             false,
             false,
@@ -379,13 +381,13 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_remove(&mut self, item_key: &str) {
+    pub fn queue_remove(&mut self, item_key: char) {
         self.menus
             .add_menu(vec![""], "i", "", false, false, false, false, "menu", "");
 
         self.menus.add_menu(
             vec!["i"],
-            item_key,
+            &item_key.to_string(),
             "r",
             false,
             false,
@@ -396,11 +398,11 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_read_scroll(&mut self, item_key: &str) {
+    pub fn queue_read_scroll(&mut self, item_key: char) {
         self.menus.add_menu(
             vec![""],
             "r",
-            item_key,
+            &item_key.to_string(),
             false,
             false,
             false,
@@ -410,11 +412,11 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_quaff_potion(&mut self, item_key: &str) {
+    pub fn queue_quaff_potion(&mut self, item_key: char) {
         self.menus.add_menu(
             vec![""],
             "q",
-            item_key,
+            &item_key.to_string(),
             false,
             false,
             false,
@@ -424,11 +426,11 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_close_all_menus(&mut self, item_key: &str) {
+    pub fn queue_close_all_menus(&mut self, item_key: char) {
         self.menus.add_menu(
             vec![""],
             "x",
-            item_key,
+            &item_key.to_string(),
             false,
             true,
             false,
@@ -438,11 +440,11 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_use_ability(&mut self, ability_key: &str) {
+    pub fn queue_use_ability(&mut self, ability_key: char) {
         self.menus.add_menu(
             vec![""],
             "a",
-            ability_key,
+            &ability_key.to_string(),
             false,
             false,
             false,
@@ -525,7 +527,7 @@ impl CrawlData {
         );
     }
 
-    pub fn queue_identify_item(&mut self, identify_scroll: &str, item_to_identify: &str) {
+    pub fn queue_identify_item(&mut self, identify_scroll: char, item_to_identify: char) {
         self.menus.add_menu(
             vec![""],
             "r",
@@ -540,8 +542,8 @@ impl CrawlData {
 
         self.menus.add_menu(
             vec!["r"],
-            identify_scroll,
-            item_to_identify,
+            &identify_scroll.to_string(),
+            &item_to_identify.to_string(),
             false,
             false,
             false,

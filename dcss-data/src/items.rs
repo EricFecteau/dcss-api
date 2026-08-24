@@ -54,6 +54,22 @@ impl Item {
         }
     }
 
+    pub(crate) fn letter(&self) -> char {
+        match self {
+            Self::None => unreachable!("Should not attempt to get letter from an Item::None"),
+            Self::Weapon(item) => item.letter,
+            Self::Missile(item) => item.letter,
+            Self::Armour(item) => item.letter,
+            Self::Wand(item) => item.letter,
+            Self::_Unknown4 => unimplemented!(),
+            Self::Scroll(item) => item.letter,
+            Self::Jewellery(item) => item.letter,
+            Self::Potion(item) => item.letter,
+            Self::_Unknown8 => unimplemented!(),
+            Self::Staff(item) => item.letter,
+        }
+    }
+
     pub(crate) fn rating(&self) -> i32 {
         match self {
             Self::Weapon(item) => item.rating,

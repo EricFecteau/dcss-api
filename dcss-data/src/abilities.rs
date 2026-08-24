@@ -11,7 +11,7 @@ pub(crate) struct Abilities {
 
 #[derive(Debug)]
 pub(crate) struct Ability {
-    pub(crate) key: String,
+    pub(crate) key: char,
     pub(crate) _cost: String,
     pub(crate) _failure_chance: u64,
 }
@@ -34,7 +34,7 @@ impl Abilities {
                     .filter(|x| !x.is_empty())
                     .map(|x| x.trim())
                     .collect::<Vec<&str>>();
-                let key = &text[0][0..1];
+                let key = text[0].chars().next().unwrap();
                 let name = text[0].split(" - ").collect::<Vec<&str>>()[1];
                 let cost = text[1];
                 let failure_chance = text[2].replace('%', "").parse::<u64>().unwrap();
@@ -56,9 +56,9 @@ impl Abilities {
 }
 
 impl Ability {
-    pub(crate) fn new(key: &str, cost: &str, failure_chance: u64) -> Self {
+    pub(crate) fn new(key: char, cost: &str, failure_chance: u64) -> Self {
         Self {
-            key: key.to_owned(),
+            key,
             _cost: cost.to_owned(),
             _failure_chance: failure_chance,
         }
@@ -74,8 +74,8 @@ impl CrawlData {
         self.abilities.abilities.contains_key(ability)
     }
 
-    pub fn key_of_ability(&self, ability: &str) -> String {
-        self.abilities.abilities[ability].key.to_owned()
+    pub fn key_of_ability(&self, ability: &str) -> char {
+        self.abilities.abilities[ability].key
     }
 
     pub fn abilities_stale(&self) -> bool {

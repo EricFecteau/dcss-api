@@ -1,5 +1,4 @@
-use crate::common::extract_param;
-use serde_json::Value;
+use crate::common::{ascii_to_letter, extract_param};
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum PotionType {
@@ -27,59 +26,44 @@ pub(crate) enum PotionType {
 #[derive(Clone, Debug)]
 pub(crate) struct Potion {
     pub(crate) data_collected: bool,
+    pub(crate) letter: char,
     pub(crate) identified: bool,
     pub(crate) potion_type: PotionType,
+    pub(crate) quantity: u64,
 }
 
 impl Potion {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(letter: char) -> Self {
         Self {
             data_collected: false,
+            letter,
             identified: false,
             potion_type: PotionType::Unknown,
+            quantity: 0,
         }
     }
 
-    pub(crate) fn update_potion(&mut self, description: &Value) {
-        self.data_collected = true;
-
-        if description["body"]
-            .as_str()
-            .unwrap()
-            .contains(" identified ")
-        {
-            self.identified = true;
-        } else {
-            return;
-        }
-
-        if let Some(potion_type) = extract_param(
-            description["title"].as_str().unwrap(),
-            "potion of ",
-            &vec!['.', '{'],
-        ) {
-            self.potion_type = type_of_potion(potion_type.trim_end().to_owned());
-        } else {
-            self.potion_type = type_of_potion(
-                extract_param(
-                    description["title"].as_str().unwrap(),
-                    "potions of ",
-                    &vec!['.', '{'],
-                )
-                .unwrap()
-                .trim_end()
-                .to_owned(),
-            );
-        }
-    }
-
-    pub(crate) fn update_potion_values(&mut self, name: &str, _quantity: u64) {
+    pub(crate) fn update_potion_values(
+        &mut self,
+        name: &str,
+        letter: Option<i64>,
+        quantity: Option<i64>,
+    ) {
         let mut potion_type = extract_param(name, "potion of ", &vec!['\n', '{']);
         if potion_type.is_none() {
             potion_type = extract_param(name, "potions of ", &vec!['.', '{', '\n']);
         }
 
+        if let Some(quantity) = quantity {
+            self.quantity = quantity as u64;
+        }
+
+        if let Some(letter) = letter {
+            self.letter = ascii_to_letter(letter as usize);
+        }
+
         if let Some(pt) = potion_type {
+            self.data_collected = true;
             self.identified = true;
             self.potion_type = type_of_potion(pt.trim_end().to_owned());
         }
